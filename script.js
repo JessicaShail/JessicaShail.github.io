@@ -155,8 +155,15 @@ function showSection(sectionId) {
     // Update URL hash without triggering scroll
     history.replaceState(null, null, '#' + sectionId);
     
-    // Scroll to top of content
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to position the navigation bar at the top
+    const navigation = document.querySelector('.navigation');
+    if (navigation) {
+        const navigationTop = navigation.offsetTop;
+        window.scrollTo({ 
+            top: navigationTop, 
+            behavior: 'smooth' 
+        });
+    }
 }
 
 function updateActiveNavigation(activeLink) {
