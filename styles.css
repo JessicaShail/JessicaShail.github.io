@@ -29,7 +29,7 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-    font-size: 3.5rem;
+    font-size: 2.8rem;
     font-weight: 700;
 }
 
@@ -125,7 +125,7 @@ h3 {
     background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
     color: white;
     text-align: center;
-    padding: 8rem 0;
+    padding: 4rem 0;
     position: relative;
     overflow: hidden;
 }
@@ -147,24 +147,24 @@ h3 {
 }
 
 .couple-names {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
 .wedding-date {
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
     font-weight: 300;
 }
 
 .wedding-date-detail {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
     opacity: 0.9;
 }
 
 .hero-decoration {
-    font-size: 2rem;
+    font-size: 1.5rem;
     animation: heartbeat 2s ease-in-out infinite;
 }
 
@@ -758,7 +758,7 @@ h3 {
     }
     
     h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
     
     h2 {
@@ -766,7 +766,7 @@ h3 {
     }
     
     .hero {
-        padding: 6rem 0;
+        padding: 3rem 0;
     }
     
     .navigation ul {
