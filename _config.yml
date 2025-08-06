@@ -1,0 +1,27 @@
+# GitHub Pages Configuration
+title: "Jessica & [Partner] - Wedding Website"
+description: "Join us for our special day!"
+theme: minima
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+
+# Include files/directories
+include:
+  - _pages
+
+# Site settings
+url: "https://jessicashail.github.io"
+baseurl: ""
+
+# SEO settings
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
