@@ -222,7 +222,200 @@ h3 {
     display: block;
 }
 
-/* Details Section */
+/* Events Overview Section */
+.events-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.event-preview {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.event-preview:hover {
+    transform: translateY(-5px);
+    border-color: #8b4d5c;
+    box-shadow: 0 10px 25px rgba(139, 77, 92, 0.2);
+}
+
+.event-icon {
+    margin-bottom: 1.5rem;
+}
+
+.event-icon i {
+    font-size: 3rem;
+    color: #8b4d5c;
+}
+
+.event-preview h3 {
+    color: #8b4d5c;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.event-date {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #d4a574;
+    margin-bottom: 1rem;
+}
+
+.event-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.event-cta {
+    display: inline-block;
+    color: #8b4d5c;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.event-preview:hover .event-cta {
+    color: #d4a574;
+}
+
+/* Individual Event Sections */
+.event-details {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.event-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.event-detail-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.event-detail-card:hover {
+    transform: translateY(-5px);
+}
+
+.event-detail-card i {
+    font-size: 2.5rem;
+    color: #8b4d5c;
+    margin-bottom: 1rem;
+}
+
+.event-detail-card h3 {
+    color: #8b4d5c;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.event-detail-card p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.event-description {
+    background: white;
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-top: 2rem;
+}
+
+.event-description h3 {
+    color: #8b4d5c;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.event-description > p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.event-highlights {
+    margin: 2rem 0;
+}
+
+.event-highlights h4 {
+    color: #8b4d5c;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.event-highlights ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.event-highlights li {
+    background: #f8f5f3;
+    padding: 1rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+.event-highlights li:hover {
+    background: #ede8e5;
+}
+
+.event-highlights li i {
+    color: #d4a574;
+    font-size: 1.2rem;
+    width: 20px;
+    text-align: center;
+}
+
+.event-note {
+    background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.event-note i {
+    margin-right: 0.5rem;
+}
+
+.event-note strong {
+    font-weight: 600;
+}
+
+/* Section Headers with Icons */
+.content-section h2 i {
+    margin-right: 1rem;
+    color: #d4a574;
+}
+
+/* Details Section (keeping existing styles) */
 .details-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -625,6 +818,18 @@ h3 {
         grid-template-columns: 1fr;
     }
     
+    .events-overview {
+        grid-template-columns: 1fr;
+    }
+    
+    .event-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .event-highlights ul {
+        grid-template-columns: 1fr;
+    }
+    
     .modal-content {
         padding: 2rem;
     }
@@ -643,7 +848,10 @@ h3 {
     .location-card,
     .travel-info,
     .attire-card,
-    .attire-suggestion {
+    .attire-suggestion,
+    .event-preview,
+    .event-detail-card,
+    .event-description {
         padding: 1.5rem;
     }
     

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jessica & [Partner] - Wedding</title>
+    <title>Jessica & Shail - Wedding</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -29,7 +29,7 @@
         <!-- Header -->
         <header class="hero">
             <div class="hero-content">
-                <h1 class="couple-names">Jessica & [Partner]</h1>
+                <h1 class="couple-names">Jessica & Shail</h1>
                 <p class="wedding-date">Save the Date</p>
                 <p class="wedding-date-detail">[Date] • [Location]</p>
                 <div class="hero-decoration">
@@ -41,115 +41,211 @@
         <!-- Navigation -->
         <nav class="navigation">
             <ul>
-                <li><a href="#details" onclick="showSection('details')">Details</a></li>
-                <li><a href="#schedule" onclick="showSection('schedule')">Schedule</a></li>
-                <li><a href="#location" onclick="showSection('location')">Location</a></li>
+                <li><a href="#events" onclick="showSection('events')">Events</a></li>
+                <li><a href="#mehndi" onclick="showSection('mehndi')">Mehndi</a></li>
+                <li><a href="#ceremony" onclick="showSection('ceremony')">Ceremony</a></li>
+                <li><a href="#reception" onclick="showSection('reception')">Reception</a></li>
                 <li><a href="#attire" onclick="showSection('attire')">Attire</a></li>
                 <li><a href="#rsvp" onclick="showSection('rsvp')">RSVP</a></li>
             </ul>
         </nav>
 
-        <!-- Wedding Details Section -->
-        <section id="details" class="content-section active">
+        <!-- Events Overview Section -->
+        <section id="events" class="content-section active">
             <div class="container">
-                <h2>Wedding Details</h2>
-                <div class="details-grid">
-                    <div class="detail-card">
-                        <i class="fas fa-calendar-alt"></i>
-                        <h3>Date</h3>
-                        <p>[Wedding Date]</p>
-                        <p class="detail-sub">[Day of the Week]</p>
-                    </div>
-                    <div class="detail-card">
-                        <i class="fas fa-clock"></i>
-                        <h3>Time</h3>
-                        <p>Ceremony: [Time]</p>
-                        <p class="detail-sub">Reception: [Time]</p>
-                    </div>
-                    <div class="detail-card">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <h3>Venue</h3>
-                        <p>[Venue Name]</p>
-                        <p class="detail-sub">[Address]</p>
-                    </div>
-                </div>
+                <h2>Our Wedding Celebrations</h2>
                 
                 <div class="wedding-story">
-                    <h3>Our Story</h3>
-                    <p>We are so excited to celebrate this special day with our family and friends. Your presence means the world to us as we begin this new chapter of our lives together.</p>
+                    <h3>Join Us for Three Days of Love & Celebration</h3>
+                    <p>We are so excited to celebrate this special milestone with our family and friends across three beautiful events. Your presence means the world to us as we begin this new chapter of our lives together.</p>
                 </div>
-            </div>
-        </section>
 
-        <!-- Schedule Section -->
-        <section id="schedule" class="content-section">
-            <div class="container">
-                <h2>Wedding Day Schedule</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-time">[Time]</div>
-                        <div class="timeline-content">
-                            <h3>Ceremony</h3>
-                            <p>Join us for our wedding ceremony at [Location]. Please arrive 15 minutes early.</p>
+                <div class="events-overview">
+                    <div class="event-preview" onclick="showSection('mehndi')">
+                        <div class="event-icon">
+                            <i class="fas fa-hand-sparkles"></i>
                         </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-time">[Time]</div>
-                        <div class="timeline-content">
-                            <h3>Cocktail Hour</h3>
-                            <p>Enjoy cocktails and hors d'oeuvres while we take photos.</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-time">[Time]</div>
-                        <div class="timeline-content">
-                            <h3>Reception</h3>
-                            <p>Dinner, dancing, and celebration begins!</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-time">[Time]</div>
-                        <div class="timeline-content">
-                            <h3>Last Dance</h3>
-                            <p>The celebration continues until the last song.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Location Section -->
-        <section id="location" class="content-section">
-            <div class="container">
-                <h2>Location & Travel</h2>
-                <div class="location-info">
-                    <div class="location-card">
-                        <h3>[Venue Name]</h3>
-                        <p>[Full Address]</p>
-                        <p>[City, State ZIP]</p>
-                        <a href="#" class="btn-link" target="_blank">View on Google Maps</a>
+                        <h3>Mehndi Ceremony</h3>
+                        <p class="event-date">[Mehndi Date]</p>
+                        <p class="event-description">Traditional henna ceremony with music, dancing, and beautiful intricate designs</p>
+                        <span class="event-cta">Learn More →</span>
                     </div>
                     
-                    <div class="travel-info">
-                        <h3>Travel Information</h3>
-                        <div class="travel-options">
-                            <div class="travel-option">
-                                <h4>Parking</h4>
-                                <p>Free parking is available on-site.</p>
-                            </div>
-                            <div class="travel-option">
-                                <h4>Transportation</h4>
-                                <p>Uber and taxi services are readily available.</p>
-                            </div>
-                            <div class="travel-option">
-                                <h4>Accommodations</h4>
-                                <p>We have reserved room blocks at nearby hotels. Contact us for details.</p>
-                            </div>
+                    <div class="event-preview" onclick="showSection('ceremony')">
+                        <div class="event-icon">
+                            <i class="fas fa-rings-wedding"></i>
+                        </div>
+                        <h3>Wedding Ceremony</h3>
+                        <p class="event-date">[Ceremony Date]</p>
+                        <p class="event-description">Sacred ceremony where we exchange vows and become one</p>
+                        <span class="event-cta">Learn More →</span>
+                    </div>
+                    
+                    <div class="event-preview" onclick="showSection('reception')">
+                        <div class="event-icon">
+                            <i class="fas fa-champagne-glasses"></i>
+                        </div>
+                        <h3>Reception</h3>
+                        <p class="event-date">[Reception Date]</p>
+                        <p class="event-description">Celebration with dinner, dancing, and festivities late into the night</p>
+                        <span class="event-cta">Learn More →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mehndi Section -->
+        <section id="mehndi" class="content-section">
+            <div class="container">
+                <h2><i class="fas fa-hand-sparkles"></i> Mehndi Ceremony</h2>
+                
+                <div class="event-details">
+                    <div class="event-info-grid">
+                        <div class="event-detail-card">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3>Date & Time</h3>
+                            <p>[Mehndi Date]</p>
+                            <p class="detail-sub">[Day] at [Time]</p>
+                        </div>
+                        <div class="event-detail-card">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h3>Venue</h3>
+                            <p>[Mehndi Venue Name]</p>
+                            <p class="detail-sub">[Mehndi Address]</p>
+                        </div>
+                        <div class="event-detail-card">
+                            <i class="fas fa-palette"></i>
+                            <h3>Dress Code</h3>
+                            <p>[Mehndi Dress Code]</p>
+                            <p class="detail-sub">Bright colors encouraged!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="event-description">
+                        <h3>About the Mehndi</h3>
+                        <p>Join us for a vibrant and joyous Mehndi ceremony filled with traditional henna art, music, and dancing. This beautiful pre-wedding celebration is all about community, joy, and the artistry of intricate henna designs.</p>
+                        
+                        <div class="event-highlights">
+                            <h4>What to Expect:</h4>
+                            <ul>
+                                <li><i class="fas fa-music"></i> Traditional music and dancing</li>
+                                <li><i class="fas fa-hand-sparkles"></i> Professional henna artists</li>
+                                <li><i class="fas fa-utensils"></i> Delicious appetizers and refreshments</li>
+                                <li><i class="fas fa-camera"></i> Beautiful photo opportunities</li>
+                                <li><i class="fas fa-gift"></i> Traditional games and activities</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="event-note">
+                            <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> Please arrive on time as the henna application takes time. We recommend wearing clothes that you don't mind getting henna on!</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- Ceremony Section -->
+        <section id="ceremony" class="content-section">
+            <div class="container">
+                <h2><i class="fas fa-rings-wedding"></i> Wedding Ceremony</h2>
+                
+                <div class="event-details">
+                    <div class="event-info-grid">
+                        <div class="event-detail-card">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3>Date & Time</h3>
+                            <p>[Ceremony Date]</p>
+                            <p class="detail-sub">[Day] at [Time]</p>
+                        </div>
+                        <div class="event-detail-card">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h3>Venue</h3>
+                            <p>[Ceremony Venue Name]</p>
+                            <p class="detail-sub">[Ceremony Address]</p>
+                        </div>
+                        <div class="event-detail-card">
+                            <i class="fas fa-tshirt"></i>
+                            <h3>Dress Code</h3>
+                            <p>[Ceremony Dress Code]</p>
+                            <p class="detail-sub">Formal attire requested</p>
+                        </div>
+                    </div>
+                    
+                    <div class="event-description">
+                        <h3>Our Sacred Union</h3>
+                        <p>This is the moment we've been waiting for - the sacred ceremony where we exchange vows and officially become husband and wife. We are honored to have you witness this beautiful milestone in our lives.</p>
+                        
+                        <div class="event-highlights">
+                            <h4>Ceremony Details:</h4>
+                            <ul>
+                                <li><i class="fas fa-heart"></i> Exchange of wedding vows</li>
+                                <li><i class="fas fa-ring"></i> Ring ceremony</li>
+                                <li><i class="fas fa-pray"></i> Traditional blessings</li>
+                                <li><i class="fas fa-camera"></i> Professional photography</li>
+                                <li><i class="fas fa-flower-tulip"></i> Beautiful floral arrangements</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="event-note">
+                            <p><i class="fas fa-clock"></i> <strong>Please arrive 15-20 minutes early</strong> to allow time for seating. The ceremony will begin promptly at the scheduled time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reception Section -->
+        <section id="reception" class="content-section">
+            <div class="container">
+                <h2><i class="fas fa-champagne-glasses"></i> Wedding Reception</h2>
+                
+                <div class="event-details">
+                    <div class="event-info-grid">
+                        <div class="event-detail-card">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3>Date & Time</h3>
+                            <p>[Reception Date]</p>
+                            <p class="detail-sub">[Day] at [Time]</p>
+                        </div>
+                        <div class="event-detail-card">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h3>Venue</h3>
+                            <p>[Reception Venue Name]</p>
+                            <p class="detail-sub">[Reception Address]</p>
+                        </div>
+                        <div class="event-detail-card">
+                            <i class="fas fa-music"></i>
+                            <h3>Entertainment</h3>
+                            <p>Live Music & Dancing</p>
+                            <p class="detail-sub">Party until late!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="event-description">
+                        <h3>Let's Celebrate!</h3>
+                        <p>After the ceremony, join us for an unforgettable evening of celebration! We'll feast, dance, and party the night away as we celebrate the beginning of our married life together.</p>
+                        
+                        <div class="event-highlights">
+                            <h4>Reception Highlights:</h4>
+                            <ul>
+                                <li><i class="fas fa-utensils"></i> Multi-course dinner</li>
+                                <li><i class="fas fa-wine-glass"></i> Open bar with signature cocktails</li>
+                                <li><i class="fas fa-music"></i> Live band and DJ</li>
+                                <li><i class="fas fa-birthday-cake"></i> Wedding cake cutting</li>
+                                <li><i class="fas fa-dancing"></i> Dancing all night long</li>
+                                <li><i class="fas fa-photo-video"></i> Photo booth fun</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="event-note">
+                            <p><i class="fas fa-glass-cheers"></i> <strong>Get ready to party!</strong> We'll be celebrating late into the night, so come prepared to dance and make memories!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
 
         <!-- Attire Section -->
         <section id="attire" class="content-section">
@@ -242,7 +338,7 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="container">
-                <p>&hearts; Jessica & [Partner] &hearts;</p>
+                <p>&hearts; Jessica & Shail &hearts;</p>
                 <p>We can't wait to celebrate with you!</p>
             </div>
         </footer>
@@ -250,4 +346,5 @@
 
     <script src="script.js"></script>
 </body>
+</html>
 </html>

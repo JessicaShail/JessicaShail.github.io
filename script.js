@@ -63,7 +63,7 @@ function hidePasswordModal() {
     document.getElementById('mainContent').classList.remove('hidden');
     
     // Show default section
-    showSection('details');
+    showSection('events');
 }
 
 function checkPassword() {
@@ -290,15 +290,17 @@ window.addEventListener('popstate', function(e) {
     if (hash) {
         showSection(hash);
     } else {
-        showSection('details');
+        showSection('events');
     }
 });
 
 // Handle initial page load with hash
 window.addEventListener('load', function() {
     const hash = window.location.hash.substring(1);
-    if (hash) {
+    if (hash && ['events', 'mehndi', 'ceremony', 'reception', 'attire', 'rsvp'].includes(hash)) {
         showSection(hash);
+    } else {
+        showSection('events');
     }
 });
 
