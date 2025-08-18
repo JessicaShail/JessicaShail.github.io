@@ -17,7 +17,7 @@ body {
     font-family: 'Lato', sans-serif;
     line-height: 1.6;
     color: #333;
-    background-color: #faf9f7;
+    background-color: #FFF9E5;
 }
 
 .container {
@@ -51,7 +51,7 @@ h2 {
     font-size: 2.5rem;
     margin-bottom: 2rem;
     text-align: center;
-    color: #8b4d5c;
+    color: #004030;
 }
 
 h3 {
@@ -66,7 +66,7 @@ h3 {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
+    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -84,7 +84,7 @@ h3 {
 }
 
 .password-container h2 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
     font-size: 2rem;
 }
@@ -110,12 +110,12 @@ h3 {
 
 .password-form input:focus {
     outline: none;
-    border-color: #8b4d5c;
+    border-color: #4A9782;
 }
 
 .password-form button {
     padding: 1rem;
-    background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
+    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -136,7 +136,7 @@ h3 {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
+    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
     color: white;
     text-align: center;
     padding: 4rem 0;
@@ -144,16 +144,7 @@ h3 {
     overflow: hidden;
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="hearts" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><text x="10" y="15" text-anchor="middle" fill="rgba(255,255,255,0.1)" font-size="12">♥</text></pattern></defs><rect width="100" height="100" fill="url(%23hearts)"/></svg>');
-    opacity: 0.3;
-}
+.hero::before { content: none; }
 
 .hero-content {
     position: relative;
@@ -210,7 +201,7 @@ h3 {
 
 .navigation a {
     text-decoration: none;
-    color: #8b4d5c;
+    color: #004030;
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 25px;
@@ -220,7 +211,7 @@ h3 {
 
 .navigation a:hover,
 .navigation a.active {
-    background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
+    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
     color: white;
     transform: translateY(-2px);
 }
@@ -257,8 +248,8 @@ h3 {
 
 .event-preview:hover {
     transform: translateY(-5px);
-    border-color: #8b4d5c;
-    box-shadow: 0 10px 25px rgba(139, 77, 92, 0.2);
+    border-color: #4A9782;
+    box-shadow: 0 10px 25px rgba(74, 151, 130, 0.2);
 }
 
 .event-icon {
@@ -267,11 +258,11 @@ h3 {
 
 .event-icon i {
     font-size: 3rem;
-    color: #8b4d5c;
+    color: #004030;
 }
 
 .event-preview h3 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
     font-size: 1.4rem;
 }
@@ -279,7 +270,7 @@ h3 {
 .event-date {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #d4a574;
+    color: #DCD0A8;
     margin-bottom: 1rem;
 }
 
@@ -298,7 +289,7 @@ h3 {
 }
 
 .event-preview:hover .event-cta {
-    color: #d4a574;
+    color: #4A9782;
 }
 
 /* Individual Event Sections */
@@ -329,12 +320,12 @@ h3 {
 
 .event-detail-card i {
     font-size: 2.5rem;
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
 }
 
 .event-detail-card h3 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
     font-size: 1.3rem;
 }
@@ -354,7 +345,7 @@ h3 {
 }
 
 .event-description h3 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1.5rem;
     text-align: center;
 }
@@ -386,7 +377,7 @@ h3 {
 }
 
 .event-highlights li {
-    background: #f8f5f3;
+    background: #FFF9E5;
     padding: 1rem;
     border-radius: 10px;
     display: flex;
@@ -396,18 +387,18 @@ h3 {
 }
 
 .event-highlights li:hover {
-    background: #ede8e5;
+    background: #DCD0A8;
 }
 
 .event-highlights li i {
-    color: #d4a574;
+    color: #4A9782;
     font-size: 1.2rem;
     width: 20px;
     text-align: center;
 }
 
 .event-note {
-    background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
+    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
     color: white;
     padding: 1.5rem;
     border-radius: 10px;
@@ -426,7 +417,7 @@ h3 {
 /* Section Headers with Icons */
 .content-section h2 i {
     margin-right: 1rem;
-    color: #d4a574;
+    color: #4A9782;
 }
 
 /* Details Section (keeping existing styles) */
@@ -452,12 +443,12 @@ h3 {
 
 .detail-card i {
     font-size: 2.5rem;
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
 }
 
 .detail-card h3 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
 }
 
@@ -481,7 +472,7 @@ h3 {
 }
 
 .wedding-story h3 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1.5rem;
 }
 
@@ -505,7 +496,7 @@ h3 {
     top: 0;
     bottom: 0;
     width: 2px;
-    background: #d4a574;
+    background: #DCD0A8;
     transform: translateX(-50%);
 }
 
@@ -525,7 +516,7 @@ h3 {
 
 .timeline-time {
     flex: 0 0 100px;
-    background: #8b4d5c;
+    background: #004030;
     color: white;
     padding: 1rem;
     border-radius: 10px;
@@ -546,7 +537,7 @@ h3 {
 }
 
 .timeline-content h3 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 0.5rem;
 }
 
@@ -568,7 +559,7 @@ h3 {
 
 .location-card h3,
 .travel-info h3 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1.5rem;
 }
 
@@ -576,7 +567,7 @@ h3 {
     display: inline-block;
     margin-top: 1rem;
     padding: 0.8rem 1.5rem;
-    background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
+    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
     color: white;
     text-decoration: none;
     border-radius: 25px;
@@ -593,7 +584,7 @@ h3 {
 }
 
 .travel-option h4 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 0.5rem;
 }
 
@@ -614,14 +605,14 @@ h3 {
 
 .attire-card i {
     font-size: 3rem;
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
 }
 
 .dress-code {
     font-size: 1.3rem;
     font-weight: 600;
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
 }
 
@@ -640,20 +631,20 @@ h3 {
 }
 
 .attire-suggestion h4 {
-    color: #8b4d5c;
+    color: #004030;
     margin-bottom: 1rem;
 }
 
 .weather-note {
-    background: #f8f5f3;
+    background: #FFF9E5;
     padding: 1.5rem;
     border-radius: 10px;
     text-align: center;
-    border-left: 4px solid #d4a574;
+    border-left: 4px solid #DCD0A8;
 }
 
 .weather-note i {
-    color: #d4a574;
+    color: #4A9782;
     margin-right: 0.5rem;
 }
 
@@ -684,7 +675,7 @@ h3 {
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #8b4d5c;
+    color: #004030;
     font-weight: 500;
 }
 
@@ -704,7 +695,7 @@ h3 {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #8b4d5c;
+    border-color: #4A9782;
 }
 
 .form-group textarea {
@@ -715,7 +706,7 @@ h3 {
 .rsvp-submit {
     width: 100%;
     padding: 1.2rem;
-    background: linear-gradient(135deg, #8b4d5c 0%, #d4a574 100%);
+    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
     color: white;
     border: none;
     border-radius: 10px;
