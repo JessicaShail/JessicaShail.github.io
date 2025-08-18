@@ -1,3 +1,11 @@
+@font-face {
+	font-family: 'Great Vibes';
+	src: url('GreatVibes-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
 /* Reset and Base Styles */
 * {
     margin: 0;
@@ -24,13 +32,19 @@ body {
 
 /* Typography */
 h1, h2, h3, h4 {
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
+    font-family: 'Great Vibes', 'Playfair Display', serif;
+    font-weight: 400;
+}
+
+/* Use Great Vibes for hero names */
+.couple-names {
+	font-family: 'Great Vibes', 'Playfair Display', serif;
+	font-weight: 400;
 }
 
 h1 {
     font-size: 2.8rem;
-    font-weight: 700;
+    font-weight: 400;
 }
 
 h2 {
