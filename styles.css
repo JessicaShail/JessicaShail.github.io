@@ -6,6 +6,14 @@
 	font-display: swap;
 }
 
+@font-face {
+    font-family: 'Maibu Ring';
+    src: url('MaibuRing-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* Reset and Base Styles */
 * {
     margin: 0;
@@ -38,7 +46,7 @@ h1, h2, h3, h4 {
 
 /* Use Great Vibes for hero names */
 .couple-names {
-	font-family: 'Great Vibes', 'Playfair Display', serif;
+	font-family: 'Maibu Ring', 'Playfair Display', serif;
 	font-weight: 400;
 }
 
