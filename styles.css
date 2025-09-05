@@ -144,7 +144,7 @@ h3 {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(150deg, #004030 0%, #256C59 50%, #4A9782 100%);
+    background: #427a5e;
     color: white;
     text-align: center;
     padding: 4rem 0;
@@ -220,7 +220,7 @@ h3 {
 
 .navigation a:hover,
 .navigation a.active {
-    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
+    background: #427a5e;
     color: white;
     transform: translateY(-2px);
 }
