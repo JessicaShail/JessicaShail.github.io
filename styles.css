@@ -171,12 +171,12 @@ h3 {
 
 .hero-decoration {
     font-size: 1.5rem;
-    animation: heartbeat 2s ease-in-out infinite;
+    animation: sparkle 3s ease-in-out infinite;
 }
 
-@keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+@keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+    50% { transform: scale(1.1) rotate(5deg); opacity: 1; }
 }
 
 /* Navigation */
