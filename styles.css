@@ -7,7 +7,7 @@
 }
 
 @font-face {
-    font-family: 'Maibu Ring';
+    font-family: 'Malibu Ring';
     src: url('MaibuRing-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
@@ -40,13 +40,13 @@ body {
 
 /* Typography */
 h1, h2, h3, h4 {
-    font-family: 'Great Vibes', 'Playfair Display', serif;
+    font-family: 'Malibu Ring', 'Great Vibes', 'Playfair Display', serif;
     font-weight: 400;
 }
 
 /* Use Great Vibes for hero names */
 .couple-names {
-	font-family: 'Maibu Ring', 'Playfair Display', serif;
+	font-family: 'Malibu Ring', 'Great Vibes', 'Playfair Display', serif;
 	font-weight: 400;
 }
 
