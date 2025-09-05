@@ -40,13 +40,13 @@ body {
 
 /* Typography */
 h1, h2, h3, h4 {
-    font-family: 'Malibu Ring', 'Great Vibes', 'Playfair Display', serif;
+    font-family: 'Malibu Ring', 'Great Vibes', 'Playfair Display';
     font-weight: 400;
 }
 
 /* Use Great Vibes for hero names */
 .couple-names {
-	font-family: 'Malibu Ring', 'Great Vibes', 'Playfair Display', serif;
+	font-family: 'Malibu Ring', 'Great Vibes', 'Playfair Display';
 	font-weight: 400;
 }
 
