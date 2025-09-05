@@ -483,6 +483,10 @@ h3 {
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
+.section-spacing {
+    margin-bottom: 3rem;
+}
+
 .wedding-story h3 {
     color: #004030;
     margin-bottom: 1.5rem;
