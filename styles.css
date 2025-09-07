@@ -1,14 +1,14 @@
 @font-face {
-	font-family: 'Great Vibes';
-	src: url('GreatVibes-Regular.ttf') format('truetype');
+	font-family: 'Alta';
+	src: url('alta-regular.otf') format('opentype');
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
 }
 
 @font-face {
-    font-family: 'Malibu Ring';
-    src: url('Maibu.otf') format('opentype');
+    font-family: 'Bodoni FLF';
+    src: url('BodoniFLF-Roman.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -22,7 +22,7 @@
 }
 
 body {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Bodoni FLF', serif;
     line-height: 1.6;
     color: #333;
     background-color: #FFF9E5;
@@ -39,22 +39,9 @@ body {
 }
 
 /* Typography */
-h1 {
-    font-family: 'Malibu Ring', 'Great Vibes', 'Playfair Display';
-    font-weight: 400;
-}
-
-h2, h3, h4 {
+h1, h2, h3, h4  {
     font-family: 'Alta', serif;
-}
-/* Use Great Vibes for hero names */
-.couple-names {
-	font-family: 'Malibu Ring', 'Great Vibes', 'Playfair Display';
-	font-weight: 400;
-}
-
-h1 {
-    font-size: 2.8rem;
+    text-transform: uppercase;
     font-weight: 400;
 }
 
@@ -147,14 +134,14 @@ h3 {
 
 /* Hero Section */
 .hero {
-    background: #427a5e url('J&S Website Banner v1.png') center center/contain no-repeat;
-    background-size: 100% auto;
+    background: #427a5e url('J&S Website Banner v1.png') center center no-repeat;
+    background-size: cover;
     color: white;
     text-align: center;
     padding: 2rem 0;
-    height: 50vh;
-    min-height: 300px;
-    max-height: 500px;
+    height: 60vh;
+    min-height: 400px;
+    max-height: 600px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -799,10 +786,10 @@ h3 {
     
     .hero {
         padding: 1rem 0;
-        height: 40vh;
-        min-height: 250px;
-        max-height: 350px;
-        background-size: contain;
+        height: 50vh;
+        min-height: 300px;
+        max-height: 450px;
+        background-size: cover;
     }
     
     .navigation ul {
