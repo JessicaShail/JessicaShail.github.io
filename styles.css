@@ -144,12 +144,19 @@ h3 {
 
 /* Hero Section */
 .hero {
-    background: #427a5e url('J&S Website Banner v1.png') center center/cover no-repeat;
+    background: #427a5e url('J&S Website Banner v1.png') center center/contain no-repeat;
+    background-size: 100% auto;
     color: white;
     text-align: center;
-    padding: 4rem 0;
+    padding: 2rem 0;
+    height: 50vh;
+    min-height: 300px;
+    max-height: 500px;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hero::before { content: none; }
@@ -788,7 +795,11 @@ h3 {
     }
     
     .hero {
-        padding: 3rem 0;
+        padding: 1rem 0;
+        height: 40vh;
+        min-height: 250px;
+        max-height: 350px;
+        background-size: contain;
     }
     
     .navigation ul {
