@@ -49,7 +49,7 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4  {
+h2, h3, h4  {
     font-family: 'Alta', serif;
     text-transform: uppercase;
     font-weight: 400;
