@@ -276,11 +276,13 @@ async function submitRSVP() {
         // Log for development/testing
         console.log('RSVP Data:', rsvpData);
         
-        // Submit to Netlify Forms (this will work automatically when deployed)
-        await fetch('/', {
+        // Submit to Formspree (works with GitHub Pages)
+        await fetch(form.action, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(formData).toString()
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
         });
         
         // Show success message
