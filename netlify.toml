@@ -1,0 +1,25 @@
+[build]
+  functions = "netlify/functions"
+  publish = "."
+
+[functions]
+  node_bundler = "esbuild"
+
+# Environment variables (set these in Netlify dashboard)
+# NEON_DATABASE_URL = "postgresql://username:password@host:5432/database"
+# ADMIN_PASSWORD = "your-secure-admin-password"
+
+# Redirects for SPA routing
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

@@ -3,22 +3,8 @@
 // Configuration
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID"; // Replace with your Formspree endpoint
 
-// Guest List Configuration (encoded for basic security)
-// To add guests: encode each name with btoa("Guest Name") and add to array
-const _guestList = [
-    "Sm9obiBTbWl0aA==", // John Smith
-    "SmFuZSBEb2U=", // Jane Doe
-    "TWljaGFlbCBKb2huc29u", // Michael Johnson
-    "U2FyYWggV2lsc29u", // Sarah Wilson
-    "RGF2aWQgQnJvd24=", // David Brown
-    "RW1pbHkgRGF2aXM=", // Emily Davis
-    "Q2hyaXMgTWlsbGVy", // Chris Miller
-    "TGlzYSBHYXJjaWE=", // Lisa Garcia
-    "TWF0dCBUYXlsb3I=", // Matt Taylor
-    "QW1hbmRhIE1vb3Jl" // Amanda Moore
-    // Add more encoded guest names here
-    // To encode: console.log(btoa("Full Name"))
-];
+// API Configuration
+const API_BASE = '/.netlify/functions';
 
 const _p = ["UGFzdGE=","QUxhVmk=","bnRvbg=="];
 const _s = 'wedding_auth_token';
@@ -223,56 +209,23 @@ function toggleGuestCount(eventName) {
     }
 }
 
-// Guest List Validation Functions
-function normalizeGuestName(name) {
-    return name.toLowerCase()
-        .trim()
-        .replace(/[^\w\s]/g, '') // Remove special characters
-        .replace(/\s+/g, ' '); // Normalize spaces
-}
-
-function isGuestInvited(guestName) {
-    const normalizedInput = normalizeGuestName(guestName);
+// API Helper Functions
+async function submitRSVPToAPI(formData) {
+    const response = await fetch(`${API_BASE}/submit-rsvp`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Object.fromEntries(formData))
+    });
     
-    // Check against the guest list
-    for (let encodedGuest of _guestList) {
-        try {
-            const decodedGuest = atob(encodedGuest);
-            const normalizedGuest = normalizeGuestName(decodedGuest);
-            
-            // Exact match or partial match (for couples/families)
-            if (normalizedGuest === normalizedInput || 
-                normalizedGuest.includes(normalizedInput) ||
-                normalizedInput.includes(normalizedGuest)) {
-                return { 
-                    isValid: true, 
-                    matchedGuest: decodedGuest 
-                };
-            }
-        } catch (e) {
-            // Skip invalid encoded entries
-            continue;
-        }
+    const result = await response.json();
+    
+    if (!response.ok) {
+        throw new Error(result.error || 'Submission failed');
     }
     
-    return { isValid: false, matchedGuest: null };
-}
-
-function validateGuestList(guestName) {
-    const validation = isGuestInvited(guestName);
-    
-    if (!validation.isValid) {
-        return {
-            isValid: false,
-            message: `We couldn't find "${guestName}" on our guest list. Please check the spelling or contact us if you believe this is an error.`
-        };
-    }
-    
-    return {
-        isValid: true,
-        message: `Welcome, ${validation.matchedGuest}! We're excited to celebrate with you.`,
-        matchedGuest: validation.matchedGuest
-    };
+    return result;
 }
 
 // Validate form before submission
@@ -280,7 +233,7 @@ function validateAndSubmitRSVP() {
     const form = document.getElementById('rsvpForm');
     const formData = new FormData(form);
     
-    // Basic validation
+    // Basic client-side validation
     const name = formData.get('guestName');
     const email = formData.get('email');
     
@@ -294,16 +247,6 @@ function validateAndSubmitRSVP() {
         return;
     }
     
-    // Guest list validation
-    const guestValidation = validateGuestList(name);
-    if (!guestValidation.isValid) {
-        showRSVPError(guestValidation.message);
-        return;
-    }
-    
-    // Show welcome message for valid guests
-    showGuestWelcomeMessage(guestValidation.message);
-    
     // Check if at least one event is selected
     const mehndiAttending = formData.get('mehndi-attending');
     const ceremonyAttending = formData.get('ceremony-attending');
@@ -314,7 +257,7 @@ function validateAndSubmitRSVP() {
         return;
     }
     
-    // If validation passes, submit the form
+    // If basic validation passes, submit to API
     submitRSVP();
 }
 
@@ -328,42 +271,11 @@ async function submitRSVP() {
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     
     try {
-        // Prepare comprehensive form data
-        const rsvpData = {
-            name: formData.get('guestName'),
-            email: formData.get('email'),
-            phone: formData.get('phone') || 'Not provided',
-            events: {
-                mehndi: {
-                    attending: formData.get('mehndi-attending') || 'no',
-                    guests: formData.get('mehndi-guests') || '0'
-                },
-                ceremony: {
-                    attending: formData.get('ceremony-attending') || 'no',
-                    guests: formData.get('ceremony-guests') || '0'
-                },
-                reception: {
-                    attending: formData.get('reception-attending') || 'no',
-                    guests: formData.get('reception-guests') || '0'
-                }
-            },
-            dietary: formData.get('dietary') || 'None specified',
-            message: formData.get('message') || 'No message',
-            timestamp: new Date().toISOString()
-        };
+        // Submit to API
+        const result = await submitRSVPToAPI(formData);
         
-        // Log for development/testing
-        console.log('RSVP Data:', rsvpData);
-        
-        // Submit to Netlify Forms (automatic when deployed on Netlify)
-        await fetch('/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(formData).toString()
-        });
-        
-        // Show success message
-        showRSVPSuccess();
+        // Show success message with personalized greeting
+        showRSVPSuccessWithMessage(result.message);
         
         // Reset form and hide guest count groups
         form.reset();
@@ -377,7 +289,7 @@ async function submitRSVP() {
         
     } catch (error) {
         console.error('RSVP submission error:', error);
-        showRSVPError('There was an error submitting your RSVP. Please try again or contact us directly.');
+        showRSVPError(error.message || 'There was an error submitting your RSVP. Please try again or contact us directly.');
     } finally {
         // Re-enable submit button
         submitButton.disabled = false;
@@ -385,17 +297,21 @@ async function submitRSVP() {
     }
 }
 
-// Simulate form submission (replace with real API call)
-function simulateFormSubmission(data) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            // Simulate 90% success rate
-            if (Math.random() > 0.1) {
-                resolve(data);
-            } else {
-                reject(new Error('Simulated network error'));
-            }
-        }, 1500);
+function showRSVPSuccessWithMessage(message) {
+    // Hide form and show success
+    document.getElementById('rsvpForm').classList.add('hidden');
+    const successDiv = document.getElementById('rsvpSuccess');
+    
+    // Update success message with personalized content
+    const messageP = successDiv.querySelector('p');
+    messageP.textContent = message;
+    
+    successDiv.classList.remove('hidden');
+    
+    // Scroll to success message
+    successDiv.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
     });
 }
 
