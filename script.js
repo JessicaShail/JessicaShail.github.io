@@ -3,6 +3,23 @@
 // Configuration
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID"; // Replace with your Formspree endpoint
 
+// Guest List Configuration (encoded for basic security)
+// To add guests: encode each name with btoa("Guest Name") and add to array
+const _guestList = [
+    "Sm9obiBTbWl0aA==", // John Smith
+    "SmFuZSBEb2U=", // Jane Doe
+    "TWljaGFlbCBKb2huc29u", // Michael Johnson
+    "U2FyYWggV2lsc29u", // Sarah Wilson
+    "RGF2aWQgQnJvd24=", // David Brown
+    "RW1pbHkgRGF2aXM=", // Emily Davis
+    "Q2hyaXMgTWlsbGVy", // Chris Miller
+    "TGlzYSBHYXJjaWE=", // Lisa Garcia
+    "TWF0dCBUYXlsb3I=", // Matt Taylor
+    "QW1hbmRhIE1vb3Jl" // Amanda Moore
+    // Add more encoded guest names here
+    // To encode: console.log(btoa("Full Name"))
+];
+
 const _p = ["UGFzdGE=","QUxhVmk=","bnRvbg=="];
 const _s = 'wedding_auth_token';
 const _getAuth = () => atob(_p[0]) + atob(_p[1]) + atob(_p[2]);
@@ -206,6 +223,58 @@ function toggleGuestCount(eventName) {
     }
 }
 
+// Guest List Validation Functions
+function normalizeGuestName(name) {
+    return name.toLowerCase()
+        .trim()
+        .replace(/[^\w\s]/g, '') // Remove special characters
+        .replace(/\s+/g, ' '); // Normalize spaces
+}
+
+function isGuestInvited(guestName) {
+    const normalizedInput = normalizeGuestName(guestName);
+    
+    // Check against the guest list
+    for (let encodedGuest of _guestList) {
+        try {
+            const decodedGuest = atob(encodedGuest);
+            const normalizedGuest = normalizeGuestName(decodedGuest);
+            
+            // Exact match or partial match (for couples/families)
+            if (normalizedGuest === normalizedInput || 
+                normalizedGuest.includes(normalizedInput) ||
+                normalizedInput.includes(normalizedGuest)) {
+                return { 
+                    isValid: true, 
+                    matchedGuest: decodedGuest 
+                };
+            }
+        } catch (e) {
+            // Skip invalid encoded entries
+            continue;
+        }
+    }
+    
+    return { isValid: false, matchedGuest: null };
+}
+
+function validateGuestList(guestName) {
+    const validation = isGuestInvited(guestName);
+    
+    if (!validation.isValid) {
+        return {
+            isValid: false,
+            message: `We couldn't find "${guestName}" on our guest list. Please check the spelling or contact us if you believe this is an error.`
+        };
+    }
+    
+    return {
+        isValid: true,
+        message: `Welcome, ${validation.matchedGuest}! We're excited to celebrate with you.`,
+        matchedGuest: validation.matchedGuest
+    };
+}
+
 // Validate form before submission
 function validateAndSubmitRSVP() {
     const form = document.getElementById('rsvpForm');
@@ -224,6 +293,16 @@ function validateAndSubmitRSVP() {
         showRSVPError('Please enter a valid email address.');
         return;
     }
+    
+    // Guest list validation
+    const guestValidation = validateGuestList(name);
+    if (!guestValidation.isValid) {
+        showRSVPError(guestValidation.message);
+        return;
+    }
+    
+    // Show welcome message for valid guests
+    showGuestWelcomeMessage(guestValidation.message);
     
     // Check if at least one event is selected
     const mehndiAttending = formData.get('mehndi-attending');
@@ -276,13 +355,11 @@ async function submitRSVP() {
         // Log for development/testing
         console.log('RSVP Data:', rsvpData);
         
-        // Submit to Formspree (works with GitHub Pages)
-        await fetch(form.action, {
+        // Submit to Netlify Forms (automatic when deployed on Netlify)
+        await fetch('/', {
             method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(formData).toString()
         });
         
         // Show success message
@@ -334,37 +411,78 @@ function showRSVPSuccess() {
 }
 
 function showRSVPError(message) {
-    // Create or update error message element
-    let errorDiv = document.getElementById('rsvpError');
-    if (!errorDiv) {
-        errorDiv = document.createElement('div');
-        errorDiv.id = 'rsvpError';
-        errorDiv.className = 'error-message';
-        errorDiv.style.cssText = `
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        `;
-        
-        const form = document.getElementById('rsvpForm');
-        form.parentNode.insertBefore(errorDiv, form);
-    }
+    // Remove any existing messages
+    const existingError = document.getElementById('rsvpError');
+    const existingWelcome = document.getElementById('rsvpWelcome');
+    if (existingError) existingError.remove();
+    if (existingWelcome) existingWelcome.remove();
+    
+    // Create error message element
+    const errorDiv = document.createElement('div');
+    errorDiv.id = 'rsvpError';
+    errorDiv.className = 'error-message';
+    errorDiv.style.cssText = `
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    `;
+    
+    const form = document.getElementById('rsvpForm');
+    form.parentNode.insertBefore(errorDiv, form);
     
     errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
     errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     
-    // Auto-hide after 5 seconds
+    // Auto-hide after 8 seconds
     setTimeout(() => {
         if (errorDiv) {
             errorDiv.remove();
         }
-    }, 5000);
+    }, 8000);
+}
+
+function showGuestWelcomeMessage(message) {
+    // Remove any existing messages
+    const existingError = document.getElementById('rsvpError');
+    const existingWelcome = document.getElementById('rsvpWelcome');
+    if (existingError) existingError.remove();
+    if (existingWelcome) existingWelcome.remove();
+    
+    // Create welcome message element
+    const welcomeDiv = document.createElement('div');
+    welcomeDiv.id = 'rsvpWelcome';
+    welcomeDiv.className = 'welcome-message';
+    welcomeDiv.style.cssText = `
+        background: linear-gradient(135deg, #DCD0A8, #FFF9E5);
+        border: 1px solid #4A9782;
+        color: #004030;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    `;
+    
+    const form = document.getElementById('rsvpForm');
+    form.parentNode.insertBefore(welcomeDiv, form);
+    
+    welcomeDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #4A9782;"></i> ${message}`;
+    welcomeDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    // Auto-hide after 6 seconds
+    setTimeout(() => {
+        if (welcomeDiv) {
+            welcomeDiv.remove();
+        }
+    }, 6000);
 }
 
 // Utility Functions
