@@ -301,45 +301,146 @@
                     <p>We can't wait to celebrate with you!</p>
                 </div>
                 
-                <form id="rsvpForm" class="rsvp-form">
-                    <div class="form-group">
-                        <label for="guestName">Full Name(s) *</label>
-                        <input type="text" id="guestName" name="guestName" required>
+                <form id="rsvpForm" class="rsvp-form" netlify name="wedding-rsvp" method="POST">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h3>Your Information</h3>
+                        <div class="form-group">
+                            <label for="guestName">Full Name(s) *</label>
+                            <input type="text" id="guestName" name="guestName" required placeholder="Enter your full name(s)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="(optional)">
+                        </div>
+                    </div>
+
+                    <!-- Event Attendance -->
+                    <div class="form-section">
+                        <h3>Event Attendance</h3>
+                        
+                        <!-- Mehndi Event -->
+                        <div class="event-rsvp">
+                            <div class="event-header">
+                                <i class="fas fa-users"></i>
+                                <div class="event-info">
+                                    <h4>Mehndi Ceremony</h4>
+                                    <p>Saturday Afternoon • Casual Attire</p>
+                                </div>
+                            </div>
+                            <div class="attendance-controls">
+                                <div class="form-group inline">
+                                    <label for="mehndi-attending">Will you attend?</label>
+                                    <select id="mehndi-attending" name="mehndi-attending" onchange="toggleGuestCount('mehndi')">
+                                        <option value="">Select</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group inline guest-count-group" id="mehndi-count-group" style="display: none;">
+                                    <label for="mehndi-guests">Number of guests</label>
+                                    <select id="mehndi-guests" name="mehndi-guests">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6+</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wedding Ceremony -->
+                        <div class="event-rsvp">
+                            <div class="event-header">
+                                <i class="fas fa-dove"></i>
+                                <div class="event-info">
+                                    <h4>Wedding Ceremony</h4>
+                                    <p>Sunday Afternoon • Formal Attire</p>
+                                </div>
+                            </div>
+                            <div class="attendance-controls">
+                                <div class="form-group inline">
+                                    <label for="ceremony-attending">Will you attend?</label>
+                                    <select id="ceremony-attending" name="ceremony-attending" onchange="toggleGuestCount('ceremony')">
+                                        <option value="">Select</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group inline guest-count-group" id="ceremony-count-group" style="display: none;">
+                                    <label for="ceremony-guests">Number of guests</label>
+                                    <select id="ceremony-guests" name="ceremony-guests">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6+</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reception -->
+                        <div class="event-rsvp">
+                            <div class="event-header">
+                                <i class="fas fa-smile"></i>
+                                <div class="event-info">
+                                    <h4>Reception</h4>
+                                    <p>Sunday Evening • Cocktail Hour, Dinner & Dancing</p>
+                                </div>
+                            </div>
+                            <div class="attendance-controls">
+                                <div class="form-group inline">
+                                    <label for="reception-attending">Will you attend?</label>
+                                    <select id="reception-attending" name="reception-attending" onchange="toggleGuestCount('reception')">
+                                        <option value="">Select</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group inline guest-count-group" id="reception-count-group" style="display: none;">
+                                    <label for="reception-guests">Number of guests</label>
+                                    <select id="reception-guests" name="reception-guests">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6+</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="form-section">
+                        <h3>Additional Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="dietary">Dietary Restrictions/Allergies</label>
+                            <textarea id="dietary" name="dietary" placeholder="Please let us know about any dietary restrictions, allergies, or special meal requirements"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Special Message for the Couple</label>
+                            <textarea id="message" name="message" placeholder="Share your excitement or any special message for Jessica & Shail!"></textarea>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="email">Email Address *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="attendance">Will you be attending? *</label>
-                        <select id="attendance" name="attendance" required>
-                            <option value="">Please select</option>
-                            <option value="yes">Joyfully accepts</option>
-                            <option value="no">Regretfully declines</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" id="guestCountGroup">
-                        <label for="guestCount">Number of Guests *</label>
-                        <select id="guestCount" name="guestCount">
-                            <option value="1">1 Guest</option>
-                            <option value="2">2 Guests</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="dietary">Dietary Restrictions</label>
-                        <textarea id="dietary" name="dietary" placeholder="Please let us know about any dietary restrictions or allergies"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="message">Special Message</label>
-                        <textarea id="message" name="message" placeholder="Share your excitement or any special message for the couple!"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="rsvp-submit">Send RSVP</button>
+                    <button type="submit" class="rsvp-submit">
+                        <i class="fas fa-heart"></i>
+                        Send RSVP
+                    </button>
                 </form>
                 
                 <div id="rsvpSuccess" class="success-message hidden">
