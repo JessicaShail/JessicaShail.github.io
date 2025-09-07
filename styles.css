@@ -144,7 +144,7 @@ h3 {
 
 /* Hero Section */
 .hero {
-    background: #427a5e;
+    background: #427a5e url('J&S Website Banner v1.png') center center/cover no-repeat;
     color: white;
     text-align: center;
     padding: 4rem 0;
