@@ -9,7 +9,7 @@
 }
 
 @font-face {
-    font-family: 'Bodoni FLF';
+    font-family: 'Bodoni FLF', serif;
     src: url('BodoniflfRoman.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
