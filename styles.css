@@ -149,8 +149,8 @@ h3 {
 
 /* Hero Section */
 .hero {
-    background: #427a5e url('J&S Website Banner v1.png') center no-repeat;
-    background-size: contain;
+    background: #427a5e url('J&S Website Banner image sept 8.png') center no-repeat;
+    background-size: cover;
     color: white;
     text-align: center;
     padding: 2rem 0;
@@ -169,6 +169,11 @@ h3 {
 .hero-content {
     position: relative;
     z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .couple-names {
@@ -192,6 +197,15 @@ h3 {
 .hero-decoration {
     font-size: 1.5rem;
     animation: sparkle 3s ease-in-out infinite;
+}
+
+.hero-text-overlay {
+    background: url('Jessica & Shail (words only) sept 8.png') center no-repeat;
+    background-size: contain;
+    width: 80%;
+    max-width: 600px;
+    height: 200px;
+    position: relative;
 }
 
 @keyframes sparkle {
@@ -889,6 +903,11 @@ h3 {
         min-height: 300px;
         max-height: 450px;
         background-size: cover;
+    }
+    
+    .hero-text-overlay {
+        width: 90%;
+        height: 150px;
     }
     
     .navigation ul {
