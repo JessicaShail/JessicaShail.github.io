@@ -149,7 +149,7 @@ h3 {
 
 /* Hero Section */
 .hero {
-    background: #427a5e url('J&S Website Banner image sept 8.png') center no-repeat;
+    background: #427a5e url('J&S Website Banner image sept 8.jpg') center no-repeat;
     background-size: cover;
     color: white;
     text-align: center;
@@ -202,8 +202,8 @@ h3 {
 .hero-text-overlay {
     background: url('Jessica & Shail (words only) sept 8.png') center no-repeat;
     background-size: contain;
-    width: 80%;
-    max-width: 600px;
+    width: 100%;
+    max-width: 800px;
     height: 200px;
     position: relative;
 }
