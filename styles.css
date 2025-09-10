@@ -203,8 +203,8 @@ h3 {
     background: url('Jessica & Shail (words only) sept 8.png') center no-repeat;
     background-size: contain;
     width: 100%;
-    max-width: 800px;
-    height: 300px;
+    max-width: 1200px;
+    height: 500px;
     position: relative;
 }
 
@@ -511,6 +511,42 @@ h3 {
 
 .section-spacing {
     margin-bottom: 3rem;
+}
+
+/* Section Dividers */
+.section-divider {
+    border: none;
+    height: 1px;
+    background-color: #DCD0A8;
+    margin: 2rem 0;
+    width: 100%;
+}
+
+/* Simple Events Layout */
+.events-simple {
+    margin-top: 2rem;
+}
+
+.events-simple h3 {
+    color: #004030;
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.events-simple h3:first-child {
+    margin-top: 0;
+}
+
+.simple-link {
+    color: #4A9782;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.simple-link:hover {
+    color: #004030;
+    text-decoration: underline;
 }
 
 .wedding-story h3 {
