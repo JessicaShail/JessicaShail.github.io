@@ -65,9 +65,11 @@
                     <!-- Mehndi Collapsible -->
                     <div class="event-collapsible">
                         <button class="collapsible-header" onclick="toggleCollapsible('mehndi')">
-                            <h3>Mehndi Ceremony</h3>
-                            <p><strong>Saturday May 9th - Afternoon</strong></p>
-                            <span class="collapsible-icon">+</span>
+                            <span class="chevron-icon">▶</span>
+                            <div class="header-content">
+                                <h3>Mehndi Ceremony</h3>
+                                <p><strong>Saturday May 9th - Afternoon</strong></p>
+                            </div>
                         </button>
                         <div id="mehndi-content" class="collapsible-content">
                             <div class="event-details">
@@ -98,14 +100,14 @@
                         </div>
                     </div>
                     
-                    <hr class="section-divider">
-                    
                     <!-- Ceremony Collapsible -->
                     <div class="event-collapsible">
                         <button class="collapsible-header" onclick="toggleCollapsible('ceremony')">
-                            <h3>Wedding Ceremony</h3>
-                            <p><strong>Sunday May 10th - Mid-Afternoon</strong></p>
-                            <span class="collapsible-icon">+</span>
+                            <span class="chevron-icon">▶</span>
+                            <div class="header-content">
+                                <h3>Wedding Ceremony</h3>
+                                <p><strong>Sunday May 10th - Mid-Afternoon</strong></p>
+                            </div>
                         </button>
                         <div id="ceremony-content" class="collapsible-content">
                             <div class="event-details">
@@ -136,14 +138,14 @@
                         </div>
                     </div>
                     
-                    <hr class="section-divider">
-                    
                     <!-- Reception Collapsible -->
                     <div class="event-collapsible">
                         <button class="collapsible-header" onclick="toggleCollapsible('reception')">
-                            <h3>Reception</h3>
-                            <p><strong>Sunday May 10th - Evening</strong></p>
-                            <span class="collapsible-icon">+</span>
+                            <span class="chevron-icon">▶</span>
+                            <div class="header-content">
+                                <h3>Reception</h3>
+                                <p><strong>Sunday May 10th - Evening</strong></p>
+                            </div>
                         </button>
                         <div id="reception-content" class="collapsible-content">
                             <div class="event-details">
@@ -174,14 +176,14 @@
                         </div>
                     </div>
                     
-                    <hr class="section-divider">
-                    
                     <!-- Attire Information -->
                     <div class="event-collapsible">
                         <button class="collapsible-header" onclick="toggleCollapsible('attire')">
-                            <h3>What to Wear</h3>
-                            <p><strong>Attire Guidelines</strong></p>
-                            <span class="collapsible-icon">+</span>
+                            <span class="chevron-icon">▶</span>
+                            <div class="header-content">
+                                <h3>What to Wear</h3>
+                                <p><strong>Attire Guidelines</strong></p>
+                            </div>
                         </button>
                         <div id="attire-content" class="collapsible-content">
                             <div class="attire-info">
@@ -192,195 +194,6 @@
                                 <p><strong>Day 2</strong> is for dressing up a bit. We anticipate that guests will wear the same outfit for both Day 2 events. Brightly coloured saris, suits, dress shirts, pantsuits, dresses...your choice! There will be extended times when guests will be seated and there will be a dance lesson (some of you already know about Garba, the rest of you will have the chance to learn).</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- RSVP Section -->
-        <section id="rsvp" class="content-section">
-            <div class="container">
-                <h2>RSVP</h2>
-                <div class="rsvp-intro">
-                    <p>Please respond so we can plan accordingly</p>
-                    <p>We can't wait to celebrate with you!</p>
-                </div>
-                
-                <form id="rsvpForm" class="rsvp-form" netlify name="wedding-rsvp" method="POST">
-                    <!-- Basic Information -->
-                    <div class="form-section">
-                        <h3>Your Information</h3>
-                        <div class="form-group">
-                            <label for="guestName">Full Name(s) *</label>
-                            <input type="text" id="guestName" name="guestName" required placeholder="Enter your full name(s)">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email Address *</label>
-                            <input type="email" id="email" name="email" required placeholder="your.email@example.com">
-                            <h3>Venue</h3>
-                            <p>Location TBA</p>
-                            <p class="detail-sub">Details will follow</p>
-                        </div>
-                        <div class="event-detail-card">
-                            <i class="fas fa-palette"></i>
-                            <h3>Dress Code</h3>
-                            <p>Casual & Colorful</p>
-                            <p class="detail-sub">Henna-friendly clothing</p>
-                        </div>
-                    </div>
-                    
-                    <div class="event-description">
-                        <h3>Day 1: J&S Wedding Weekend Mehndi</h3>
-                        <p>The Mehndi portion of the weekend will take place on Saturday afternoon. Our aim is for a 'family gathering' atmosphere. Henna artists will be available for anyone who wishes to have henna designs on their hands/arms.</p>
-                        
-                        <div class="event-highlights">
-                            <h4>What to Expect:</h4>
-                            <ul>
-                                <li><i class="fas fa-users"></i> Family gathering atmosphere</li>
-                                <li><i class="fas fa-hand-sparkles"></i> Professional henna artists</li>
-                                <li><i class="fas fa-utensils"></i> Delicious food and refreshments</li>
-                                <li><i class="fas fa-users"></i> Community and connection</li>
-                                <li><i class="fas fa-palette"></i> Beautiful henna designs</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="event-note">
-                            <p><i class="fas fa-info-circle"></i> <strong>Clothing Note:</strong> For those who would like to have henna applied to their hands/arms, please wear clothing that allows for this and know that your clothing may brush up against the paste and be stained.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Ceremony Section -->
-        <section id="ceremony" class="content-section">
-            <div class="container">
-                <h2><i class="fas fa-church"></i> Wedding Ceremony</h2>
-                
-                <div class="event-details">
-                    <div class="event-info-grid">
-                        <div class="event-detail-card">
-                            <i class="fas fa-calendar-alt"></i>
-                            <h3>Date & Time</h3>
-                            <p>Sunday Mid-Afternoon</p>
-                            <p class="detail-sub">Day 2 of Weekend</p>
-                        </div>
-                        <div class="event-detail-card">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <h3>Venue</h3>
-                            <p>Hamilton Mennonite Church</p>
-                            <p class="detail-sub">More details will follow</p>
-                        </div>
-                        <div class="event-detail-card">
-                            <i class="fas fa-tshirt"></i>
-                            <h3>Dress Code</h3>
-                            <p>Dressy & Colorful</p>
-                            <p class="detail-sub">Bright colors encouraged</p>
-                        </div>
-                    </div>
-                    
-                    <div class="event-description">
-                        <h3>Day 2: J&S Wedding Weekend Ceremony</h3>
-                        <p>Our Wedding Ceremony will take place mid-afternoon at Hamilton Mennonite Church. More details will follow.</p>
-                        
-                        <div class="event-highlights">
-                            <h4>What to Expect:</h4>
-                            <ul>
-                                <li><i class="fas fa-dove"></i> Sacred ceremony and vows</li>
-                                <li><i class="fas fa-users"></i> Blended traditions celebration</li>
-                                <li><i class="fas fa-camera"></i> Beautiful photo opportunities</li>
-                                <li><i class="fas fa-church"></i> Meaningful venue setting</li>
-                                <li><i class="fas fa-hands"></i> Community witness</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="event-note">
-                            <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> More details about timing and logistics will be provided closer to the date.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Reception Section -->
-        <section id="reception" class="content-section">
-            <div class="container">
-                <h2><i class="fas fa-champagne-glasses"></i> Wedding Reception</h2>
-                
-                <div class="event-details">
-                    <div class="event-info-grid">
-                        <div class="event-detail-card">
-                            <i class="fas fa-calendar-alt"></i>
-                            <h3>Date & Time</h3>
-                            <p>Sunday Evening</p>
-                            <p class="detail-sub">Day 2 of Weekend</p>
-                        </div>
-                        <div class="event-detail-card">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <h3>Venue</h3>
-                            <p>Earth To Table: The Farm</p>
-                            <p class="detail-sub">20 min drive from church</p>
-                        </div>
-                        <div class="event-detail-card">
-                            <i class="fas fa-music"></i>
-                            <h3>Activities</h3>
-                            <p>Cocktails, Dinner & Dancing</p>
-                            <p class="detail-sub">Including Garba dance lesson!</p>
-                        </div>
-                    </div>
-                    
-                    <div class="event-description">
-                        <h3>Day 2: J&S Wedding Weekend Cocktail Hour, Dinner, & Reception</h3>
-                        <p>Our Evening activities will take place at Earth To Table: The Farm. This venue is a 20 minute drive from the church. Guests are invited to a cocktail hour followed by a seated dinner and a reception. More details will follow.</p>
-                        
-                        <div class="event-highlights">
-                            <h4>Evening Highlights:</h4>
-                            <ul>
-                                <li><i class="fas fa-wine-glass"></i> Cocktail hour</li>
-                                <li><i class="fas fa-utensils"></i> Seated dinner</li>
-                                <li><i class="fas fa-music"></i> Dancing and celebration</li>
-                                <li><i class="fas fa-hands"></i> Garba dance lesson</li>
-                                <li><i class="fas fa-smile"></i> Community and joy</li>
-                                <li><i class="fas fa-camera"></i> Memorable moments</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="event-note">
-                            <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> We anticipate that guests will wear the same outfit for both Day 2 events. There will be extended times when guests will be seated and there will be a dance lesson.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-
-        <!-- Attire Section -->
-        <section id="attire" class="content-section">
-            <div class="container">
-                <h2>What to Wear</h2>
-                <div class="attire-info">
-                    <div class="attire-card">
-                        <i class="fas fa-palette"></i>
-                        <h3>J&S Wedding Weekend Attire</h3>
-                        <p class="dress-code">Colorful & Celebratory</p>
-                        <p>We invite you to lean in to colour -- with the specific request that no one dress in all white, or in all black.</p>
-                    </div>
-                    
-                    <div class="attire-details">
-                        <div class="attire-suggestion">
-                            <h4>Day 1 (Saturday Mehndi)</h4>
-                            <p>Day 1 will be less formal. Feel free to wear something more casual (though you're welcome to dress up if you like). For those who would like to have henna applied to their hands/arms, please wear clothing that allows for this and know that your clothing may brush up against the paste and be stained.</p>
-                        </div>
-                        <div class="attire-suggestion">
-                            <h4>Day 2 (Sunday Ceremony & Reception)</h4>
-                            <p>Day 2 is for dressing up a bit. We anticipate that guests will wear the same outfit for both Day 2 events. Brightly coloured saris, suits, dress shirts, pantsuits, dresses...your choice! There will be extended times when guests will be seated and there will be a dance lesson (some of you already know about Garba, the rest of you will have the chance to learn).</p>
-                        </div>
-                    </div>
-                    
-                    <div class="weather-note">
-                        <p><i class="fas fa-palette"></i> <strong>Remember:</strong> We want you to feel comfortable and celebrate with color! Avoid all white or all black outfits, but otherwise express yourself with bright, joyful colors.</p>
                     </div>
                 </div>
             </div>
@@ -423,11 +236,10 @@
                         <div class="event-rsvp">
                             <div class="event-header">
                                 <i class="fas fa-users"></i>
-                                <div class="event-info">
-                                    <h4>Mehndi Ceremony</h4>
-                                    <p>Saturday Afternoon • Casual Attire</p>
-                                </div>
+                                <h4>Mehndi Ceremony</h4>
+                                <span class="event-date">Saturday May 9th - Afternoon</span>
                             </div>
+                            
                             <div class="attendance-controls">
                                 <div class="form-group inline">
                                     <label for="mehndi-attending">Will you attend?</label>
@@ -450,15 +262,13 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Wedding Ceremony -->
+                        
+                        <!-- Ceremony Event -->
                         <div class="event-rsvp">
                             <div class="event-header">
-                                <i class="fas fa-dove"></i>
-                                <div class="event-info">
-                                    <h4>Wedding Ceremony</h4>
-                                    <p>Sunday Afternoon • Formal Attire</p>
-                                </div>
+                                <i class="fas fa-church"></i>
+                                <h4>Wedding Ceremony</h4>
+                                <span class="event-date">Sunday May 10th - Mid-Afternoon</span>
                             </div>
                             <div class="attendance-controls">
                                 <div class="form-group inline">
@@ -482,15 +292,13 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Reception -->
+                        
+                        <!-- Reception Event -->
                         <div class="event-rsvp">
                             <div class="event-header">
-                                <i class="fas fa-smile"></i>
-                                <div class="event-info">
-                                    <h4>Reception</h4>
-                                    <p>Sunday Evening • Cocktail Hour, Dinner & Dancing</p>
-                                </div>
+                                <i class="fas fa-champagne-glasses"></i>
+                                <h4>Reception</h4>
+                                <span class="event-date">Sunday May 10th - Evening</span>
                             </div>
                             <div class="attendance-controls">
                                 <div class="form-group inline">
@@ -530,17 +338,14 @@
                             <textarea id="message" name="message" placeholder="Share your excitement or any special message for Jessica & Shail!"></textarea>
                         </div>
                     </div>
-                    
-                    <button type="submit" class="rsvp-submit">
-                        <i class="fas fa-heart"></i>
-                        Send RSVP
-                    </button>
+
+                    <button type="submit" class="rsvp-submit">Submit RSVP</button>
                 </form>
-                
-                <div id="rsvpSuccess" class="success-message hidden">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>Thank You!</h3>
-                    <p>Your RSVP has been received. We're so excited to celebrate with you!</p>
+
+                <div id="rsvpError" class="error-message" style="display: none;"></div>
+                <div id="rsvpSuccess" class="success-message" style="display: none;">
+                    <h3>Thank you for your RSVP!</h3>
+                    <p>We've received your response and can't wait to celebrate with you!</p>
                 </div>
             </div>
         </section>
@@ -548,12 +353,10 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="container">
-                <p>J&S</p>
             </div>
         </footer>
     </div>
 
     <script src="script.js"></script>
 </body>
-</html>
 </html>

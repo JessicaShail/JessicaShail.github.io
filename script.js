@@ -37,27 +37,18 @@ function initializeWebsite() {
 function toggleCollapsible(eventId) {
     const content = document.getElementById(eventId + '-content');
     const header = content.previousElementSibling;
-    const icon = header.querySelector('.collapsible-icon');
     
     // Close all other collapsibles
     document.querySelectorAll('.collapsible-content').forEach(el => {
         if (el !== content && el.classList.contains('active')) {
             el.classList.remove('active');
             el.previousElementSibling.classList.remove('active');
-            el.previousElementSibling.querySelector('.collapsible-icon').textContent = '+';
         }
     });
     
     // Toggle current collapsible
     content.classList.toggle('active');
     header.classList.toggle('active');
-    
-    // Update icon
-    if (content.classList.contains('active')) {
-        icon.textContent = '×';
-    } else {
-        icon.textContent = '+';
-    }
 }
 
 // Validate session token (basic time-based validation)

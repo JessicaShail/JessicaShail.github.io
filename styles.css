@@ -273,69 +273,6 @@ p {
 }
 
 /* Events Overview Section */
-.events-overview {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.event-preview {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: 2px solid transparent;
-}
-
-.event-preview:hover {
-    transform: translateY(-5px);
-    border-color: #4A9782;
-    box-shadow: 0 10px 25px rgba(74, 151, 130, 0.2);
-}
-
-.event-icon {
-    margin-bottom: 1.5rem;
-}
-
-.event-icon i {
-    font-size: 3rem;
-    color: #004030;
-}
-
-.event-preview h3 {
-    color: #004030;
-    margin-bottom: 1rem;
-    font-size: 1.4rem;
-}
-
-.event-date {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #DCD0A8;
-    margin-bottom: 1rem;
-}
-
-.event-description {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.event-cta {
-    display: inline-block;
-    color: #8b4d5c;
-    font-weight: 500;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.event-preview:hover .event-cta {
-    color: #4A9782;
-}
 
 /* Individual Event Sections */
 .event-details {
@@ -531,20 +468,6 @@ p {
     width: 100%;
 }
 
-/* Simple Events Layout */
-.events-simple {
-    margin-top: 2rem;
-}
-
-.events-simple h3 {
-    color: #004030;
-    margin-bottom: 0.5rem;
-    margin-top: 1.5rem;
-}
-
-.events-simple h3:first-child {
-    margin-top: 0;
-}
 
 .wedding-story h3 {
     color: #004030;
@@ -562,49 +485,48 @@ p {
 
 .collapsible-header {
     width: 100%;
-    background: white;
-    border: 2px solid #427A5E;
-    border-radius: 10px;
-    padding: 1.5rem;
-    text-align: center;
+    background: transparent;
+    border: none;
+    padding: 1rem 0;
+    text-align: left;
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     font-family: inherit;
 }
 
 .collapsible-header:hover {
-    background: #f8f9fa;
-    transform: translateY(-2px);
+    background: transparent;
 }
 
-.collapsible-header.active {
-    background: #427A5E;
-    color: white;
+.chevron-icon {
+    font-size: 1.2rem;
+    color: #427A5E;
+    transition: transform 0.3s ease;
+    min-width: 20px;
+    text-align: center;
 }
 
-.collapsible-header h3 {
+.collapsible-header.active .chevron-icon {
+    transform: rotate(90deg);
+}
+
+.header-content {
+    flex: 1;
+}
+
+.header-content h3 {
     margin: 0;
     font-size: 1.8rem;
+    color: #004030;
 }
 
-.collapsible-header p {
-    margin: 0.5rem 0 0 0;
+.header-content p {
+    margin: 0.3rem 0 0 0;
     font-size: 1.1rem;
-}
-
-.collapsible-icon {
-    position: absolute;
-    right: 1.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 2rem;
-    font-weight: bold;
-    transition: transform 0.3s ease;
-}
-
-.collapsible-header.active .collapsible-icon {
-    transform: translateY(-50%) rotate(45deg);
+    color: #666;
 }
 
 .collapsible-content {
@@ -612,16 +534,12 @@ p {
     overflow: hidden;
     transition: max-height 0.3s ease;
     background: white;
-    border-left: 2px solid #427A5E;
-    border-right: 2px solid #427A5E;
-    border-bottom: 2px solid #427A5E;
-    border-top: none;
-    border-radius: 0 0 10px 10px;
+    margin-left: 2rem;
 }
 
 .collapsible-content.active {
     max-height: 1000px;
-    padding: 2rem;
+    padding: 1rem 0;
 }
 
 .event-info-grid {
