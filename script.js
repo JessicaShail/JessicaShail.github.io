@@ -33,6 +33,33 @@ function initializeWebsite() {
     initializeNavigation();
 }
 
+// Collapsible functionality
+function toggleCollapsible(eventId) {
+    const content = document.getElementById(eventId + '-content');
+    const header = content.previousElementSibling;
+    const icon = header.querySelector('.collapsible-icon');
+    
+    // Close all other collapsibles
+    document.querySelectorAll('.collapsible-content').forEach(el => {
+        if (el !== content && el.classList.contains('active')) {
+            el.classList.remove('active');
+            el.previousElementSibling.classList.remove('active');
+            el.previousElementSibling.querySelector('.collapsible-icon').textContent = '+';
+        }
+    });
+    
+    // Toggle current collapsible
+    content.classList.toggle('active');
+    header.classList.toggle('active');
+    
+    // Update icon
+    if (content.classList.contains('active')) {
+        icon.textContent = '×';
+    } else {
+        icon.textContent = '+';
+    }
+}
+
 // Validate session token (basic time-based validation)
 function _isValidSession(token) {
     try {
@@ -66,7 +93,7 @@ function hidePasswordModal() {
     document.getElementById('mainContent').classList.remove('hidden');
     
     // Show default section
-    showSection('events');
+    showSection('details');
 }
 
 function checkPassword() {
@@ -423,17 +450,17 @@ window.addEventListener('popstate', function(e) {
     if (hash) {
         showSection(hash);
     } else {
-        showSection('events');
+        showSection('details');
     }
 });
 
 // Handle initial page load with hash
 window.addEventListener('load', function() {
     const hash = window.location.hash.substring(1);
-    if (hash && ['events', 'mehndi', 'ceremony', 'reception', 'attire', 'rsvp'].includes(hash)) {
+    if (hash && ['details', 'rsvp'].includes(hash)) {
         showSection(hash);
     } else {
-        showSection('events');
+        showSection('details');
     }
 });
 

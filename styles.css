@@ -551,6 +551,118 @@ p {
     margin-bottom: 1.5rem;
 }
 
+/* Collapsible Events */
+.collapsible-events {
+    margin-top: 2rem;
+}
+
+.event-collapsible {
+    margin-bottom: 1rem;
+}
+
+.collapsible-header {
+    width: 100%;
+    background: white;
+    border: 2px solid #427A5E;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    font-family: inherit;
+}
+
+.collapsible-header:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+}
+
+.collapsible-header.active {
+    background: #427A5E;
+    color: white;
+}
+
+.collapsible-header h3 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.collapsible-header p {
+    margin: 0.5rem 0 0 0;
+    font-size: 1.1rem;
+}
+
+.collapsible-icon {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.collapsible-header.active .collapsible-icon {
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: white;
+    border-left: 2px solid #427A5E;
+    border-right: 2px solid #427A5E;
+    border-bottom: 2px solid #427A5E;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+
+.collapsible-content.active {
+    max-height: 1000px;
+    padding: 2rem;
+}
+
+.event-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.event-detail-card {
+    background: #FFF9E5;
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #DCD0A8;
+}
+
+.event-detail-card i {
+    font-size: 2rem;
+    color: #427A5E;
+    margin-bottom: 1rem;
+}
+
+.event-detail-card h4 {
+    color: #004030;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.detail-sub {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+.attire-info p {
+    text-align: left;
+    margin-bottom: 1rem;
+    line-height: 1.8;
+}
+
 .wedding-story p {
     font-size: 1.1rem;
     line-height: 1.8;
