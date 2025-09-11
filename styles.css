@@ -61,17 +61,18 @@ h1 {
     font-family: 'Great Vibes';
     font-weight: 400;
     text-align: center;
+    font-size: 3.5rem;
 }
 
 h2 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin-bottom: 2rem;
     text-align: center;
     color: #004030;
 }
 
 h3 {
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin-bottom: 1rem;
     text-align: center;
 }
@@ -525,7 +526,7 @@ p {
 .section-divider {
     border: none;
     height: 1px;
-    background-color: #DCD0A8;
+    background-color: #427A5E;
     margin: 2rem 0;
     width: 100%;
 }
@@ -543,18 +544,6 @@ p {
 
 .events-simple h3:first-child {
     margin-top: 0;
-}
-
-.simple-link {
-    color: #4A9782;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.simple-link:hover {
-    color: #004030;
-    text-decoration: underline;
 }
 
 .wedding-story h3 {
