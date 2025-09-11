@@ -53,11 +53,13 @@ h2, h3, h4  {
     font-family: 'Alta', serif;
     text-transform: uppercase;
     font-weight: 400;
+    text-align: center;
 }
 
 h1 {
     font-family: 'Great Vibes';
     font-weight: 400;
+    text-align: center;
 }
 
 h2 {
@@ -70,6 +72,11 @@ h2 {
 h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
+    text-align: center;
+}
+
+p {
+    text-align: center;
 }
 
 /* Password Modal */
@@ -128,7 +135,7 @@ h3 {
 
 .password-form button {
     padding: 1rem;
-    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
+    background: #427a5e;
     color: white;
     border: none;
     border-radius: 10px;
@@ -436,7 +443,7 @@ h3 {
 }
 
 .event-note {
-    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
+    background: #427a5e;
     color: white;
     padding: 1.5rem;
     border-radius: 10px;
@@ -645,7 +652,7 @@ h3 {
     display: inline-block;
     margin-top: 1rem;
     padding: 0.8rem 1.5rem;
-    background: linear-gradient(135deg, #004030 0%, #4A9782 100%);
+    background: #427a5e;
     color: white;
     text-decoration: none;
     border-radius: 25px;
@@ -862,7 +869,7 @@ h3 {
 }
 
 .rsvp-submit {
-    background: linear-gradient(135deg, #004030, #4A9782);
+    background: #427a5e;
     color: white;
     border: none;
     padding: 1rem 2rem;
