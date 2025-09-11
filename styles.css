@@ -255,7 +255,7 @@ p {
 
 .navigation a:hover,
 .navigation a.active {
-    background: #e4dfda;
+    background: #8F8D91;
     color: white;
     transform: translateY(-2px);
 }
@@ -672,7 +672,7 @@ p {
     display: block;
     margin: 1rem auto 0 auto;
     padding: 0.8rem 1.5rem;
-    background: #e4dfda;
+    background: #8F8D91;
     color: white;
     text-decoration: none;
     border-radius: 25px;
