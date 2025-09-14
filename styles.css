@@ -318,6 +318,52 @@ p {
     margin-bottom: 0.5rem;
 }
 
+/* Event Table Styles */
+.event-table {
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.event-table tr {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.event-table tr:last-child {
+    border-bottom: none;
+}
+
+.event-table td {
+    padding: 1.5rem;
+    vertical-align: middle;
+}
+
+.table-icon {
+    width: 60px;
+    text-align: center;
+}
+
+.table-icon i {
+    font-size: 1.5rem;
+    color: #004030;
+}
+
+.table-label {
+    width: 150px;
+    font-weight: 600;
+    color: #004030;
+    font-size: 1.1rem;
+}
+
+.table-value {
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
 .event-description {
     background: white;
     padding: 3rem;
@@ -1031,6 +1077,19 @@ p {
         grid-template-columns: 1fr;
     }
     
+    .event-table td {
+        padding: 1rem;
+    }
+    
+    .table-label {
+        width: 120px;
+        font-size: 1rem;
+    }
+    
+    .table-value {
+        font-size: 0.95rem;
+    }
+    
     .event-highlights ul {
         grid-template-columns: 1fr;
     }
@@ -1078,6 +1137,19 @@ p {
     .event-detail-card,
     .event-description {
         padding: 1.5rem;
+    }
+    
+    .event-table td {
+        padding: 0.75rem;
+    }
+    
+    .table-label {
+        width: 100px;
+        font-size: 0.95rem;
+    }
+    
+    .table-value {
+        font-size: 0.9rem;
     }
     
     .timeline-content {
