@@ -354,6 +354,14 @@ p {
     color: #004030;
 }
 
+.event-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
 .table-label {
     width: auto;
     font-weight: 600;
@@ -1086,6 +1094,11 @@ p {
         padding: 0.75rem;
     }
     
+    .event-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
     .table-label {
         font-size: 1rem;
     }
@@ -1145,6 +1158,11 @@ p {
     
     .event-table td {
         padding: 0.5rem;
+    }
+    
+    .event-icon {
+        width: 36px;
+        height: 36px;
     }
     
     .table-label {
