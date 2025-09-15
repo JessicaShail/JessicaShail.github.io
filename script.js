@@ -38,15 +38,7 @@ function toggleCollapsible(eventId) {
     const content = document.getElementById(eventId + '-content');
     const header = content.previousElementSibling;
     
-    // Close all other collapsibles
-    document.querySelectorAll('.collapsible-content').forEach(el => {
-        if (el !== content && el.classList.contains('active')) {
-            el.classList.remove('active');
-            el.previousElementSibling.classList.remove('active');
-        }
-    });
-    
-    // Toggle current collapsible
+    // Toggle current collapsible only
     content.classList.toggle('active');
     header.classList.toggle('active');
 }
