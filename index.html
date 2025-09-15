@@ -37,8 +37,8 @@
         <!-- Navigation -->
         <nav class="navigation">
             <ul>
-                <li><a href="#details" onclick="showSection('details')">DETAILS</a></li>
-                <li><a href="#rsvp" onclick="showSection('rsvp')">RSVP</a></li>
+                <li><a href="#details" onclick="showSection('details'); updateActiveNavigation(this)" class="active">HOME</a></li>
+                <li><a href="#rsvp" onclick="showSection('rsvp'); updateActiveNavigation(this)">RSVP</a></li>
             </ul>
         </nav>
 
