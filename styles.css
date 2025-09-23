@@ -378,6 +378,16 @@ p {
     padding-top: 0.5rem;
 }
 
+/* Two-column table styling for better centering */
+.event-table.two-column {
+    max-width: 70%;
+    margin: 1rem auto;
+}
+
+.event-table.two-column td {
+    padding: 1rem 2rem;
+}
+
 .event-description {
     background: white;
     padding: 3rem;
@@ -1095,6 +1105,14 @@ p {
         padding: 0.75rem;
     }
     
+    .event-table.two-column {
+        max-width: 85%;
+    }
+    
+    .event-table.two-column td {
+        padding: 0.75rem 1.5rem;
+    }
+    
     .event-icon {
         width: 40px;
         height: 40px;
@@ -1159,6 +1177,14 @@ p {
     
     .event-table td {
         padding: 0.5rem;
+    }
+    
+    .event-table.two-column {
+        max-width: 95%;
+    }
+    
+    .event-table.two-column td {
+        padding: 0.5rem 1rem;
     }
     
     .event-icon {
