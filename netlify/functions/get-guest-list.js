@@ -3,10 +3,10 @@ const { Client } = require('pg');
 
 // Database connection
 const getDbClient = () => {
-  const connectionString = process.env.NEON_DATABASE_URL;
+  const connectionString = process.env.NETLIFY_DATABASE_URL;
   
   if (!connectionString) {
-    throw new Error('NEON_DATABASE_URL environment variable is not set');
+    throw new Error('NETLIFY_DATABASE_URL environment variable is not set');
   }
   
   return new Client({
@@ -49,14 +49,14 @@ exports.handler = async (event, context) => {
   }
 
   // Check if environment variable exists
-  if (!process.env.NEON_DATABASE_URL) {
+  if (!process.env.NETLIFY_DATABASE_URL) {
     return {
       statusCode: 500,
       headers: corsHeaders,
       body: JSON.stringify({
         success: false,
         error: 'Database configuration missing',
-        details: 'NEON_DATABASE_URL environment variable is not set'
+        details: 'NETLIFY_DATABASE_URL environment variable is not set'
       })
     };
   }

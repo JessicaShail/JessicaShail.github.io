@@ -10,9 +10,9 @@ exports.handler = async (event, context) => {
     statusCode: 200,
     headers: corsHeaders,
     body: JSON.stringify({
-      hasNeonUrl: !!process.env.NEON_DATABASE_URL,
-      urlLength: process.env.NEON_DATABASE_URL ? process.env.NEON_DATABASE_URL.length : 0,
-      urlPrefix: process.env.NEON_DATABASE_URL ? process.env.NEON_DATABASE_URL.substring(0, 20) + '...' : 'Not set',
+      hasNeonUrl: !!process.env.NETLIFY_DATABASE_URL,
+      urlLength: process.env.NETLIFY_DATABASE_URL ? process.env.NETLIFY_DATABASE_URL.length : 0,
+      urlPrefix: process.env.NETLIFY_DATABASE_URL ? process.env.NETLIFY_DATABASE_URL.substring(0, 20) + '...' : 'Not set',
       nodeEnv: process.env.NODE_ENV,
       timestamp: new Date().toISOString()
     })

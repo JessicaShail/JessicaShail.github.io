@@ -3,7 +3,7 @@ const { Client } = require('pg');
 
 const getDbClient = () => {
   return new Client({
-    connectionString: process.env.NEON_DATABASE_URL,
+    connectionString: process.env.NETLIFY_DATABASE_URL,
     ssl: {
       rejectUnauthorized: false
     }

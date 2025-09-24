@@ -18,13 +18,13 @@ exports.handler = async (event, context) => {
   }
 
   // Check environment variable
-  if (!process.env.NEON_DATABASE_URL) {
+  if (!process.env.NETLIFY_DATABASE_URL) {
     return {
       statusCode: 500,
       headers: corsHeaders,
       body: JSON.stringify({
         success: false,
-        error: 'NEON_DATABASE_URL environment variable is not set'
+        error: 'NETLIFY_DATABASE_URL environment variable is not set'
       })
     };
   }
