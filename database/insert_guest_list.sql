@@ -1,0 +1,66 @@
+-- Insert Guest List Data
+-- Run this script to add all wedding guests and their partners
+
+INSERT INTO guest_list (guest_name, partner_name, max_guests) VALUES
+('Shilpa Choksi', 'Sanjiv Choksi', 2),
+('Bakul Choksi', NULL, 1),
+('Ashish Patel', 'Priyanka Patel', 2),
+('Asha Patel', NULL, 1),
+('Aashna Patel', NULL, 1),
+('Sumit Patel', 'Megha Patel', 2),
+('Nisarg Dalvi', 'Deeya Chhabra', 2),
+('Sachet Vora', NULL, 1),
+('Meena Dalvi', 'Yatin Dalvi', 2),
+('Anokhi Dalvi', 'Shanu Kalra', 2),
+('Tanvi Athavle', 'Yash Pawar', 2),
+('Sameer Choksi', 'Hetal Choksi', 2),
+('Kanva Choksi', NULL, 1),
+('Kanhai Choksi', NULL, 1),
+('Babita Sharma', NULL, 1),
+('Tarang', 'Rajan', 2),
+('Tanmay Sharma', NULL, 1),
+('Chinmay Sharma', NULL, 1),
+('Neil', NULL, 1),
+('Parit', NULL, 1),
+('Kajal Shah', NULL, 1),
+('Sejal Daniels', 'Vaneet Daniels', 2),
+('Anish Daniels', NULL, 1),
+('Dinesh Shah', 'Ila Shah', 2),
+('Ruchir Shah', NULL, 1),
+('Mihir Shah', NULL, 1),
+('Mohini Shah', 'Raju Shah', 2),
+('Avika Shah', NULL, 1),
+('Shreya Shah', NULL, 1),
+('Serena Shah', NULL, 1),
+('Saumil Shah', 'Aparna Shah', 2),
+('Geetu Parikh', 'Meena Parikh', 2),
+('Pulak Parikh', NULL, 1),
+('Niraj Parikh', NULL, 1),
+('Sachin Shah', 'Rajul Shah', 2),
+('Jaisal Shah', NULL, 1),
+('Rowan Shah', NULL, 1),
+('Vilas Shah', 'Niranjan Shah', 2),
+('Mandakini Choksi', 'Raju Choksi', 2),
+('Neil Choksi', 'Dimple Choksi', 2),
+('Kush Choksi', 'Barkha Vyas', 2),
+('Shikhar Choksi', NULL, 1),
+('Divyang Choksi', 'Falguni Choksi', 2),
+('Pradeep Choksi', 'Bindu Choksi', 2),
+('Ankur Choksi', 'Sonia Choksi', 2),
+('Seema Shah', 'Ravi Shah', 2),
+('Vipul Patel', NULL, 1),
+('Rashmai Patel', 'Tejal Patel', 2),
+('Samarth Patel', NULL, 1),
+('Bhumi Patel', NULL, 1),
+('Tanmay Vyas', 'Urvi Vyas', 2),
+('Ketan Pathak', NULL, 1);
+
+-- Display summary of inserted guests
+SELECT 
+    COUNT(*) as total_guests,
+    COUNT(CASE WHEN partner_name IS NOT NULL THEN 1 END) as guests_with_partners,
+    COUNT(CASE WHEN partner_name IS NULL THEN 1 END) as single_guests,
+    SUM(max_guests) as total_max_capacity
+FROM guest_list;
+
+COMMIT;

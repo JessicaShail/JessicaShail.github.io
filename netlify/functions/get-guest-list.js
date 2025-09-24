@@ -91,12 +91,23 @@ exports.handler = async (event, context) => {
   } catch (error) {
     console.error('Database error:', error);
     
+    // More detailed error information for debugging
+    const errorDetails = {
+      message: error.message,
+      code: error.code,
+      hasConnectionString: !!process.env.NEON_DATABASE_URL,
+      timestamp: new Date().toISOString()
+    };
+    
+    console.error('Error details:', errorDetails);
+    
     return {
       statusCode: 500,
       headers: corsHeaders,
       body: JSON.stringify({
         success: false,
-        error: 'Failed to fetch guest list'
+        error: 'Failed to fetch guest list',
+        details: process.env.NODE_ENV === 'development' ? errorDetails : undefined
       })
     };
     
