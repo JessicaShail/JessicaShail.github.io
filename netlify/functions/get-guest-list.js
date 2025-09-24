@@ -88,17 +88,19 @@ exports.handler = async (event, context) => {
     let query, params;
     
     if (searchQuery) {
-      // Search for guests matching the query
+      // Search for guests matching the query in both guest_name and partner_name
       const normalizedQuery = searchQuery.toLowerCase().trim();
       query = `
         SELECT guest_name, partner_name, max_guests 
         FROM guest_list 
-        WHERE LOWER(guest_name) ILIKE $1
+        WHERE LOWER(guest_name) ILIKE $1 OR LOWER(partner_name) ILIKE $1
         ORDER BY 
           CASE 
             WHEN LOWER(guest_name) LIKE $2 THEN 1 
-            WHEN LOWER(guest_name) LIKE $3 THEN 2 
-            ELSE 3 
+            WHEN LOWER(partner_name) LIKE $2 THEN 2
+            WHEN LOWER(guest_name) LIKE $3 THEN 3 
+            WHEN LOWER(partner_name) LIKE $3 THEN 4
+            ELSE 5 
           END,
           guest_name
         LIMIT 20

@@ -300,7 +300,7 @@ function initializeGuestAutocomplete() {
             <div class="suggestion-item" data-index="${index}" onclick="selectSuggestionByIndex(${index})">
                 <div class="suggestion-name">${escapeHtml(guest.guest_name)}</div>
                 <div class="suggestion-details">
-                    ${guest.partner_name ? `With ${escapeHtml(guest.partner_name)} • ` : ''}Party size up to ${guest.max_guests} guest${guest.max_guests > 1 ? 's' : ''}
+                    ${guest.partner_name ? `With ${escapeHtml(guest.partner_name)}` : ''}
                 </div>
             </div>
         `).join('');
