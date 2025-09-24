@@ -3,11 +3,22 @@ const { Client } = require('pg');
 
 // Database connection
 const getDbClient = () => {
+  const connectionString = process.env.NEON_DATABASE_URL;
+  
+  if (!connectionString) {
+    throw new Error('NEON_DATABASE_URL environment variable is not set');
+  }
+  
   return new Client({
-    connectionString: process.env.NEON_DATABASE_URL,
+    connectionString: connectionString,
     ssl: {
       rejectUnauthorized: false
-    }
+    },
+    // Add connection timeout settings
+    connectionTimeoutMillis: 10000,
+    query_timeout: 10000,
+    // Ensure proper SSL mode for Neon
+    sslmode: 'require'
   });
 };
 
@@ -37,10 +48,39 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const client = getDbClient();
+  // Check if environment variable exists
+  if (!process.env.NEON_DATABASE_URL) {
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({
+        success: false,
+        error: 'Database configuration missing',
+        details: 'NEON_DATABASE_URL environment variable is not set'
+      })
+    };
+  }
+
+  let client;
   
   try {
+    client = getDbClient();
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({
+        success: false,
+        error: 'Database client initialization failed',
+        details: error.message
+      })
+    };
+  }
+  
+  try {
+    console.log('Attempting to connect to database...');
     await client.connect();
+    console.log('Database connection successful');
     
     // Get search query from URL parameters
     const searchQuery = event.queryStringParameters?.q || '';
@@ -112,6 +152,12 @@ exports.handler = async (event, context) => {
     };
     
   } finally {
-    await client.end();
+    if (client) {
+      try {
+        await client.end();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
   }
 };
