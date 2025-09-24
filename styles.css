@@ -903,6 +903,76 @@ p {
     resize: vertical;
 }
 
+/* Autocomplete Styles */
+.autocomplete-container {
+    position: relative;
+}
+
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #DCD0A8;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-suggestions.show {
+    display: block;
+}
+
+.suggestion-item {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #F5F2E8;
+    font-family: 'Playfair Display', serif;
+    transition: background-color 0.2s ease;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item.highlighted {
+    background-color: #F5F2E8;
+    color: #4A9782;
+}
+
+.suggestion-item.highlighted {
+    background-color: #4A9782;
+    color: white;
+}
+
+.suggestion-name {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.suggestion-details {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+.suggestion-item.highlighted .suggestion-details {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.no-suggestions {
+    padding: 0.75rem;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+}
+
 /* Event RSVP Styling */
 .event-rsvp {
     background: #FFF9E5;
@@ -957,6 +1027,86 @@ p {
 
 .guest-count-group.show {
     opacity: 1;
+}
+
+/* Partner Section Styling */
+.partner-section {
+    background: linear-gradient(135deg, #f8f4e6 0%, #fff9e5 100%);
+    border: 2px solid #e8d8b5;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.partner-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.partner-info i {
+    color: #d2691e;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.partner-info p {
+    margin: 0;
+    color: #4a4a4a;
+}
+
+.partner-info strong {
+    color: #004030;
+    font-weight: 600;
+}
+
+.partner-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* Attendee Sections */
+.attendee-section {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.attendee-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.attendee-header i {
+    margin-right: 0.5rem;
+    width: 20px;
+    text-align: center;
+    color: #4A9782;
+}
+
+.partner-attendee {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffeaa7 100%);
+    border: 1px solid #ffeaa7;
+}
+
+.partner-attendee .attendee-header i {
+    color: #d2691e;
+}
+
+.help-text {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+    display: block;
+    text-align: left;
 }
 
 .rsvp-submit {

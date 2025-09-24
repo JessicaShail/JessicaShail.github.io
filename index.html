@@ -196,7 +196,19 @@
                         <h3>Your Information</h3>
                         <div class="form-group">
                             <label for="guestName">Full Name(s) *</label>
-                            <input type="text" id="guestName" name="guestName" required placeholder="Enter your full name(s)">
+                            <div class="autocomplete-container">
+                                <input type="text" id="guestName" name="guestName" required placeholder="Start typing your name..." autocomplete="off">
+                                <div id="guestSuggestions" class="autocomplete-suggestions"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Partner Information (shown when applicable) -->
+                        <div id="partnerSection" class="partner-section" style="display: none;">
+                            <div class="partner-info">
+                                <i class="fas fa-heart"></i>
+                                <p>We see you're invited with <strong id="partnerName"></strong>!</p>
+                                <p class="partner-subtitle">You can RSVP for both of you below.</p>
+                            </div>
                         </div>
                         
                         <div class="form-group">
@@ -223,24 +235,47 @@
                             </div>
                             
                             <div class="attendance-controls">
-                                <div class="form-group inline">
-                                    <label for="mehndi-attending">Will you attend?</label>
-                                    <select id="mehndi-attending" name="mehndi-attending" onchange="toggleGuestCount('mehndi')">
-                                        <option value="">Select</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
+                                <div class="attendee-section">
+                                    <div class="attendee-header">
+                                        <i class="fas fa-user"></i>
+                                        <span>Your Attendance</span>
+                                    </div>
+                                    <div class="form-group inline">
+                                        <label for="mehndi-attending">Will you attend?</label>
+                                        <select id="mehndi-attending" name="mehndi-attending" onchange="toggleGuestCount('mehndi')">
+                                            <option value="">Select</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
                                 </div>
+                                
+                                <!-- Partner Section (shown when applicable) -->
+                                <div id="mehndi-partner-section" class="attendee-section partner-attendee" style="display: none;">
+                                    <div class="attendee-header">
+                                        <i class="fas fa-heart"></i>
+                                        <span id="mehndi-partner-label">Partner's Attendance</span>
+                                    </div>
+                                    <div class="form-group inline">
+                                        <label for="mehndi-partner-attending">Will they attend?</label>
+                                        <select id="mehndi-partner-attending" name="mehndi-partner-attending" onchange="togglePartnerGuestCount('mehndi')">
+                                            <option value="">Select</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group inline guest-count-group" id="mehndi-count-group" style="display: none;">
-                                    <label for="mehndi-guests">Number of guests</label>
+                                    <label for="mehndi-guests">Additional guests</label>
                                     <select id="mehndi-guests" name="mehndi-guests">
+                                        <option value="0">0</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6+</option>
+                                        <option value="4">4+</option>
                                     </select>
+                                    <small class="help-text">Beyond yourself and partner</small>
                                 </div>
                             </div>
                         </div>
@@ -253,24 +288,47 @@
                                 <span class="event-date">Sunday May 10th - Mid-Afternoon</span>
                             </div>
                             <div class="attendance-controls">
-                                <div class="form-group inline">
-                                    <label for="ceremony-attending">Will you attend?</label>
-                                    <select id="ceremony-attending" name="ceremony-attending" onchange="toggleGuestCount('ceremony')">
-                                        <option value="">Select</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
+                                <div class="attendee-section">
+                                    <div class="attendee-header">
+                                        <i class="fas fa-user"></i>
+                                        <span>Your Attendance</span>
+                                    </div>
+                                    <div class="form-group inline">
+                                        <label for="ceremony-attending">Will you attend?</label>
+                                        <select id="ceremony-attending" name="ceremony-attending" onchange="toggleGuestCount('ceremony')">
+                                            <option value="">Select</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
                                 </div>
+                                
+                                <!-- Partner Section (shown when applicable) -->
+                                <div id="ceremony-partner-section" class="attendee-section partner-attendee" style="display: none;">
+                                    <div class="attendee-header">
+                                        <i class="fas fa-heart"></i>
+                                        <span id="ceremony-partner-label">Partner's Attendance</span>
+                                    </div>
+                                    <div class="form-group inline">
+                                        <label for="ceremony-partner-attending">Will they attend?</label>
+                                        <select id="ceremony-partner-attending" name="ceremony-partner-attending" onchange="togglePartnerGuestCount('ceremony')">
+                                            <option value="">Select</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group inline guest-count-group" id="ceremony-count-group" style="display: none;">
-                                    <label for="ceremony-guests">Number of guests</label>
+                                    <label for="ceremony-guests">Additional guests</label>
                                     <select id="ceremony-guests" name="ceremony-guests">
+                                        <option value="0">0</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6+</option>
+                                        <option value="4">4+</option>
                                     </select>
+                                    <small class="help-text">Beyond yourself and partner</small>
                                 </div>
                             </div>
                         </div>
@@ -283,24 +341,47 @@
                                 <span class="event-date">Sunday May 10th - Evening</span>
                             </div>
                             <div class="attendance-controls">
-                                <div class="form-group inline">
-                                    <label for="reception-attending">Will you attend?</label>
-                                    <select id="reception-attending" name="reception-attending" onchange="toggleGuestCount('reception')">
-                                        <option value="">Select</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
+                                <div class="attendee-section">
+                                    <div class="attendee-header">
+                                        <i class="fas fa-user"></i>
+                                        <span>Your Attendance</span>
+                                    </div>
+                                    <div class="form-group inline">
+                                        <label for="reception-attending">Will you attend?</label>
+                                        <select id="reception-attending" name="reception-attending" onchange="toggleGuestCount('reception')">
+                                            <option value="">Select</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
                                 </div>
+                                
+                                <!-- Partner Section (shown when applicable) -->
+                                <div id="reception-partner-section" class="attendee-section partner-attendee" style="display: none;">
+                                    <div class="attendee-header">
+                                        <i class="fas fa-heart"></i>
+                                        <span id="reception-partner-label">Partner's Attendance</span>
+                                    </div>
+                                    <div class="form-group inline">
+                                        <label for="reception-partner-attending">Will they attend?</label>
+                                        <select id="reception-partner-attending" name="reception-partner-attending" onchange="togglePartnerGuestCount('reception')">
+                                            <option value="">Select</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group inline guest-count-group" id="reception-count-group" style="display: none;">
-                                    <label for="reception-guests">Number of guests</label>
+                                    <label for="reception-guests">Additional guests</label>
                                     <select id="reception-guests" name="reception-guests">
+                                        <option value="0">0</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6+</option>
+                                        <option value="4">4+</option>
                                     </select>
+                                    <small class="help-text">Beyond yourself and partner</small>
                                 </div>
                             </div>
                         </div>

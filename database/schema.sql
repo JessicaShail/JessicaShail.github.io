@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS rsvps (
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(50),
     
-    -- Event attendance
+    -- Event attendance (primary guest)
     mehndi_attending BOOLEAN DEFAULT FALSE,
     mehndi_guests INTEGER DEFAULT 0,
     
@@ -17,6 +17,12 @@ CREATE TABLE IF NOT EXISTS rsvps (
     
     reception_attending BOOLEAN DEFAULT FALSE,
     reception_guests INTEGER DEFAULT 0,
+    
+    -- Partner information and attendance
+    partner_name VARCHAR(255),
+    partner_mehndi_attending BOOLEAN DEFAULT FALSE,
+    partner_ceremony_attending BOOLEAN DEFAULT FALSE,
+    partner_reception_attending BOOLEAN DEFAULT FALSE,
     
     -- Additional information
     dietary_restrictions TEXT,
@@ -33,6 +39,7 @@ CREATE TABLE IF NOT EXISTS rsvps (
 CREATE TABLE IF NOT EXISTS guest_list (
     id SERIAL PRIMARY KEY,
     guest_name VARCHAR(255) NOT NULL UNIQUE,
+    partner_name VARCHAR(255), -- Partner's name if applicable
     invited_by VARCHAR(255),
     max_guests INTEGER DEFAULT 2,
     notes TEXT,
@@ -48,9 +55,15 @@ CREATE INDEX IF NOT EXISTS idx_guest_list_name ON guest_list(guest_name);
 CREATE OR REPLACE VIEW rsvp_summary AS
 SELECT 
     COUNT(*) as total_rsvps,
-    SUM(CASE WHEN mehndi_attending THEN 1 ELSE 0 END) as mehndi_attendees,
-    SUM(CASE WHEN ceremony_attending THEN 1 ELSE 0 END) as ceremony_attendees,
-    SUM(CASE WHEN reception_attending THEN 1 ELSE 0 END) as reception_attendees,
+    SUM(CASE WHEN mehndi_attending THEN 1 ELSE 0 END) as mehndi_primary_attendees,
+    SUM(CASE WHEN ceremony_attending THEN 1 ELSE 0 END) as ceremony_primary_attendees,
+    SUM(CASE WHEN reception_attending THEN 1 ELSE 0 END) as reception_primary_attendees,
+    SUM(CASE WHEN partner_mehndi_attending THEN 1 ELSE 0 END) as mehndi_partner_attendees,
+    SUM(CASE WHEN partner_ceremony_attending THEN 1 ELSE 0 END) as ceremony_partner_attendees,
+    SUM(CASE WHEN partner_reception_attending THEN 1 ELSE 0 END) as reception_partner_attendees,
+    SUM(CASE WHEN mehndi_attending THEN 1 ELSE 0 END) + SUM(CASE WHEN partner_mehndi_attending THEN 1 ELSE 0 END) as total_mehndi_attendees,
+    SUM(CASE WHEN ceremony_attending THEN 1 ELSE 0 END) + SUM(CASE WHEN partner_ceremony_attending THEN 1 ELSE 0 END) as total_ceremony_attendees,
+    SUM(CASE WHEN reception_attending THEN 1 ELSE 0 END) + SUM(CASE WHEN partner_reception_attending THEN 1 ELSE 0 END) as total_reception_attendees,
     SUM(mehndi_guests) as total_mehndi_guests,
     SUM(ceremony_guests) as total_ceremony_guests,
     SUM(reception_guests) as total_reception_guests

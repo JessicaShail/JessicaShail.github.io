@@ -2,8 +2,13 @@
   functions = "netlify/functions"
   publish = "."
 
+[dev]
+  framework = "#static"
+  publish = "."
+
 [functions]
   node_bundler = "esbuild"
+  external_node_modules = ["pg"]
 
 # Environment variables (set these in Netlify dashboard)
 # NEON_DATABASE_URL = "postgresql://username:password@host:5432/database"

@@ -16,7 +16,7 @@ const validateGuest = async (client, guestName) => {
   const normalizedInput = guestName.toLowerCase().trim().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ');
   
   const query = `
-    SELECT guest_name, max_guests 
+    SELECT guest_name, partner_name, max_guests 
     FROM guest_list 
     WHERE LOWER(REPLACE(REGEXP_REPLACE(guest_name, '[^\\w\\s]', '', 'g'), ' ', ' ')) 
     ILIKE $1 
@@ -45,9 +45,13 @@ const insertRsvp = async (client, rsvpData) => {
       mehndi_attending, mehndi_guests,
       ceremony_attending, ceremony_guests,
       reception_attending, reception_guests,
+      partner_name,
+      partner_mehndi_attending,
+      partner_ceremony_attending,
+      partner_reception_attending,
       dietary_restrictions, special_message,
       ip_address, user_agent
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
     RETURNING id
   `;
   
@@ -61,6 +65,10 @@ const insertRsvp = async (client, rsvpData) => {
     parseInt(rsvpData.ceremonyGuests) || 0,
     rsvpData.receptionAttending === 'yes',
     parseInt(rsvpData.receptionGuests) || 0,
+    rsvpData.partnerName || null,
+    rsvpData.partnerMehndiAttending === 'yes',
+    rsvpData.partnerCeremonyAttending === 'yes',
+    rsvpData.partnerReceptionAttending === 'yes',
     rsvpData.dietary || null,
     rsvpData.message || null,
     rsvpData.ipAddress,
@@ -114,6 +122,10 @@ exports.handler = async (event, context) => {
       ceremonyGuests: data['ceremony-guests'],
       receptionAttending: data['reception-attending'],
       receptionGuests: data['reception-guests'],
+      partnerName: data.partnerName,
+      partnerMehndiAttending: data['mehndi-partner-attending'],
+      partnerCeremonyAttending: data['ceremony-partner-attending'],
+      partnerReceptionAttending: data['reception-partner-attending'],
       dietary: data.dietary,
       message: data.message,
       ipAddress: clientIP,
@@ -171,20 +183,28 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Check if at least one event is selected
+    // Check if at least one person is attending at least one event
     const hasEventSelected = rsvpData.mehndiAttending === 'yes' || 
                            rsvpData.ceremonyAttending === 'yes' || 
-                           rsvpData.receptionAttending === 'yes';
+                           rsvpData.receptionAttending === 'yes' ||
+                           rsvpData.partnerMehndiAttending === 'yes' ||
+                           rsvpData.partnerCeremonyAttending === 'yes' ||
+                           rsvpData.partnerReceptionAttending === 'yes';
     
     if (!hasEventSelected) {
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({ 
-          error: 'Please select your attendance for at least one event.',
+          error: 'Please select attendance for at least one person at one event.',
           field: 'events'
         })
       };
+    }
+    
+    // Set partner name from guest validation if not provided
+    if (guestValidation.partner_name && !rsvpData.partnerName) {
+      rsvpData.partnerName = guestValidation.partner_name;
     }
 
     // Insert RSVP

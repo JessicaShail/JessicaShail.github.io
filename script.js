@@ -199,6 +199,213 @@ function initializeRSVPForm() {
         e.preventDefault();
         validateAndSubmitRSVP();
     });
+    
+    // Initialize autocomplete for guest names
+    initializeGuestAutocomplete();
+}
+
+// Guest name autocomplete functionality
+function initializeGuestAutocomplete() {
+    const guestNameInput = document.getElementById('guestName');
+    const suggestionsContainer = document.getElementById('guestSuggestions');
+    let currentSuggestions = [];
+    let selectedIndex = -1;
+    let searchTimeout;
+
+    // Handle input changes
+    guestNameInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        // Clear previous timeout
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            hideSuggestions();
+            return;
+        }
+        
+        // Debounce the search to avoid too many API calls
+        searchTimeout = setTimeout(() => {
+            searchGuests(query);
+        }, 300);
+    });
+
+    // Handle keyboard navigation
+    guestNameInput.addEventListener('keydown', function(e) {
+        if (!suggestionsContainer.classList.contains('show')) {
+            return;
+        }
+        
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, currentSuggestions.length - 1);
+                highlightSuggestion();
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                highlightSuggestion();
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedIndex >= 0 && selectedIndex < currentSuggestions.length) {
+                    selectSuggestion(currentSuggestions[selectedIndex]);
+                }
+                break;
+            case 'Escape':
+                hideSuggestions();
+                break;
+        }
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!guestNameInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+            hideSuggestions();
+        }
+    });
+
+    // Search for guests
+    async function searchGuests(query) {
+        try {
+            const response = await fetch(`${API_BASE}/get-guest-list?q=${encodeURIComponent(query)}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch guest suggestions');
+            }
+            
+            const data = await response.json();
+            
+            if (data.success && data.guests) {
+                currentSuggestions = data.guests;
+                displaySuggestions(data.guests);
+            } else {
+                displayNoSuggestions();
+            }
+        } catch (error) {
+            console.error('Error fetching guest suggestions:', error);
+            displayNoSuggestions();
+        }
+    }
+
+    // Display suggestions
+    function displaySuggestions(guests) {
+        if (guests.length === 0) {
+            displayNoSuggestions();
+            return;
+        }
+
+        suggestionsContainer.innerHTML = guests.map((guest, index) => `
+            <div class="suggestion-item" data-index="${index}" onclick="selectSuggestionByIndex(${index})">
+                <div class="suggestion-name">${escapeHtml(guest.guest_name)}</div>
+                <div class="suggestion-details">
+                    ${guest.partner_name ? `With ${escapeHtml(guest.partner_name)} • ` : ''}Party size up to ${guest.max_guests} guest${guest.max_guests > 1 ? 's' : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        selectedIndex = -1;
+        suggestionsContainer.classList.add('show');
+    }
+
+    // Display no suggestions message
+    function displayNoSuggestions() {
+        suggestionsContainer.innerHTML = '<div class="no-suggestions">No matching guests found</div>';
+        suggestionsContainer.classList.add('show');
+        currentSuggestions = [];
+        selectedIndex = -1;
+    }
+
+    // Hide suggestions
+    function hideSuggestions() {
+        suggestionsContainer.classList.remove('show');
+        selectedIndex = -1;
+    }
+
+    // Highlight selected suggestion
+    function highlightSuggestion() {
+        const items = suggestionsContainer.querySelectorAll('.suggestion-item');
+        items.forEach((item, index) => {
+            if (index === selectedIndex) {
+                item.classList.add('highlighted');
+            } else {
+                item.classList.remove('highlighted');
+            }
+        });
+    }
+
+    // Select a suggestion
+    function selectSuggestion(guest) {
+        guestNameInput.value = guest.guest_name;
+        hideSuggestions();
+        
+        // Store max guests for validation later
+        guestNameInput.dataset.maxGuests = guest.max_guests;
+        guestNameInput.dataset.partnerName = guest.partner_name || '';
+        
+        // Show/hide partner section based on whether guest has a partner
+        showPartnerSection(guest.partner_name);
+        
+        // Focus on next input
+        document.getElementById('email').focus();
+    }
+
+    // Global function to select suggestion by index (called from onclick)
+    window.selectSuggestionByIndex = function(index) {
+        if (index >= 0 && index < currentSuggestions.length) {
+            selectSuggestion(currentSuggestions[index]);
+        }
+    };
+
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+// Show or hide partner section based on guest selection
+function showPartnerSection(partnerName) {
+    const partnerSection = document.getElementById('partnerSection');
+    const partnerNameElement = document.getElementById('partnerName');
+    
+    // Event-specific partner sections
+    const events = ['mehndi', 'ceremony', 'reception'];
+    
+    if (partnerName && partnerName.trim()) {
+        // Show partner section
+        partnerSection.style.display = 'block';
+        partnerNameElement.textContent = partnerName;
+        
+        // Show partner attendance options for each event and update labels
+        events.forEach(event => {
+            const partnerEventSection = document.getElementById(`${event}-partner-section`);
+            const partnerLabel = document.getElementById(`${event}-partner-label`);
+            
+            if (partnerEventSection && partnerLabel) {
+                partnerEventSection.style.display = 'block';
+                partnerLabel.textContent = `${partnerName}'s Attendance`;
+            }
+        });
+    } else {
+        // Hide partner section
+        partnerSection.style.display = 'none';
+        
+        // Hide partner attendance options for each event
+        events.forEach(event => {
+            const partnerEventSection = document.getElementById(`${event}-partner-section`);
+            const partnerAttendingSelect = document.getElementById(`${event}-partner-attending`);
+            
+            if (partnerEventSection) {
+                partnerEventSection.style.display = 'none';
+            }
+            if (partnerAttendingSelect) {
+                partnerAttendingSelect.value = '';
+            }
+        });
+    }
 }
 
 // Function to toggle guest count visibility for each event
@@ -207,16 +414,27 @@ function toggleGuestCount(eventName) {
     const countGroup = document.getElementById(`${eventName}-count-group`);
     const guestSelect = document.getElementById(`${eventName}-guests`);
     
-    if (attendingSelect.value === 'yes') {
+    // Check if either the primary guest or partner is attending
+    const partnerAttendingSelect = document.getElementById(`${eventName}-partner-attending`);
+    const primaryAttending = attendingSelect.value === 'yes';
+    const partnerAttending = partnerAttendingSelect ? partnerAttendingSelect.value === 'yes' : false;
+    const anyoneAttending = primaryAttending || partnerAttending;
+    
+    if (anyoneAttending) {
         countGroup.style.display = 'block';
         countGroup.style.opacity = '1';
-        guestSelect.required = true;
+        guestSelect.required = false; // Additional guests are optional
     } else {
         countGroup.style.display = 'none';
         countGroup.style.opacity = '0';
         guestSelect.required = false;
-        guestSelect.value = '1'; // Reset to default
+        guestSelect.value = '0'; // Reset to default
     }
+}
+
+// Also toggle guest count when partner attendance changes
+function togglePartnerGuestCount(eventName) {
+    toggleGuestCount(eventName);
 }
 
 // API Helper Functions
@@ -257,13 +475,19 @@ function validateAndSubmitRSVP() {
         return;
     }
     
-    // Check if at least one event is selected
+    // Check if at least one person is attending at least one event
     const mehndiAttending = formData.get('mehndi-attending');
     const ceremonyAttending = formData.get('ceremony-attending');
     const receptionAttending = formData.get('reception-attending');
+    const mehndiPartnerAttending = formData.get('mehndi-partner-attending');
+    const ceremonyPartnerAttending = formData.get('ceremony-partner-attending');
+    const receptionPartnerAttending = formData.get('reception-partner-attending');
     
-    if (!mehndiAttending && !ceremonyAttending && !receptionAttending) {
-        showRSVPError('Please select your attendance for at least one event.');
+    const hasAnyAttendance = mehndiAttending === 'yes' || ceremonyAttending === 'yes' || receptionAttending === 'yes' ||
+                            mehndiPartnerAttending === 'yes' || ceremonyPartnerAttending === 'yes' || receptionPartnerAttending === 'yes';
+    
+    if (!hasAnyAttendance) {
+        showRSVPError('Please select attendance for at least one person at one event.');
         return;
     }
     
@@ -291,11 +515,21 @@ async function submitRSVP() {
         form.reset();
         ['mehndi', 'ceremony', 'reception'].forEach(event => {
             const countGroup = document.getElementById(`${event}-count-group`);
+            const partnerSection = document.getElementById(`${event}-partner-section`);
             if (countGroup) {
                 countGroup.style.display = 'none';
                 countGroup.style.opacity = '0';
             }
+            if (partnerSection) {
+                partnerSection.style.display = 'none';
+            }
         });
+        
+        // Hide main partner section
+        const partnerSection = document.getElementById('partnerSection');
+        if (partnerSection) {
+            partnerSection.style.display = 'none';
+        }
         
     } catch (error) {
         console.error('RSVP submission error:', error);
