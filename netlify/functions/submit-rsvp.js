@@ -49,9 +49,9 @@ const insertRsvp = async (client, rsvpData) => {
       partner_mehndi_attending,
       partner_ceremony_attending,
       partner_reception_attending,
-      dietary_restrictions, special_message,
+      dietary_restrictions, song_requests, advice, special_message,
       ip_address, user_agent
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
     RETURNING id
   `;
   
@@ -70,6 +70,8 @@ const insertRsvp = async (client, rsvpData) => {
     rsvpData.partnerCeremonyAttending === 'yes',
     rsvpData.partnerReceptionAttending === 'yes',
     rsvpData.dietary || null,
+    rsvpData['song-requests'] || null,
+    rsvpData.advice || null,
     rsvpData.message || null,
     rsvpData.ipAddress,
     rsvpData.userAgent

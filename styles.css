@@ -858,7 +858,7 @@ p {
 .form-section h3 {
     color: #004030;
     margin-bottom: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1.85rem;
     border-left: 4px solid #4A9782;
     padding-left: 1rem;
 }
@@ -883,7 +883,7 @@ p {
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #DCD0A8;
+    border: 2px solid #666666;
     border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
@@ -975,7 +975,7 @@ p {
 
 /* Event RSVP Styling */
 .event-rsvp {
-    background: #FFF9E5;
+    background: #ffffff;
     border: 1px solid #DCD0A8;
     border-radius: 12px;
     padding: 1.5rem;
