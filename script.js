@@ -408,34 +408,7 @@ function showPartnerSection(partnerName) {
     }
 }
 
-// Function to toggle guest count visibility for each event
-function toggleGuestCount(eventName) {
-    const attendingSelect = document.getElementById(`${eventName}-attending`);
-    const countGroup = document.getElementById(`${eventName}-count-group`);
-    const guestSelect = document.getElementById(`${eventName}-guests`);
-    
-    // Check if either the primary guest or partner is attending
-    const partnerAttendingSelect = document.getElementById(`${eventName}-partner-attending`);
-    const primaryAttending = attendingSelect.value === 'yes';
-    const partnerAttending = partnerAttendingSelect ? partnerAttendingSelect.value === 'yes' : false;
-    const anyoneAttending = primaryAttending || partnerAttending;
-    
-    if (anyoneAttending) {
-        countGroup.style.display = 'block';
-        countGroup.style.opacity = '1';
-        guestSelect.required = false; // Additional guests are optional
-    } else {
-        countGroup.style.display = 'none';
-        countGroup.style.opacity = '0';
-        guestSelect.required = false;
-        guestSelect.value = '0'; // Reset to default
-    }
-}
 
-// Also toggle guest count when partner attendance changes
-function togglePartnerGuestCount(eventName) {
-    toggleGuestCount(eventName);
-}
 
 // API Helper Functions
 async function submitRSVPToAPI(formData) {
@@ -511,15 +484,10 @@ async function submitRSVP() {
         // Show success message with personalized greeting
         showRSVPSuccessWithMessage(result.message);
         
-        // Reset form and hide guest count groups
+        // Reset form and hide partner sections
         form.reset();
         ['mehndi', 'ceremony', 'reception'].forEach(event => {
-            const countGroup = document.getElementById(`${event}-count-group`);
             const partnerSection = document.getElementById(`${event}-partner-section`);
-            if (countGroup) {
-                countGroup.style.display = 'none';
-                countGroup.style.opacity = '0';
-            }
             if (partnerSection) {
                 partnerSection.style.display = 'none';
             }

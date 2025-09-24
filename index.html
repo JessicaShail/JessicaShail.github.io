@@ -231,7 +231,7 @@
                             <div class="event-header">
                                 <i class="fas"></i>
                                 <h4>Mehndi Ceremony | </h4>
-                                <span class="event-date">Saturday May 9th - Afternoon</span>
+                                <span class="event-date"> Saturday May 9th - Afternoon</span>
                             </div>
                             
                             <div class="attendance-controls">
@@ -242,7 +242,7 @@
                                     </div>
                                     <div class="form-group inline">
                                         <label for="mehndi-attending">Will you attend?</label>
-                                        <select id="mehndi-attending" name="mehndi-attending" onchange="toggleGuestCount('mehndi')">
+                                        <select id="mehndi-attending" name="mehndi-attending">
                                             <option value="">Select</option>
                                             <option value="yes">Yes</option>
                                             <option value="no">No</option>
@@ -258,24 +258,12 @@
                                     </div>
                                     <div class="form-group inline">
                                         <label for="mehndi-partner-attending">Will they attend?</label>
-                                        <select id="mehndi-partner-attending" name="mehndi-partner-attending" onchange="togglePartnerGuestCount('mehndi')">
+                                        <select id="mehndi-partner-attending" name="mehndi-partner-attending">
                                             <option value="">Select</option>
                                             <option value="yes">Yes</option>
                                             <option value="no">No</option>
                                         </select>
                                     </div>
-                                </div>
-                                
-                                <div class="form-group inline guest-count-group" id="mehndi-count-group" style="display: none;">
-                                    <label for="mehndi-guests">Additional guests</label>
-                                    <select id="mehndi-guests" name="mehndi-guests">
-                                        <option value="0">0</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4+</option>
-                                    </select>
-                                    <small class="help-text">Beyond yourself and partner</small>
                                 </div>
                             </div>
                         </div>
@@ -285,7 +273,7 @@
                             <div class="event-header">
                                 <i class="fas fa-church"></i>
                                 <h4>Wedding Ceremony | </h4>
-                                <span class="event-date">Sunday May 10th - Mid-Afternoon</span>
+                                <span class="event-date"> Sunday May 10th - Mid-Afternoon</span>
                             </div>
                             <div class="attendance-controls">
                                 <div class="attendee-section">
@@ -295,7 +283,7 @@
                                     </div>
                                     <div class="form-group inline">
                                         <label for="ceremony-attending">Will you attend?</label>
-                                        <select id="ceremony-attending" name="ceremony-attending" onchange="toggleGuestCount('ceremony')">
+                                        <select id="ceremony-attending" name="ceremony-attending">
                                             <option value="">Select</option>
                                             <option value="yes">Yes</option>
                                             <option value="no">No</option>
@@ -311,24 +299,12 @@
                                     </div>
                                     <div class="form-group inline">
                                         <label for="ceremony-partner-attending">Will they attend?</label>
-                                        <select id="ceremony-partner-attending" name="ceremony-partner-attending" onchange="togglePartnerGuestCount('ceremony')">
+                                        <select id="ceremony-partner-attending" name="ceremony-partner-attending">
                                             <option value="">Select</option>
                                             <option value="yes">Yes</option>
                                             <option value="no">No</option>
                                         </select>
                                     </div>
-                                </div>
-                                
-                                <div class="form-group inline guest-count-group" id="ceremony-count-group" style="display: none;">
-                                    <label for="ceremony-guests">Additional guests</label>
-                                    <select id="ceremony-guests" name="ceremony-guests">
-                                        <option value="0">0</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4+</option>
-                                    </select>
-                                    <small class="help-text">Beyond yourself and partner</small>
                                 </div>
                             </div>
                         </div>
@@ -338,7 +314,7 @@
                             <div class="event-header">
                                 <i class="fas fa-champagne-glasses"></i>
                                 <h4>Reception | </h4>
-                                <span class="event-date">Sunday May 10th - Evening</span>
+                                <span class="event-date"> Sunday May 10th - Evening</span>
                             </div>
                             <div class="attendance-controls">
                                 <div class="attendee-section">
@@ -348,7 +324,7 @@
                                     </div>
                                     <div class="form-group inline">
                                         <label for="reception-attending">Will you attend?</label>
-                                        <select id="reception-attending" name="reception-attending" onchange="toggleGuestCount('reception')">
+                                        <select id="reception-attending" name="reception-attending">
                                             <option value="">Select</option>
                                             <option value="yes">Yes</option>
                                             <option value="no">No</option>
@@ -364,24 +340,12 @@
                                     </div>
                                     <div class="form-group inline">
                                         <label for="reception-partner-attending">Will they attend?</label>
-                                        <select id="reception-partner-attending" name="reception-partner-attending" onchange="togglePartnerGuestCount('reception')">
+                                        <select id="reception-partner-attending" name="reception-partner-attending">
                                             <option value="">Select</option>
                                             <option value="yes">Yes</option>
                                             <option value="no">No</option>
                                         </select>
                                     </div>
-                                </div>
-                                
-                                <div class="form-group inline guest-count-group" id="reception-count-group" style="display: none;">
-                                    <label for="reception-guests">Additional guests</label>
-                                    <select id="reception-guests" name="reception-guests">
-                                        <option value="0">0</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4+</option>
-                                    </select>
-                                    <small class="help-text">Beyond yourself and partner</small>
                                 </div>
                             </div>
                         </div>
@@ -407,8 +371,8 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="message">Special Message for the Couple</label>
-                            <textarea id="message" name="message" placeholder="Share your excitement or any special message for Jessica & Shail!"></textarea>
+                            <label for="message">Anything else that you'd like us to know about?</label>
+                            <textarea id="message" name="message" placeholder="Share anything else that you would like Jessica & Shail to know!"></textarea>
                         </div>
                     </div>
 

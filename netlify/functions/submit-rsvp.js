@@ -42,16 +42,16 @@ const insertRsvp = async (client, rsvpData) => {
   const query = `
     INSERT INTO rsvps (
       guest_name, email, phone,
-      mehndi_attending, mehndi_guests,
-      ceremony_attending, ceremony_guests,
-      reception_attending, reception_guests,
+      mehndi_attending,
+      ceremony_attending,
+      reception_attending,
       partner_name,
       partner_mehndi_attending,
       partner_ceremony_attending,
       partner_reception_attending,
       dietary_restrictions, song_requests, advice, special_message,
       ip_address, user_agent
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
     RETURNING id
   `;
   
@@ -60,11 +60,8 @@ const insertRsvp = async (client, rsvpData) => {
     rsvpData.email,
     rsvpData.phone || null,
     rsvpData.mehndiAttending === 'yes',
-    parseInt(rsvpData.mehndiGuests) || 0,
     rsvpData.ceremonyAttending === 'yes',
-    parseInt(rsvpData.ceremonyGuests) || 0,
     rsvpData.receptionAttending === 'yes',
-    parseInt(rsvpData.receptionGuests) || 0,
     rsvpData.partnerName || null,
     rsvpData.partnerMehndiAttending === 'yes',
     rsvpData.partnerCeremonyAttending === 'yes',
