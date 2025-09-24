@@ -1,5 +1,10 @@
 // Netlify Function for RSVP submission
 const { Client } = require('pg');
+const { Resend } = require('resend');
+const { createRsvpConfirmationEmail } = require('./email-templates');
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Database connection
 const getDbClient = () => {
@@ -209,12 +214,41 @@ exports.handler = async (event, context) => {
     // Insert RSVP
     const rsvpId = await insertRsvp(client, rsvpData);
 
+    // Send confirmation email
+    try {
+      const emailData = {
+        guestName: guestValidation.guest_name,
+        partnerName: rsvpData.partnerName,
+        email: rsvpData.email,
+        events: {
+          mehndi: rsvpData.mehndiAttending === 'yes' || rsvpData.partnerMehndiAttending === 'yes',
+          ceremony: rsvpData.ceremonyAttending === 'yes' || rsvpData.partnerCeremonyAttending === 'yes',
+          reception: rsvpData.receptionAttending === 'yes' || rsvpData.partnerReceptionAttending === 'yes'
+        }
+      };
+
+      const emailContent = createRsvpConfirmationEmail(emailData);
+      
+      await resend.emails.send({
+        from: process.env.FROM_EMAIL || 'Jessica & Shail <rsvp@yourdomain.com>',
+        to: rsvpData.email,
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text
+      });
+      
+      console.log(`Confirmation email sent to ${rsvpData.email}`);
+    } catch (emailError) {
+      console.error('Error sending confirmation email:', emailError);
+      // Don't fail the RSVP if email fails - just log it
+    }
+
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({ 
         success: true,
-        message: `Thank you, ${guestValidation.guest_name}! Your RSVP has been received.`,
+        message: `Thank you, ${guestValidation.guest_name}! Your RSVP has been received and a confirmation email has been sent.`,
         rsvpId: rsvpId
       })
     };
