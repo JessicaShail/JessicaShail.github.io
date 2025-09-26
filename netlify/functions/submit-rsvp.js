@@ -16,12 +16,13 @@ const getDbClient = () => {
   });
 };
 
-// Guest list validation
+// Guest list validation with tier checking
 const validateGuest = async (client, guestName) => {
   const normalizedInput = guestName.toLowerCase().trim().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ');
   
-  const query = `
-    SELECT guest_name, partner_name, max_guests 
+  // First check if guest exists at all
+  const existsQuery = `
+    SELECT guest_name, partner_name, max_guests, tier, invitation_date
     FROM guest_list 
     WHERE LOWER(REPLACE(REGEXP_REPLACE(guest_name, '[^\\w\\s]', '', 'g'), ' ', ' ')) 
     ILIKE $1 
@@ -31,8 +32,24 @@ const validateGuest = async (client, guestName) => {
     LIMIT 1
   `;
   
-  const result = await client.query(query, [normalizedInput]);
-  return result.rows.length > 0 ? result.rows[0] : null;
+  const existsResult = await client.query(existsQuery, [normalizedInput]);
+  
+  if (existsResult.rows.length === 0) {
+    return null; // Guest not found at all
+  }
+  
+  const guest = existsResult.rows[0];
+  
+  // Check if invitation date has passed
+  if (new Date(guest.invitation_date) > new Date()) {
+    return {
+      ...guest,
+      notYetAvailable: true,
+      availableDate: guest.invitation_date
+    };
+  }
+  
+  return guest; // Guest is available for RSVP
 };
 
 // Check if guest already RSVP'd
@@ -170,6 +187,27 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ 
           error: `We couldn't find "${rsvpData.guestName}" on our guest list. Please check the spelling or contact us if you believe this is an error.`,
           field: 'guestName'
+        })
+      };
+    }
+
+    // Check if guest's invitation is available yet (tier system)
+    if (guestValidation.notYetAvailable) {
+      const availableDate = new Date(guestValidation.availableDate).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      return {
+        statusCode: 403,
+        headers,
+        body: JSON.stringify({ 
+          error: `Hi ${guestValidation.guest_name}! Your RSVP will be available starting ${availableDate}. Please check back then to submit your response.`,
+          field: 'guestName',
+          availableDate: guestValidation.availableDate,
+          tier: guestValidation.tier
         })
       };
     }

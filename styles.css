@@ -991,6 +991,7 @@ p {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
+    font-family: 'Alta', serif;
 }
 
 .event-header i {
@@ -1066,6 +1067,35 @@ p {
     font-size: 0.9rem;
     color: #666;
     font-style: italic;
+}
+
+/* Tier Information Styling */
+.tier-info {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border: 2px solid #ffb74d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.tier-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tier-message i {
+    color: #f57c00;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.tier-message p {
+    margin: 0;
+    color: #4a4a4a;
+    font-weight: 500;
 }
 
 /* Attendee Sections */
@@ -1301,6 +1331,7 @@ p {
         flex-direction: column;
         align-items: flex-start;
         text-align: left;
+        font-family: 'Alta', serif;
     }
     
     .event-header i {

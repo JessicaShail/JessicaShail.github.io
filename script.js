@@ -221,6 +221,11 @@ function initializeGuestAutocomplete() {
         
         if (query.length < 2) {
             hideSuggestions();
+            // Hide tier info when input is cleared
+            const tierInfo = document.getElementById('tier-info');
+            if (tierInfo) {
+                tierInfo.style.display = 'none';
+            }
             return;
         }
         
@@ -343,9 +348,14 @@ function initializeGuestAutocomplete() {
         // Store max guests for validation later
         guestNameInput.dataset.maxGuests = guest.max_guests;
         guestNameInput.dataset.partnerName = guest.partner_name || '';
+        guestNameInput.dataset.tier = guest.tier || '';
+        guestNameInput.dataset.invitationDate = guest.invitation_date || '';
         
         // Show/hide partner section based on whether guest has a partner
         showPartnerSection(guest.partner_name);
+        
+        // Check and display tier information
+        checkAndDisplayTierInfo(guest);
         
         // Focus on next input
         document.getElementById('email').focus();
@@ -357,6 +367,37 @@ function initializeGuestAutocomplete() {
             selectSuggestion(currentSuggestions[index]);
         }
     };
+
+    // Check tier availability and display information
+    function checkAndDisplayTierInfo(guest) {
+        const tierInfo = document.getElementById('tier-info');
+        const tierMessage = document.getElementById('tier-message');
+        const tierDateSpan = document.getElementById('tier-date');
+        
+        if (!tierInfo || !tierMessage || !tierDateSpan) {
+            return; // Elements don't exist
+        }
+        
+        const today = new Date();
+        const invitationDate = guest.invitation_date ? new Date(guest.invitation_date) : null;
+        
+        if (invitationDate && today < invitationDate) {
+            // Tier is not yet open - show tier info
+            const tierNumber = guest.tier || 'Unknown';
+            const dateString = invitationDate.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            tierMessage.textContent = `You are on our Tier ${tierNumber} invitation list.`;
+            tierDateSpan.textContent = dateString;
+            tierInfo.style.display = 'block';
+        } else {
+            // Tier is open or no restriction - hide tier info
+            tierInfo.style.display = 'none';
+        }
+    }
 
     // Helper function to escape HTML
     function escapeHtml(text) {
@@ -501,7 +542,19 @@ async function submitRSVP() {
         
     } catch (error) {
         console.error('RSVP submission error:', error);
-        showRSVPError(error.message || 'There was an error submitting your RSVP. Please try again or contact us directly.');
+        
+        // Check for tier-specific error messages
+        let errorMessage = error.message || 'There was an error submitting your RSVP. Please try again or contact us directly.';
+        
+        if (error.message && error.message.includes('not yet open for your invitation tier')) {
+            // Show tier information panel if it exists
+            const tierInfo = document.getElementById('tier-info');
+            if (tierInfo) {
+                tierInfo.style.display = 'block';
+            }
+        }
+        
+        showRSVPError(errorMessage);
     } finally {
         // Re-enable submit button
         submitButton.disabled = false;

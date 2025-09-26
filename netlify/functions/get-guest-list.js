@@ -89,11 +89,13 @@ exports.handler = async (event, context) => {
     
     if (searchQuery) {
       // Search for guests matching the query in both guest_name and partner_name
+      // Only show guests whose invitation date has passed
       const normalizedQuery = searchQuery.toLowerCase().trim();
       query = `
-        SELECT guest_name, partner_name, max_guests 
+        SELECT guest_name, partner_name, max_guests, tier, invitation_date
         FROM guest_list 
-        WHERE LOWER(guest_name) ILIKE $1 OR LOWER(partner_name) ILIKE $1
+        WHERE (LOWER(guest_name) ILIKE $1 OR LOWER(partner_name) ILIKE $1)
+        AND invitation_date <= CURRENT_DATE
         ORDER BY 
           CASE 
             WHEN LOWER(guest_name) LIKE $2 THEN 1 
@@ -102,6 +104,7 @@ exports.handler = async (event, context) => {
             WHEN LOWER(partner_name) LIKE $3 THEN 4
             ELSE 5 
           END,
+          tier,
           guest_name
         LIMIT 20
       `;
@@ -111,8 +114,14 @@ exports.handler = async (event, context) => {
         `%${normalizedQuery}%`
       ];
     } else {
-      // Return all guests if no search query
-      query = 'SELECT guest_name, partner_name, max_guests FROM guest_list ORDER BY guest_name LIMIT 50';
+      // Return all guests whose invitation date has passed if no search query
+      query = `
+        SELECT guest_name, partner_name, max_guests, tier, invitation_date 
+        FROM guest_list 
+        WHERE invitation_date <= CURRENT_DATE 
+        ORDER BY tier, guest_name 
+        LIMIT 50
+      `;
       params = [];
     }
     
