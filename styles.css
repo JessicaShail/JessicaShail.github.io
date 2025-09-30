@@ -88,7 +88,7 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(150deg, #004030 0%, #256C59 50%, #4A9782 100%);
+    background: linear-gradient(150deg, #004030 0%, #256C59 50%, #004030 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -132,7 +132,7 @@ p {
 
 .password-form input:focus {
     outline: none;
-    border-color: #4A9782;
+    border-color: #004030;
 }
 
 .password-form button {
@@ -445,7 +445,7 @@ p {
 }
 
 .event-highlights li i {
-    color: #4A9782;
+    color: #004030;
     font-size: 1.2rem;
     width: 20px;
     text-align: center;
@@ -471,7 +471,7 @@ p {
 /* Section Headers with Icons */
 .content-section h2 i {
     margin-right: 1rem;
-    color: #4A9782;
+    color: #004030;
 }
 
 /* Details Section (keeping existing styles) */
@@ -820,7 +820,7 @@ p {
 }
 
 .weather-note i {
-    color: #4A9782;
+    color: #004030;
     margin-right: 0.5rem;
 }
 
@@ -859,7 +859,7 @@ p {
     color: #004030;
     margin-bottom: 1.5rem;
     font-size: 1.85rem;
-    border-left: 4px solid #4A9782;
+    border-left: 4px solid #004030;
     padding-left: 1rem;
 }
 
@@ -875,7 +875,7 @@ p {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #4A9782;
+    color: #004030;
 }
 
 .form-group input,
@@ -894,7 +894,7 @@ p {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #4A9782;
+    border-color: #004030;
     box-shadow: 0 0 0 3px rgba(74, 151, 130, 0.1);
 }
 
@@ -943,11 +943,11 @@ p {
 .suggestion-item:hover,
 .suggestion-item.highlighted {
     background-color: #F5F2E8;
-    color: #4A9782;
+    color: #004030;
 }
 
 .suggestion-item.highlighted {
-    background-color: #4A9782;
+    background-color: #004030;
     color: white;
 }
 
@@ -996,7 +996,7 @@ p {
 
 .event-header i {
     font-size: 1.5rem;
-    color: #4A9782;
+    color: #004030;
     margin-right: 1rem;
     width: 30px;
     text-align: center;
@@ -1119,7 +1119,7 @@ p {
     margin-right: 0.5rem;
     width: 20px;
     text-align: center;
-    color: #4A9782;
+    color: #004030;
 }
 
 .partner-attendee {
@@ -1140,13 +1140,14 @@ p {
 }
 
 .rsvp-submit {
-    background: #427a5e;
+    background: #004030;
     color: white;
     border: none;
     padding: 1rem 2rem;
     border-radius: 8px;
     font-size: 1.1rem;
     font-weight: 600;
+    font-family: 'Alta', serif;
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
@@ -1173,7 +1174,7 @@ p {
 
 .success-message i {
     font-size: 3rem;
-    color: #4A9782;
+    color: #004030;
     margin-bottom: 1rem;
 }
 
@@ -1185,7 +1186,7 @@ p {
 /* Footer */
 .footer {
     background: #004030;
-    color: #FFF9E5;
+    color: white;
     text-align: center;
     padding: 3rem 0;
     margin-top: 4rem;
