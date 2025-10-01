@@ -251,8 +251,6 @@ exports.handler = async (event, context) => {
 
     // Send confirmation email
     try {
-      // Only attempt to send email if API key is configured
-      if (process.env.RESEND_API_KEY) {
         const resend = new Resend(process.env.RESEND_API_KEY);
         const emailData = {
           guestName: guestValidation.guest_name,
@@ -268,7 +266,7 @@ exports.handler = async (event, context) => {
         const emailContent = createRsvpConfirmationEmail(emailData);
         
         await resend.emails.send({
-          from: process.env.FROM_EMAIL || 'Jessica & Shail <rsvp@yourdomain.com>',
+          from: process.env.FROM_EMAIL || 'Jessica & Shail <JessicaShail@proton.me>',
           to: rsvpData.email,
           subject: emailContent.subject,
           html: emailContent.html,
@@ -276,9 +274,6 @@ exports.handler = async (event, context) => {
         });
         
         console.log(`Confirmation email sent to ${rsvpData.email}`);
-      } else {
-        console.log('Resend API key not configured - skipping email send');
-      }
     } catch (emailError) {
       console.error('Error sending confirmation email:', emailError);
       // Don't fail the RSVP if email fails - just log it
@@ -301,7 +296,7 @@ exports.handler = async (event, context) => {
       headers,
       body: JSON.stringify({ 
         error: 'There was an error processing your RSVP. Please try again later.',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: error.message
       })
     };
   } finally {
