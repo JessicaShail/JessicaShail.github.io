@@ -228,6 +228,8 @@ function initializeGuestAutocomplete() {
             }
             // Hide RSVP form sections when input is cleared
             hideRSVPFormSections();
+            // Clear guest names
+            clearGuestNames();
             return;
         }
         
@@ -353,6 +355,9 @@ function initializeGuestAutocomplete() {
         guestNameInput.dataset.tier = guest.tier || '';
         guestNameInput.dataset.invitationDate = guest.invitation_date || '';
         
+        // Populate guest names in RSVP sections
+        populateGuestNames(guest.guest_name, guest.partner_name);
+        
         // Show/hide partner section based on whether guest has a partner
         showPartnerSection(guest.partner_name);
         
@@ -427,6 +432,40 @@ function initializeGuestAutocomplete() {
         }
     }
 
+    // Populate guest names in all RSVP sections
+    function populateGuestNames(guestName, partnerName) {
+        // Update main guest name in all events
+        const events = ['mehndi', 'ceremony', 'reception'];
+        events.forEach(event => {
+            const guestNameElement = document.getElementById(`${event}-guest-name`);
+            if (guestNameElement) {
+                guestNameElement.textContent = guestName;
+            }
+            
+            // Update partner name if applicable
+            const partnerNameElement = document.getElementById(`${event}-partner-name`);
+            if (partnerNameElement && partnerName) {
+                partnerNameElement.textContent = partnerName;
+            }
+        });
+    }
+
+    // Clear guest names from all RSVP sections
+    function clearGuestNames() {
+        const events = ['mehndi', 'ceremony', 'reception'];
+        events.forEach(event => {
+            const guestNameElement = document.getElementById(`${event}-guest-name`);
+            if (guestNameElement) {
+                guestNameElement.textContent = 'Guest Name';
+            }
+            
+            const partnerNameElement = document.getElementById(`${event}-partner-name`);
+            if (partnerNameElement) {
+                partnerNameElement.textContent = 'Partner Name';
+            }
+        });
+    }
+
     // Helper function to escape HTML
     function escapeHtml(text) {
         const div = document.createElement('div');
@@ -448,14 +487,12 @@ function showPartnerSection(partnerName) {
         partnerSection.style.display = 'block';
         partnerNameElement.textContent = partnerName;
         
-        // Show partner attendance options for each event and update labels
+        // Show partner attendance options for each event
         events.forEach(event => {
             const partnerEventSection = document.getElementById(`${event}-partner-section`);
-            const partnerLabel = document.getElementById(`${event}-partner-label`);
             
-            if (partnerEventSection && partnerLabel) {
+            if (partnerEventSection) {
                 partnerEventSection.style.display = 'block';
-                partnerLabel.textContent = `${partnerName}'s Attendance`;
             }
         });
     } else {
@@ -570,6 +607,9 @@ async function submitRSVP() {
         
         // Hide RSVP form sections after successful submission
         hideRSVPFormSections();
+        
+        // Clear guest names after successful submission
+        clearGuestNames();
         
     } catch (error) {
         console.error('RSVP submission error:', error);

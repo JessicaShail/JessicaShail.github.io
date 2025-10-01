@@ -946,6 +946,13 @@ p {
     box-shadow: 0 0 0 3px rgba(74, 151, 130, 0.1);
 }
 
+/* Attendee Name Styles */
+.attendee-name {
+    font-weight: 500;
+    color: #333;
+    font-size: 1rem;
+}
+
 /* Autocomplete Styles */
 .autocomplete-container {
     position: relative;
