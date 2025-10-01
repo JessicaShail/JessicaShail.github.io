@@ -248,61 +248,28 @@ exports.handler = async (event, context) => {
     // Insert RSVP
     const rsvpId = await insertRsvp(client, rsvpData);
 
-    // Send confirmation email
-    try {
-      // Only attempt to send email if Mailgun is configured
-      if (process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN) {
-        const emailData = {
-          guestName: guestValidation.guest_name,
-          partnerName: rsvpData.partnerName,
-          email: rsvpData.email,
-          events: {
-            mehndi: rsvpData.mehndiAttending === 'yes' || rsvpData.partnerMehndiAttending === 'yes',
-            ceremony: rsvpData.ceremonyAttending === 'yes' || rsvpData.partnerCeremonyAttending === 'yes',
-            reception: rsvpData.receptionAttending === 'yes' || rsvpData.partnerReceptionAttending === 'yes'
-          }
-        };
+    // Note: Email sending will be handled by frontend using EmailJS
+    // This reduces backend complexity and allows using personal email accounts
+    console.log('RSVP saved successfully - email will be sent via frontend');
 
-        const emailContent = createRsvpConfirmationEmail(emailData);
-        
-        // Prepare form data for Mailgun API
-        const formData = new URLSearchParams();
-        formData.append('from', process.env.FROM_EMAIL || 'Jessica & Shail <rsvp@yourdomain.com>');
-        formData.append('to', rsvpData.email);
-        formData.append('subject', emailContent.subject);
-        formData.append('html', emailContent.html);
-        formData.append('text', emailContent.text);
+    // Determine if anyone is attending any event
+    const isAnyoneAttending = rsvpData.mehndiAttending === 'yes' || 
+                            rsvpData.ceremonyAttending === 'yes' || 
+                            rsvpData.receptionAttending === 'yes' ||
+                            rsvpData.partnerMehndiAttending === 'yes' ||
+                            rsvpData.partnerCeremonyAttending === 'yes' ||
+                            rsvpData.partnerReceptionAttending === 'yes';
 
-        // Send email via Mailgun API
-        const response = await fetch(`https://api.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: formData
-        });
-
-        if (response.ok) {
-          console.log(`Confirmation email sent to ${rsvpData.email}`);
-        } else {
-          const errorText = await response.text();
-          console.error('Mailgun API error:', response.status, errorText);
-        }
-      } else {
-        console.log('Mailgun not configured - skipping email send');
-      }
-    } catch (emailError) {
-      console.error('Error sending confirmation email:', emailError);
-      // Don't fail the RSVP if email fails - just log it
-    }
+    const successMessage = isAnyoneAttending 
+      ? `Thank you for your RSVP! We look forward to seeing you in May!`
+      : `Thank you for your RSVP! We will miss you but we look forward to celebrating with you soon!`;
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({ 
         success: true,
-        message: `Thank you, ${guestValidation.guest_name}! Your RSVP has been received successfully.`,
+        message: `Thank you, ${guestValidation.guest_name}! ${successMessage}`,
         rsvpId: rsvpId
       })
     };
