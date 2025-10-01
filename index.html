@@ -219,9 +219,11 @@
                         </div>
                     </div>
 
-                    <!-- Event Attendance -->
-                    <div class="form-section">
-                        <h3>Event Attendance</h3>
+                    <!-- RSVP Form Sections (Hidden until guest is validated) -->
+                    <div id="rsvp-form-sections" style="display: none;">
+                        <!-- Event Attendance -->
+                        <div class="form-section">
+                            <h3>Event Attendance</h3>
                         
                         <!-- Mehndi Event -->
                         <div class="event-rsvp">
@@ -364,7 +366,8 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="rsvp-submit">Submit RSVP</button>
+                        <button type="submit" class="rsvp-submit">Submit RSVP</button>
+                    </div> <!-- End rsvp-form-sections -->
                 </form>
 
                 <div id="rsvpError" class="error-message" style="display: none;"></div>

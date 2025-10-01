@@ -226,6 +226,8 @@ function initializeGuestAutocomplete() {
             if (tierInfo) {
                 tierInfo.style.display = 'none';
             }
+            // Hide RSVP form sections when input is cleared
+            hideRSVPFormSections();
             return;
         }
         
@@ -354,8 +356,15 @@ function initializeGuestAutocomplete() {
         // Show/hide partner section based on whether guest has a partner
         showPartnerSection(guest.partner_name);
         
-        // Check and display tier information
-        checkAndDisplayTierInfo(guest);
+        // Check and display tier information, and show RSVP sections if allowed
+        const canRSVP = checkAndDisplayTierInfo(guest);
+        
+        // Show the RSVP form sections only if guest can RSVP (tier is available)
+        if (canRSVP) {
+            showRSVPFormSections();
+        } else {
+            hideRSVPFormSections();
+        }
         
         // Focus on next input
         document.getElementById('email').focus();
@@ -369,20 +378,21 @@ function initializeGuestAutocomplete() {
     };
 
     // Check tier availability and display information
+    // Returns true if guest can RSVP, false if tier is not yet available
     function checkAndDisplayTierInfo(guest) {
         const tierInfo = document.getElementById('tier-info');
         const tierMessage = document.getElementById('tier-message');
         const tierDateSpan = document.getElementById('tier-date');
         
         if (!tierInfo || !tierMessage || !tierDateSpan) {
-            return; // Elements don't exist
+            return true; // Elements don't exist, assume can RSVP
         }
         
         const today = new Date();
         const invitationDate = guest.invitation_date ? new Date(guest.invitation_date) : null;
         
         if (invitationDate && today < invitationDate) {
-            // Tier is not yet open - show tier info
+            // Tier is not yet open - show tier info and don't allow RSVP
             const tierNumber = guest.tier || 'Unknown';
             const dateString = invitationDate.toLocaleDateString('en-US', { 
                 year: 'numeric', 
@@ -393,9 +403,27 @@ function initializeGuestAutocomplete() {
             tierMessage.textContent = `You are on our Tier ${tierNumber} invitation list.`;
             tierDateSpan.textContent = dateString;
             tierInfo.style.display = 'block';
+            return false; // Cannot RSVP yet
         } else {
-            // Tier is open or no restriction - hide tier info
+            // Tier is open or no restriction - hide tier info and allow RSVP
             tierInfo.style.display = 'none';
+            return true; // Can RSVP
+        }
+    }
+
+    // Show RSVP form sections when valid guest is selected
+    function showRSVPFormSections() {
+        const rsvpFormSections = document.getElementById('rsvp-form-sections');
+        if (rsvpFormSections) {
+            rsvpFormSections.style.display = 'block';
+        }
+    }
+
+    // Hide RSVP form sections when guest input is cleared
+    function hideRSVPFormSections() {
+        const rsvpFormSections = document.getElementById('rsvp-form-sections');
+        if (rsvpFormSections) {
+            rsvpFormSections.style.display = 'none';
         }
     }
 
@@ -539,6 +567,9 @@ async function submitRSVP() {
         if (partnerSection) {
             partnerSection.style.display = 'none';
         }
+        
+        // Hide RSVP form sections after successful submission
+        hideRSVPFormSections();
         
     } catch (error) {
         console.error('RSVP submission error:', error);
