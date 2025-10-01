@@ -1,6 +1,6 @@
 // Netlify Function for RSVP submission
 const { Client } = require('pg');
-const { Resend } = require('resend');
+const mailgun = require('mailgun-js');
 const { createRsvpConfirmationEmail } = require('./email-templates');
 
 // Database connection
@@ -251,7 +251,13 @@ exports.handler = async (event, context) => {
 
     // Send confirmation email
     try {
-        const resend = new Resend(process.env.RESEND_API_KEY);
+      // Only attempt to send email if Mailgun is configured
+      if (process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN) {
+        const mg = mailgun({
+          apiKey: process.env.MAILGUN_API_KEY,
+          domain: process.env.MAILGUN_DOMAIN
+        });
+
         const emailData = {
           guestName: guestValidation.guest_name,
           partnerName: rsvpData.partnerName,
@@ -265,15 +271,20 @@ exports.handler = async (event, context) => {
 
         const emailContent = createRsvpConfirmationEmail(emailData);
         
-        await resend.emails.send({
+        const emailOptions = {
           from: process.env.FROM_EMAIL || 'Jessica & Shail <JessicaShail@proton.me>',
           to: rsvpData.email,
           subject: emailContent.subject,
           html: emailContent.html,
           text: emailContent.text
-        });
+        };
+
+        await mg.messages().send(emailOptions);
         
         console.log(`Confirmation email sent to ${rsvpData.email}`);
+      } else {
+        console.log('Mailgun not configured - skipping email send');
+      }
     } catch (emailError) {
       console.error('Error sending confirmation email:', emailError);
       // Don't fail the RSVP if email fails - just log it
