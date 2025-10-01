@@ -872,6 +872,20 @@ p {
     padding-left: 1rem;
 }
 
+.adults-only-note {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0 1.5rem 0;
+    font-size: 0.95rem;
+    color: #495057;
+}
+
+.adults-only-note strong {
+    color: #004030;
+}
+
 .form-group {
     margin-bottom: 1.5rem;
 }

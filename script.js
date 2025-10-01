@@ -631,7 +631,7 @@ async function submitRSVP() {
     } finally {
         // Re-enable submit button
         submitButton.disabled = false;
-        submitButton.innerHTML = '<i class="fas fa-heart"></i> Send RSVP';
+        submitButton.innerHTML = 'Submit RSVP';
     }
 }
 
