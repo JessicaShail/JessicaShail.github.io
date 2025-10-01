@@ -1172,10 +1172,7 @@ p {
     color: #004030;
 }
 
-.partner-attendee {
-    background: linear-gradient(135deg, #fff5f5 0%, #ffeaa7 100%);
-    border: 1px solid #ffeaa7;
-}
+/* Partner attendee sections now have same styling as main attendee */
 
 .partner-attendee .attendee-header i {
     color: #d2691e;
