@@ -416,62 +416,64 @@ function initializeGuestAutocomplete() {
         }
     }
 
-    // Show RSVP form sections when valid guest is selected
-    function showRSVPFormSections() {
-        const rsvpFormSections = document.getElementById('rsvp-form-sections');
-        if (rsvpFormSections) {
-            rsvpFormSections.style.display = 'block';
+
+}
+
+// Show RSVP form sections when valid guest is selected
+function showRSVPFormSections() {
+    const rsvpFormSections = document.getElementById('rsvp-form-sections');
+    if (rsvpFormSections) {
+        rsvpFormSections.style.display = 'block';
+    }
+}
+
+// Hide RSVP form sections when guest input is cleared
+function hideRSVPFormSections() {
+    const rsvpFormSections = document.getElementById('rsvp-form-sections');
+    if (rsvpFormSections) {
+        rsvpFormSections.style.display = 'none';
+    }
+}
+
+// Populate guest names in all RSVP sections
+function populateGuestNames(guestName, partnerName) {
+    // Update main guest name in all events
+    const events = ['mehndi', 'ceremony', 'reception'];
+    events.forEach(event => {
+        const guestNameElement = document.getElementById(`${event}-guest-name`);
+        if (guestNameElement) {
+            guestNameElement.textContent = guestName;
         }
-    }
-
-    // Hide RSVP form sections when guest input is cleared
-    function hideRSVPFormSections() {
-        const rsvpFormSections = document.getElementById('rsvp-form-sections');
-        if (rsvpFormSections) {
-            rsvpFormSections.style.display = 'none';
+        
+        // Update partner name if applicable
+        const partnerNameElement = document.getElementById(`${event}-partner-name`);
+        if (partnerNameElement && partnerName) {
+            partnerNameElement.textContent = partnerName;
         }
-    }
+    });
+}
 
-    // Populate guest names in all RSVP sections
-    function populateGuestNames(guestName, partnerName) {
-        // Update main guest name in all events
-        const events = ['mehndi', 'ceremony', 'reception'];
-        events.forEach(event => {
-            const guestNameElement = document.getElementById(`${event}-guest-name`);
-            if (guestNameElement) {
-                guestNameElement.textContent = guestName;
-            }
-            
-            // Update partner name if applicable
-            const partnerNameElement = document.getElementById(`${event}-partner-name`);
-            if (partnerNameElement && partnerName) {
-                partnerNameElement.textContent = partnerName;
-            }
-        });
-    }
+// Clear guest names from all RSVP sections
+function clearGuestNames() {
+    const events = ['mehndi', 'ceremony', 'reception'];
+    events.forEach(event => {
+        const guestNameElement = document.getElementById(`${event}-guest-name`);
+        if (guestNameElement) {
+            guestNameElement.textContent = 'Guest Name';
+        }
+        
+        const partnerNameElement = document.getElementById(`${event}-partner-name`);
+        if (partnerNameElement) {
+            partnerNameElement.textContent = 'Partner Name';
+        }
+    });
+}
 
-    // Clear guest names from all RSVP sections
-    function clearGuestNames() {
-        const events = ['mehndi', 'ceremony', 'reception'];
-        events.forEach(event => {
-            const guestNameElement = document.getElementById(`${event}-guest-name`);
-            if (guestNameElement) {
-                guestNameElement.textContent = 'Guest Name';
-            }
-            
-            const partnerNameElement = document.getElementById(`${event}-partner-name`);
-            if (partnerNameElement) {
-                partnerNameElement.textContent = 'Partner Name';
-            }
-        });
-    }
-
-    // Helper function to escape HTML
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+// Helper function to escape HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Show or hide partner section based on guest selection
