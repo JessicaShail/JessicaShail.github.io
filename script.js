@@ -437,13 +437,13 @@ function showPartnerSection(partnerName) {
         // Hide partner attendance options for each event
         events.forEach(event => {
             const partnerEventSection = document.getElementById(`${event}-partner-section`);
-            const partnerAttendingSelect = document.getElementById(`${event}-partner-attending`);
+            const partnerAttendingCheckbox = document.getElementById(`${event}-partner-attending`);
             
             if (partnerEventSection) {
                 partnerEventSection.style.display = 'none';
             }
-            if (partnerAttendingSelect) {
-                partnerAttendingSelect.value = '';
+            if (partnerAttendingCheckbox) {
+                partnerAttendingCheckbox.checked = false;
             }
         });
     }
