@@ -77,6 +77,14 @@ h3 {
     text-align: center;
 }
 
+h4 {
+    font-size: 1.95rem; /* 30% increase from default ~1.5rem */
+}
+
+h5 {
+    font-size: 1.56rem; /* 30% increase from default ~1.2rem */
+}
+
 p {
     text-align: center;
 }
@@ -951,6 +959,62 @@ p {
     font-weight: 500;
     color: #333;
     font-size: 1.25rem;
+}
+
+.attendee-name-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Radio Button Styles */
+.radio-group {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.radio-label {
+    display: flex !important;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 0 !important;
+    font-weight: normal !important;
+    font-size: 1rem;
+}
+
+.radio-label input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #4A9782;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.radio-label input[type="radio"]:checked + .radio-custom {
+    background-color: #4A9782;
+    border-color: #4A9782;
+}
+
+.radio-label input[type="radio"]:checked + .radio-custom:after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.radio-label:hover .radio-custom {
+    border-color: #427a5e;
+    box-shadow: 0 0 0 3px rgba(74, 151, 130, 0.1);
 }
 
 /* Autocomplete Styles */
