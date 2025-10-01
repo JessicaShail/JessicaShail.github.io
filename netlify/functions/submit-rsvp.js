@@ -1,6 +1,5 @@
 // Netlify Function for RSVP submission
 const { Client } = require('pg');
-const mailgun = require('mailgun-js');
 const { createRsvpConfirmationEmail } = require('./email-templates');
 
 // Database connection
@@ -253,11 +252,6 @@ exports.handler = async (event, context) => {
     try {
       // Only attempt to send email if Mailgun is configured
       if (process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN) {
-        const mg = mailgun({
-          apiKey: process.env.MAILGUN_API_KEY,
-          domain: process.env.MAILGUN_DOMAIN
-        });
-
         const emailData = {
           guestName: guestValidation.guest_name,
           partnerName: rsvpData.partnerName,
@@ -271,17 +265,30 @@ exports.handler = async (event, context) => {
 
         const emailContent = createRsvpConfirmationEmail(emailData);
         
-        const emailOptions = {
-          from: process.env.FROM_EMAIL || 'Jessica & Shail <JessicaShail@proton.me>',
-          to: rsvpData.email,
-          subject: emailContent.subject,
-          html: emailContent.html,
-          text: emailContent.text
-        };
+        // Prepare form data for Mailgun API
+        const formData = new URLSearchParams();
+        formData.append('from', process.env.FROM_EMAIL || 'Jessica & Shail <rsvp@yourdomain.com>');
+        formData.append('to', rsvpData.email);
+        formData.append('subject', emailContent.subject);
+        formData.append('html', emailContent.html);
+        formData.append('text', emailContent.text);
 
-        await mg.messages().send(emailOptions);
-        
-        console.log(`Confirmation email sent to ${rsvpData.email}`);
+        // Send email via Mailgun API
+        const response = await fetch(`https://api.mailgun.net/v3/${process.env.MAILGUN_DOMAIN}/messages`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${Buffer.from(`api:${process.env.MAILGUN_API_KEY}`).toString('base64')}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: formData
+        });
+
+        if (response.ok) {
+          console.log(`Confirmation email sent to ${rsvpData.email}`);
+        } else {
+          const errorText = await response.text();
+          console.error('Mailgun API error:', response.status, errorText);
+        }
       } else {
         console.log('Mailgun not configured - skipping email send');
       }
