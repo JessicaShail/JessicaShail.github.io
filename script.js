@@ -737,10 +737,6 @@ function showRSVPSuccessWithMessage(message) {
     document.getElementById('rsvpForm').classList.add('hidden');
     const successDiv = document.getElementById('rsvpSuccess');
     
-    // Update success message with personalized content
-    const messageP = successDiv.querySelector('p');
-    messageP.textContent = message;
-    
     // Remove both the hidden class and inline style
     successDiv.classList.remove('hidden');
     successDiv.style.display = 'block';
