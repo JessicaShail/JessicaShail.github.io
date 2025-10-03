@@ -614,6 +614,7 @@ async function sendEmailWithEmailJS(formData, apiResultMessage) {
         // Custom fields
         guestName,
         partnerName: formData.get('partnerName') || '',
+        is_partner_attending: partnerName ? true : false,
         email,
         phone: formData.get('phone') || '',
         mehndi_attending: formData.get('mehndi-attending') || 'no',
