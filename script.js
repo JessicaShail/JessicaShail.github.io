@@ -604,22 +604,24 @@ async function sendEmailWithEmailJS(formData, apiResultMessage) {
 
     // Prepare template params from form fields
     const guestName = formData.get('guestName') || '';
+    const partnerName = formData.get('partnerName') || '';
     const email = formData.get('email') || '';
     const params = {
         // Common EmailJS variables
         from_name: guestName,
         reply_to: email,
-        to_name: 'Jessica & Shail',
+        to_name: guestName,
         // Custom fields
         guestName,
+        partnerName: formData.get('partnerName') || '',
         email,
         phone: formData.get('phone') || '',
         mehndi_attending: formData.get('mehndi-attending') || 'no',
-        mehndi_guests: formData.get('mehndi-guests') || '0',
+        partner_mehndi_attending: formData.get('mehndi-partner-attending') || 'no',
+        partner_ceremony_attending: formData.get('ceremony-partner-attending') || 'no',
         ceremony_attending: formData.get('ceremony-attending') || 'no',
-        ceremony_guests: formData.get('ceremony-guests') || '0',
         reception_attending: formData.get('reception-attending') || 'no',
-        reception_guests: formData.get('reception-guests') || '0',
+        partner_reception_attending: formData.get('reception-partner-attending') || 'no',
         dietary: formData.get('dietary') || '',
         message: formData.get('message') || '',
         confirmation_message: apiResultMessage || 'Your RSVP has been received.',
