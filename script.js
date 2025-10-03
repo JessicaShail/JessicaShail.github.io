@@ -589,6 +589,12 @@ async function submitRSVP() {
         // Submit to API
         const result = await submitRSVPToAPI(formData);
         
+        // Debug: Log the result to see what we got back from the server
+        console.log('RSVP submission result:', result);
+        if (result.emailDebug) {
+            console.log('Email configuration debug:', result.emailDebug);
+        }
+        
         // Show success message with personalized greeting
         showRSVPSuccessWithMessage(result.message);
         

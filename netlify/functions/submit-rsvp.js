@@ -338,16 +338,22 @@ exports.handler = async (event, context) => {
                             rsvpData.partnerReceptionAttending === 'yes';
 
     const successMessage = isAnyoneAttending 
-      ? `Thank you for your RSVP! We look forward to seeing you in May!`
-      : `Thank you for your RSVP! We will miss you but we look forward to celebrating with you soon!`;
+      ? `Thank you for your RSVP!`
+      : `Thank you for your RSVP!`;
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({ 
         success: true,
-        message: `Thank you, ${guestValidation.guest_name}! ${successMessage}`,
-        rsvpId: rsvpId
+        message: ``,
+        rsvpId: rsvpId,
+        emailDebug: process.env.NODE_ENV === 'development' ? {
+          hasEmailJsKeys: !!(process.env.EMAILJS_PUBLIC_KEY && process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID),
+          publicKey: process.env.EMAILJS_PUBLIC_KEY ? 'SET' : 'MISSING',
+          serviceId: process.env.EMAILJS_SERVICE_ID ? 'SET' : 'MISSING',
+          templateId: process.env.EMAILJS_TEMPLATE_ID ? 'SET' : 'MISSING'
+        } : undefined
       })
     };
 
