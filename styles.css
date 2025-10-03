@@ -1336,40 +1336,32 @@ p {
     overflow: hidden;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    aspect-ratio: 16 / 9;        /* Maintain consistent height without cropping */
-    background: #000;            /* Letterbox background for non-16:9 images */
+    aspect-ratio: 16 / 9;
+    background: #000;
 }
 
 .photo-slides {
     display: flex;
-    width: 300%; /* 3 slides */
-    animation: slide-show 18s infinite;
-    height: 100%;                /* Make slides track fill container height */
+    width: 300%;            /* Track is 3x container */
+    height: 100%;
+    animation: slide-show 18s infinite ease-in-out;
 }
 
 .photo-slides img {
-    width: 100%;
-    object-fit: cover;
-    aspect-ratio: 16 / 9;
-    flex: 0 0 100%;
-    height: 100%;                /* Fill container height */
-    object-fit: contain;         /* Show full image without cropping (no zoom) */
-    background-color: #000;      /* Match letterbox color */
-    aspect-ratio: auto;          /* Let height control the layout */
-}
-
-/* Pause on hover */
-.photo-slideshow:hover .photo-slides {
-    animation-play-state: paused;
+    flex: 0 0 33.3333%;     /* Each slide is 1/3 of track = 100% of container */
+    width: 33.3333%;
+    height: 100%;
+    object-fit: contain;     /* Show full image */
+    background-color: #000;  /* Letterbox */
 }
 
 @keyframes slide-show {
     0% { transform: translateX(0%); }
     28% { transform: translateX(0%); }
-    33% { transform: translateX(-100%); }
-    61% { transform: translateX(-100%); }
-    66% { transform: translateX(-200%); }
-    95% { transform: translateX(-200%); }
+    33% { transform: translateX(-33.3333%); }
+    61% { transform: translateX(-33.3333%); }
+    66% { transform: translateX(-66.6667%); }
+    95% { transform: translateX(-66.6667%); }
     100% { transform: translateX(0%); }
 }
 
