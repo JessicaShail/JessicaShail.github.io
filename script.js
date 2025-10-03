@@ -34,7 +34,7 @@ async function loadEmailJsConfig() {
 // API Configuration
 const API_BASE = '/.netlify/functions';
 
-const _p = ["UGFzdGE=","QUxhVmk=","bnRvbg=="]; 
+const _p = ["SmVzc2lj","YVNoYWls","MjAyNiE="]; 
 const _s = 'wedding_auth_token';
 const _getAuth = () => atob(_p[0]) + atob(_p[1]) + atob(_p[2]);
 

@@ -1336,12 +1336,15 @@ p {
     overflow: hidden;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    aspect-ratio: 16 / 9;        /* Maintain consistent height without cropping */
+    background: #000;            /* Letterbox background for non-16:9 images */
 }
 
 .photo-slides {
     display: flex;
     width: 300%; /* 3 slides */
     animation: slide-show 18s infinite;
+    height: 100%;                /* Make slides track fill container height */
 }
 
 .photo-slides img {
@@ -1349,6 +1352,10 @@ p {
     object-fit: cover;
     aspect-ratio: 16 / 9;
     flex: 0 0 100%;
+    height: 100%;                /* Fill container height */
+    object-fit: contain;         /* Show full image without cropping (no zoom) */
+    background-color: #000;      /* Match letterbox color */
+    aspect-ratio: auto;          /* Let height control the layout */
 }
 
 /* Pause on hover */
@@ -1367,7 +1374,7 @@ p {
 }
 
 @media (max-width: 640px) {
-    .photo-slides img { aspect-ratio: 4 / 3; }
+    .photo-slideshow { aspect-ratio: 4 / 3; } /* Taller on mobile for better visibility */
 }
 
 /* Footer */
