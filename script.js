@@ -1,8 +1,5 @@
 // Wedding Website JavaScript
 
-// Configuration
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID"; // Replace with your Formspree endpoint
-
 // EmailJS Configuration (dynamic from Netlify env via function, with fallbacks)
 const _getMeta = (n) => {
     try {
