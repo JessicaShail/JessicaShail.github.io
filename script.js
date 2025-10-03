@@ -1,11 +1,16 @@
 // Wedding Website JavaScript
 
+// Configuration
+// Removed unused Formspree constant since the app uses Netlify functions + EmailJS
+
 // EmailJS Configuration (dynamic from Netlify env via function, with fallbacks)
 const _getMeta = (n) => {
     try {
         return (typeof document !== 'undefined' && document.querySelector(`meta[name="${n}"]`)?.getAttribute('content')) || '';
     } catch { return ''; }
 };
+// Helper to mask values in logs
+const _mask = (s) => (s && s.length > 6 ? `${s.slice(0,3)}...${s.slice(-3)}` : s || '');
 let EMAILJS_PUBLIC_KEY = '';
 let EMAILJS_SERVICE_ID = '';
 let EMAILJS_TEMPLATE_ID = '';
@@ -18,15 +23,27 @@ async function loadEmailJsConfig() {
             EMAILJS_PUBLIC_KEY = cfg.publicKey || '';
             EMAILJS_SERVICE_ID = cfg.serviceId || '';
             EMAILJS_TEMPLATE_ID = cfg.templateId || '';
+            console.info('[EmailJS] Config loaded from Netlify function', {
+                hasPublicKey: !!EMAILJS_PUBLIC_KEY,
+                serviceId: EMAILJS_SERVICE_ID,
+                templateId: EMAILJS_TEMPLATE_ID,
+            });
             return;
+        } else {
+            console.warn('[EmailJS] Failed to load config from function', { status: res.status });
         }
     } catch (e) {
-        // ignore; will use fallbacks
+        console.warn('[EmailJS] Error fetching config from function, falling back to meta/window', e);
     }
     // Fallback to meta/window values
     EMAILJS_PUBLIC_KEY = _getMeta('emailjs-public-key') || (typeof window !== 'undefined' ? (window.EMAILJS_PUBLIC_KEY || '') : '');
     EMAILJS_SERVICE_ID = _getMeta('emailjs-service-id') || (typeof window !== 'undefined' ? (window.EMAILJS_SERVICE_ID || '') : '');
     EMAILJS_TEMPLATE_ID = _getMeta('emailjs-template-id') || (typeof window !== 'undefined' ? (window.EMAILJS_TEMPLATE_ID || '') : '');
+    console.info('[EmailJS] Config loaded from meta/window', {
+        hasPublicKey: !!EMAILJS_PUBLIC_KEY,
+        serviceId: EMAILJS_SERVICE_ID,
+        templateId: EMAILJS_TEMPLATE_ID,
+    });
 }
 
 // API Configuration
@@ -43,8 +60,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY) {
         try {
             emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+            console.info('[EmailJS] Initialized with public key', _mask(EMAILJS_PUBLIC_KEY));
         } catch (e) {
-            console.warn('EmailJS init failed:', e);
+            console.error('[EmailJS] Init failed:', e);
+        }
+    } else {
+        if (typeof emailjs === 'undefined') {
+            console.error('[EmailJS] SDK not loaded on page');
+        }
+        if (!EMAILJS_PUBLIC_KEY) {
+            console.warn('[EmailJS] Public key missing; emails will not be sent');
         }
     }
     
@@ -556,6 +581,7 @@ function showPartnerSection(partnerName) {
 
 // API Helper Functions
 async function submitRSVPToAPI(formData) {
+    console.info('[RSVP] Submitting RSVP to API');
     const response = await fetch(`${API_BASE}/submit-rsvp`, {
         method: 'POST',
         headers: {
@@ -564,26 +590,43 @@ async function submitRSVPToAPI(formData) {
         body: JSON.stringify(Object.fromEntries(formData))
     });
     
-    const result = await response.json();
+    const result = await response.json().catch(() => ({}));
     
     if (!response.ok) {
-        throw new Error(result.error || 'Submission failed');
+        console.error('[RSVP] API error', { status: response.status, result });
+        throw new Error(result.error || `Submission failed (status ${response.status})`);
     }
     
+    console.info('[RSVP] API success', result);
     return result;
 }
 
 // Send confirmation/notification email via EmailJS
 async function sendEmailWithEmailJS(formData, apiResultMessage) {
-    if (typeof emailjs === 'undefined' || !EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
-        // Not configured; skip silently
+    if (typeof emailjs === 'undefined') {
+        console.error('[EmailJS] SDK is undefined; cannot send');
+        return;
+    }
+    if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
+        console.warn('[EmailJS] Missing configuration; skipping send', {
+            hasPublicKey: !!EMAILJS_PUBLIC_KEY,
+            hasServiceId: !!EMAILJS_SERVICE_ID,
+            hasTemplateId: !!EMAILJS_TEMPLATE_ID,
+        });
         return;
     }
 
     // Prepare template params from form fields
+    const guestName = formData.get('guestName') || '';
+    const email = formData.get('email') || '';
     const params = {
-        guestName: formData.get('guestName') || '',
-        email: formData.get('email') || '',
+        // Common EmailJS variables
+        from_name: guestName,
+        reply_to: email,
+        to_name: 'Jessica & Shail',
+        // Custom fields
+        guestName,
+        email,
         phone: formData.get('phone') || '',
         mehndi_attending: formData.get('mehndi-attending') || 'no',
         mehndi_guests: formData.get('mehndi-guests') || '0',
@@ -598,10 +641,11 @@ async function sendEmailWithEmailJS(formData, apiResultMessage) {
     };
 
     try {
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+        console.info('[EmailJS] Sending email', { serviceId: EMAILJS_SERVICE_ID, templateId: EMAILJS_TEMPLATE_ID, to: _mask(email) });
+        const res = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+        console.info('[EmailJS] Send success', { status: res?.status, text: res?.text });
     } catch (e) {
-        // Log but do not block UX
-        console.warn('EmailJS send failed:', e);
+        console.error('[EmailJS] Send failed', e);
     }
 }
 
@@ -652,6 +696,7 @@ async function submitRSVP() {
     // Disable submit button and show loading state
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    console.info('[RSVP] Submit started');
     
     try {
         // Submit to API
@@ -663,46 +708,24 @@ async function submitRSVP() {
         // Show success message with personalized greeting
         showRSVPSuccessWithMessage(result.message);
         
-        // Reset form and hide partner sections
+        // Reset form and hide guest count groups
         form.reset();
         ['mehndi', 'ceremony', 'reception'].forEach(event => {
-            const partnerSection = document.getElementById(`${event}-partner-section`);
-            if (partnerSection) {
-                partnerSection.style.display = 'none';
+            const countGroup = document.getElementById(`${event}-count-group`);
+            if (countGroup) {
+                countGroup.style.display = 'none';
+                countGroup.style.opacity = '0';
             }
         });
         
-        // Hide main partner section
-        const partnerSection = document.getElementById('partnerSection');
-        if (partnerSection) {
-            partnerSection.style.display = 'none';
-        }
-        
-        // Hide RSVP form sections after successful submission
-        hideRSVPFormSections();
-        
-        // Clear guest names after successful submission
-        clearGuestNames();
-        
     } catch (error) {
-        console.error('RSVP submission error:', error);
-        
-        // Check for tier-specific error messages
-        let errorMessage = error.message || 'There was an error submitting your RSVP. Please try again or contact us directly.';
-        
-        if (error.message && error.message.includes('not yet open for your invitation tier')) {
-            // Show tier information panel if it exists
-            const tierInfo = document.getElementById('tier-info');
-            if (tierInfo) {
-                tierInfo.style.display = 'block';
-            }
-        }
-        
-        showRSVPError(errorMessage);
+        console.error('[RSVP] Submission failed', error);
+        showRSVPError(error.message || 'There was an error submitting your RSVP. Please try again or contact us directly.');
     } finally {
         // Re-enable submit button
         submitButton.disabled = false;
-        submitButton.innerHTML = 'Submit RSVP';
+        submitButton.innerHTML = '<i class="fas fa-heart"></i> Send RSVP';
+        console.info('[RSVP] Submit ended');
     }
 }
 
