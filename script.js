@@ -592,9 +592,6 @@ async function submitRSVP() {
         // Show success message with personalized greeting
         showRSVPSuccessWithMessage(result.message);
         
-        // Send confirmation email via EmailJS (non-blocking)
-        sendConfirmationEmail(formData);
-        
         // Reset form and hide partner sections
         form.reset();
         ['mehndi', 'ceremony', 'reception'].forEach(event => {
@@ -819,53 +816,8 @@ function addScrollAnimations() {
     });
 }
 
-// EmailJS Configuration and Email Sending
-function initializeEmailJS() {
-    // Initialize EmailJS with your public key
-    // You'll need to replace 'YOUR_PUBLIC_KEY' with your actual EmailJS public key
-    if (typeof emailjs !== 'undefined') {
-        emailjs.init('YOUR_PUBLIC_KEY'); // Replace with your EmailJS public key
-    }
-}
-
-async function sendConfirmationEmail(formData) {
-    try {
-        // Only send email if EmailJS is configured
-        if (typeof emailjs === 'undefined') {
-            console.log('EmailJS not loaded - skipping email send');
-            return;
-        }
-
-        // Prepare email template parameters
-        const templateParams = {
-            guest_name: formData.get('guestName'),
-            guest_email: formData.get('email'),
-            partner_name: formData.get('partnerName') || '',
-            mehndi_attending: formData.get('mehndi-attending') || 'no',
-            ceremony_attending: formData.get('ceremony-attending') || 'no',
-            reception_attending: formData.get('reception-attending') || 'no',
-            partner_mehndi_attending: formData.get('mehndi-partner-attending') || 'no',
-            partner_ceremony_attending: formData.get('ceremony-partner-attending') || 'no',
-            partner_reception_attending: formData.get('reception-partner-attending') || 'no',
-            dietary_restrictions: formData.get('dietary') || '',
-            special_message: formData.get('message') || '',
-            reply_to: formData.get('email')
-        };
-
-        // Send email using EmailJS
-        // You'll need to replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID'
-        await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
-        
-        console.log('Confirmation email sent successfully via EmailJS');
-    } catch (error) {
-        console.error('Error sending confirmation email via EmailJS:', error);
-        // Don't show error to user - email is secondary to RSVP submission
-    }
-}
-
 // Initialize animations when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    initializeEmailJS();
     setTimeout(addScrollAnimations, 1000); // Delay to ensure everything is loaded
 });
 

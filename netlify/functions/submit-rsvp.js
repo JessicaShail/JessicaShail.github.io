@@ -248,9 +248,54 @@ exports.handler = async (event, context) => {
     // Insert RSVP
     const rsvpId = await insertRsvp(client, rsvpData);
 
-    // Note: Email sending will be handled by frontend using EmailJS
-    // This reduces backend complexity and allows using personal email accounts
-    console.log('RSVP saved successfully - email will be sent via frontend');
+    // Send confirmation email via EmailJS
+    try {
+      // Only attempt to send email if EmailJS is configured
+      if (process.env.EMAILJS_PUBLIC_KEY && process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID) {
+        
+        // Prepare email template parameters
+        const templateParams = {
+          guest_name: guestValidation.guest_name,
+          guest_email: rsvpData.email,
+          partner_name: rsvpData.partnerName || '',
+          mehndi_attending: rsvpData.mehndiAttending || 'no',
+          ceremony_attending: rsvpData.ceremonyAttending || 'no',
+          reception_attending: rsvpData.receptionAttending || 'no',
+          partner_mehndi_attending: rsvpData.partnerMehndiAttending || 'no',
+          partner_ceremony_attending: rsvpData.partnerCeremonyAttending || 'no',
+          partner_reception_attending: rsvpData.partnerReceptionAttending || 'no',
+          dietary_restrictions: rsvpData.dietary || '',
+          special_message: rsvpData.message || '',
+          reply_to: rsvpData.email
+        };
+
+        // Send email using EmailJS REST API
+        const emailResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            service_id: process.env.EMAILJS_SERVICE_ID,
+            template_id: process.env.EMAILJS_TEMPLATE_ID,
+            user_id: process.env.EMAILJS_PUBLIC_KEY,
+            template_params: templateParams
+          })
+        });
+
+        if (emailResponse.ok) {
+          console.log(`Confirmation email sent to ${rsvpData.email} via EmailJS`);
+        } else {
+          const errorText = await emailResponse.text();
+          console.error('EmailJS API error:', emailResponse.status, errorText);
+        }
+      } else {
+        console.log('EmailJS not configured - skipping email send');
+      }
+    } catch (emailError) {
+      console.error('Error sending confirmation email via EmailJS:', emailError);
+      // Don't fail the RSVP if email fails - just log it
+    }
 
     // Determine if anyone is attending any event
     const isAnyoneAttending = rsvpData.mehndiAttending === 'yes' || 
