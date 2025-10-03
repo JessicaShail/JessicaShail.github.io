@@ -144,6 +144,8 @@ exports.handler = async (event, context) => {
       partnerCeremonyAttending: data['ceremony-partner-attending'],
       partnerReceptionAttending: data['reception-partner-attending'],
       dietary: data.dietary,
+      'song-requests': data['song-requests'],
+      advice: data.advice,
       message: data.message,
       ipAddress: clientIP,
       userAgent: userAgent
@@ -250,8 +252,18 @@ exports.handler = async (event, context) => {
 
     // Send confirmation email via EmailJS
     try {
-      // Only attempt to send email if EmailJS is configured
-      if (process.env.EMAILJS_PUBLIC_KEY && process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID) {
+      // Check if EmailJS environment variables are configured
+      const emailjsPublicKey = process.env.EMAILJS_PUBLIC_KEY;
+      const emailjsServiceId = process.env.EMAILJS_SERVICE_ID;
+      const emailjsTemplateId = process.env.EMAILJS_TEMPLATE_ID;
+      
+      console.log('EmailJS Config Check:', {
+        hasPublicKey: !!emailjsPublicKey,
+        hasServiceId: !!emailjsServiceId,
+        hasTemplateId: !!emailjsTemplateId
+      });
+
+      if (emailjsPublicKey && emailjsServiceId && emailjsTemplateId) {
         
         // Prepare email template parameters
         const templateParams = {
@@ -265,35 +277,55 @@ exports.handler = async (event, context) => {
           partner_ceremony_attending: rsvpData.partnerCeremonyAttending || 'no',
           partner_reception_attending: rsvpData.partnerReceptionAttending || 'no',
           dietary_restrictions: rsvpData.dietary || '',
+          song_requests: rsvpData['song-requests'] || '',
+          advice: rsvpData.advice || '',
           special_message: rsvpData.message || '',
           reply_to: rsvpData.email
         };
 
+        console.log('Attempting to send email via EmailJS to:', rsvpData.email);
+
         // Send email using EmailJS REST API
+        const emailPayload = {
+          service_id: emailjsServiceId,
+          template_id: emailjsTemplateId,
+          user_id: emailjsPublicKey,
+          template_params: templateParams
+        };
+
+        console.log('EmailJS payload prepared, making API call...');
+
         const emailResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            service_id: process.env.EMAILJS_SERVICE_ID,
-            template_id: process.env.EMAILJS_TEMPLATE_ID,
-            user_id: process.env.EMAILJS_PUBLIC_KEY,
-            template_params: templateParams
-          })
+          body: JSON.stringify(emailPayload)
         });
 
+        console.log('EmailJS API response status:', emailResponse.status);
+
         if (emailResponse.ok) {
-          console.log(`Confirmation email sent to ${rsvpData.email} via EmailJS`);
+          console.log(`✅ Confirmation email sent successfully to ${rsvpData.email} via EmailJS`);
         } else {
           const errorText = await emailResponse.text();
-          console.error('EmailJS API error:', emailResponse.status, errorText);
+          console.error('❌ EmailJS API error:', {
+            status: emailResponse.status,
+            statusText: emailResponse.statusText,
+            errorBody: errorText
+          });
         }
       } else {
-        console.log('EmailJS not configured - skipping email send');
+        console.log('❌ EmailJS not fully configured - missing environment variables');
+        console.log('Missing variables:', {
+          EMAILJS_PUBLIC_KEY: !emailjsPublicKey,
+          EMAILJS_SERVICE_ID: !emailjsServiceId,
+          EMAILJS_TEMPLATE_ID: !emailjsTemplateId
+        });
       }
     } catch (emailError) {
-      console.error('Error sending confirmation email via EmailJS:', emailError);
+      console.error('❌ Exception during email sending:', emailError);
+      console.error('Email error stack:', emailError.stack);
       // Don't fail the RSVP if email fails - just log it
     }
 
