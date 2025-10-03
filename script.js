@@ -3,15 +3,54 @@
 // Configuration
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID"; // Replace with your Formspree endpoint
 
+// EmailJS Configuration (dynamic from Netlify env via function, with fallbacks)
+const _getMeta = (n) => {
+    try {
+        return (typeof document !== 'undefined' && document.querySelector(`meta[name="${n}"]`)?.getAttribute('content')) || '';
+    } catch { return ''; }
+};
+let EMAILJS_PUBLIC_KEY = '';
+let EMAILJS_SERVICE_ID = '';
+let EMAILJS_TEMPLATE_ID = '';
+
+async function loadEmailJsConfig() {
+    try {
+        const res = await fetch('/.netlify/functions/get-emailjs-config');
+        if (res.ok) {
+            const cfg = await res.json();
+            EMAILJS_PUBLIC_KEY = cfg.publicKey || '';
+            EMAILJS_SERVICE_ID = cfg.serviceId || '';
+            EMAILJS_TEMPLATE_ID = cfg.templateId || '';
+            return;
+        }
+    } catch (e) {
+        // ignore; will use fallbacks
+    }
+    // Fallback to meta/window values
+    EMAILJS_PUBLIC_KEY = _getMeta('emailjs-public-key') || (typeof window !== 'undefined' ? (window.EMAILJS_PUBLIC_KEY || '') : '');
+    EMAILJS_SERVICE_ID = _getMeta('emailjs-service-id') || (typeof window !== 'undefined' ? (window.EMAILJS_SERVICE_ID || '') : '');
+    EMAILJS_TEMPLATE_ID = _getMeta('emailjs-template-id') || (typeof window !== 'undefined' ? (window.EMAILJS_TEMPLATE_ID || '') : '');
+}
+
 // API Configuration
 const API_BASE = '/.netlify/functions';
 
-const _p = ["UGFzdGE=","QUxhVmk=","bnRvbg=="];
+const _p = ["UGFzdGE=","QUxhVmk=","bnRvbg=="]; 
 const _s = 'wedding_auth_token';
 const _getAuth = () => atob(_p[0]) + atob(_p[1]) + atob(_p[2]);
 
 // Initialize the website
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Load EmailJS config then init
+    await loadEmailJsConfig();
+    if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY) {
+        try {
+            emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+        } catch (e) {
+            console.warn('EmailJS init failed:', e);
+        }
+    }
+    
     initializeWebsite();
 });
 
@@ -537,6 +576,38 @@ async function submitRSVPToAPI(formData) {
     return result;
 }
 
+// Send confirmation/notification email via EmailJS
+async function sendEmailWithEmailJS(formData, apiResultMessage) {
+    if (typeof emailjs === 'undefined' || !EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
+        // Not configured; skip silently
+        return;
+    }
+
+    // Prepare template params from form fields
+    const params = {
+        guestName: formData.get('guestName') || '',
+        email: formData.get('email') || '',
+        phone: formData.get('phone') || '',
+        mehndi_attending: formData.get('mehndi-attending') || 'no',
+        mehndi_guests: formData.get('mehndi-guests') || '0',
+        ceremony_attending: formData.get('ceremony-attending') || 'no',
+        ceremony_guests: formData.get('ceremony-guests') || '0',
+        reception_attending: formData.get('reception-attending') || 'no',
+        reception_guests: formData.get('reception-guests') || '0',
+        dietary: formData.get('dietary') || '',
+        message: formData.get('message') || '',
+        confirmation_message: apiResultMessage || 'Your RSVP has been received.',
+        submitted_at: new Date().toLocaleString(),
+    };
+
+    try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+    } catch (e) {
+        // Log but do not block UX
+        console.warn('EmailJS send failed:', e);
+    }
+}
+
 // Validate form before submission
 function validateAndSubmitRSVP() {
     const form = document.getElementById('rsvpForm');
@@ -589,11 +660,8 @@ async function submitRSVP() {
         // Submit to API
         const result = await submitRSVPToAPI(formData);
         
-        // Debug: Log the result to see what we got back from the server
-        console.log('RSVP submission result:', result);
-        if (result.emailDebug) {
-            console.log('Email configuration debug:', result.emailDebug);
-        }
+        // Kick off email send (fire-and-forget)
+        sendEmailWithEmailJS(formData, result.message);
         
         // Show success message with personalized greeting
         showRSVPSuccessWithMessage(result.message);
