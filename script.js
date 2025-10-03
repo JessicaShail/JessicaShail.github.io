@@ -239,10 +239,24 @@ function updateActiveNavigation(activeLink) {
 // RSVP Form Functions
 function initializeRSVPForm() {
     const rsvpForm = document.getElementById('rsvpForm');
-    
+    const guestNameInput = document.getElementById('guestName');
+
+    // Clear the selected flag whenever the user types/edits the field
+    guestNameInput.addEventListener('input', () => {
+        delete guestNameInput.dataset.selected;
+    });
+
     // Handle form submission
     rsvpForm.addEventListener('submit', function(e) {
         e.preventDefault();
+
+        // Enforce selection from suggestions by checking the data-selected flag
+        if (guestNameInput.dataset.selected !== 'true') {
+            showRSVPError('Please select your name from the dropdown suggestions.');
+            guestNameInput.focus();
+            return;
+        }
+
         validateAndSubmitRSVP();
     });
     
@@ -393,6 +407,8 @@ function initializeGuestAutocomplete() {
     // Select a suggestion
     function selectSuggestion(guest) {
         guestNameInput.value = guest.guest_name;
+        // Mark as selected to enforce dropdown usage
+        guestNameInput.dataset.selected = 'true';
         hideSuggestions();
         
         // Store max guests for validation later
@@ -400,6 +416,12 @@ function initializeGuestAutocomplete() {
         guestNameInput.dataset.partnerName = guest.partner_name || '';
         guestNameInput.dataset.tier = guest.tier || '';
         guestNameInput.dataset.invitationDate = guest.invitation_date || '';
+        
+        // Also set hidden input for partner name so it is included in FormData
+        const partnerNameHidden = document.getElementById('partnerNameInput');
+        if (partnerNameHidden) {
+            partnerNameHidden.value = guest.partner_name || '';
+        }
         
         // Populate guest names in RSVP sections
         populateGuestNames(guest.guest_name, guest.partner_name);
@@ -513,13 +535,12 @@ function clearGuestNames() {
             partnerNameElement.textContent = 'Partner Name';
         }
     });
-}
 
-// Helper function to escape HTML
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    // Clear hidden partner name field
+    const partnerNameHidden = document.getElementById('partnerNameInput');
+    if (partnerNameHidden) {
+        partnerNameHidden.value = '';
+    }
 }
 
 // Show or hide partner section based on guest selection
@@ -547,369 +568,18 @@ function showPartnerSection(partnerName) {
         // Hide partner section
         partnerSection.style.display = 'none';
         
-        // Hide partner attendance options for each event
+        // Hide partner attendance options for each event and clear selected radios
         events.forEach(event => {
             const partnerEventSection = document.getElementById(`${event}-partner-section`);
-            const partnerAttendingCheckbox = document.getElementById(`${event}-partner-attending`);
-            
             if (partnerEventSection) {
                 partnerEventSection.style.display = 'none';
             }
-            if (partnerAttendingCheckbox) {
-                partnerAttendingCheckbox.checked = false;
-            }
+            const yes = document.getElementById(`${event}-partner-attending-yes`);
+            const no = document.getElementById(`${event}-partner-attending-no`);
+            if (yes) yes.checked = false;
+            if (no) no.checked = false;
         });
     }
 }
 
 
-
-// API Helper Functions
-async function submitRSVPToAPI(formData) {
-    console.info('[RSVP] Submitting RSVP to API');
-    const response = await fetch(`${API_BASE}/submit-rsvp`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Object.fromEntries(formData))
-    });
-    
-    const result = await response.json().catch(() => ({}));
-    
-    if (!response.ok) {
-        console.error('[RSVP] API error', { status: response.status, result });
-        throw new Error(result.error || `Submission failed (status ${response.status})`);
-    }
-    
-    console.info('[RSVP] API success', result);
-    return result;
-}
-
-// Send confirmation/notification email via EmailJS
-async function sendEmailWithEmailJS(formData, apiResultMessage) {
-    if (typeof emailjs === 'undefined') {
-        console.error('[EmailJS] SDK is undefined; cannot send');
-        return;
-    }
-    console.log(EMAILJS_PUBLIC_KEY);
-    if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
-        console.warn('[EmailJS] Missing configuration; skipping send', {
-            hasPublicKey: !!EMAILJS_PUBLIC_KEY,
-            hasServiceId: !!EMAILJS_SERVICE_ID,
-            hasTemplateId: !!EMAILJS_TEMPLATE_ID,
-        });
-        return;
-    }
-
-    // Prepare template params from form fields
-    const guestName = formData.get('guestName') || '';
-    const partnerName = formData.get('partnerName') || '';
-    const email = formData.get('email') || '';
-    const params = {
-        // Common EmailJS variables
-        from_name: guestName,
-        reply_to: email,
-        to_name: guestName,
-        // Custom fields
-        guestName,
-        partnerName: formData.get('partnerName') || '',
-        is_partner_attending: partnerName ? true : false,
-        email,
-        phone: formData.get('phone') || '',
-        mehndi_attending: formData.get('mehndi-attending') || 'no',
-        partner_mehndi_attending: formData.get('mehndi-partner-attending') || 'no',
-        partner_ceremony_attending: formData.get('ceremony-partner-attending') || 'no',
-        ceremony_attending: formData.get('ceremony-attending') || 'no',
-        reception_attending: formData.get('reception-attending') || 'no',
-        partner_reception_attending: formData.get('reception-partner-attending') || 'no',
-        dietary: formData.get('dietary') || '',
-        message: formData.get('message') || '',
-        confirmation_message: apiResultMessage || 'Your RSVP has been received.',
-        submitted_at: new Date().toLocaleString(),
-    };
-
-    try {
-        console.info('[EmailJS] Sending email', { serviceId: EMAILJS_SERVICE_ID, templateId: EMAILJS_TEMPLATE_ID, to: _mask(email) });
-        const res = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
-        console.info('[EmailJS] Send success', { status: res?.status, text: res?.text });
-    } catch (e) {
-        console.error('[EmailJS] Send failed', e);
-    }
-}
-
-// Validate form before submission
-function validateAndSubmitRSVP() {
-    const form = document.getElementById('rsvpForm');
-    const formData = new FormData(form);
-    
-    // Basic client-side validation
-    const name = formData.get('guestName');
-    const email = formData.get('email');
-    
-    if (!name || !email) {
-        showRSVPError('Please fill in all required fields (Name and Email).');
-        return;
-    }
-    
-    if (!validateEmail(email)) {
-        showRSVPError('Please enter a valid email address.');
-        return;
-    }
-    
-    // Check if at least one person is attending at least one event
-    const mehndiAttending = formData.get('mehndi-attending');
-    const ceremonyAttending = formData.get('ceremony-attending');
-    const receptionAttending = formData.get('reception-attending');
-    const mehndiPartnerAttending = formData.get('mehndi-partner-attending');
-    const ceremonyPartnerAttending = formData.get('ceremony-partner-attending');
-    const receptionPartnerAttending = formData.get('reception-partner-attending');
-    
-    const hasAnyAttendance = mehndiAttending === 'yes' || ceremonyAttending === 'yes' || receptionAttending === 'yes' ||
-                            mehndiPartnerAttending === 'yes' || ceremonyPartnerAttending === 'yes' || receptionPartnerAttending === 'yes';
-    
-    if (!hasAnyAttendance) {
-        showRSVPError('Please select attendance for at least one person at one event.');
-        return;
-    }
-    
-    // If basic validation passes, submit to API
-    submitRSVP();
-}
-
-async function submitRSVP() {
-    const form = document.getElementById('rsvpForm');
-    const submitButton = document.querySelector('.rsvp-submit');
-    const formData = new FormData(form);
-    
-    // Disable submit button and show loading state
-    submitButton.disabled = true;
-    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    console.info('[RSVP] Submit started');
-    
-    try {
-        // Submit to API
-        const result = await submitRSVPToAPI(formData);
-        
-        // Kick off email send (fire-and-forget)
-        sendEmailWithEmailJS(formData, result.message);
-        
-        // Show success message with personalized greeting
-        showRSVPSuccessWithMessage(result.message);
-        
-        // Reset form and hide guest count groups
-        form.reset();
-        ['mehndi', 'ceremony', 'reception'].forEach(event => {
-            const countGroup = document.getElementById(`${event}-count-group`);
-            if (countGroup) {
-                countGroup.style.display = 'none';
-                countGroup.style.opacity = '0';
-            }
-        });
-        
-    } catch (error) {
-        console.error('[RSVP] Submission failed', error);
-        showRSVPError(error.message || 'There was an error submitting your RSVP. Please try again or contact us directly.');
-    } finally {
-        // Re-enable submit button
-        submitButton.disabled = false;
-        submitButton.innerHTML = '<i class="fas fa-heart"></i> Send RSVP';
-        console.info('[RSVP] Submit ended');
-    }
-}
-
-function showRSVPSuccessWithMessage(message) {
-    // Hide form and show success
-    document.getElementById('rsvpForm').classList.add('hidden');
-    const successDiv = document.getElementById('rsvpSuccess');
-    
-    // Update success message with personalized content
-    const messageP = successDiv.querySelector('p');
-    messageP.textContent = message;
-    
-    // Remove both the hidden class and inline style
-    successDiv.classList.remove('hidden');
-    successDiv.style.display = 'block';
-    
-    // Scroll to success message
-    successDiv.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-    });
-}
-
-function showRSVPSuccess() {
-    document.getElementById('rsvpForm').classList.add('hidden');
-    document.getElementById('rsvpSuccess').classList.remove('hidden');
-    
-    // Scroll to success message
-    document.getElementById('rsvpSuccess').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-    });
-}
-
-function showRSVPError(message) {
-    // Remove any existing messages
-    const existingError = document.getElementById('rsvpError');
-    const existingWelcome = document.getElementById('rsvpWelcome');
-    if (existingError) existingError.remove();
-    if (existingWelcome) existingWelcome.remove();
-    
-    // Create error message element
-    const errorDiv = document.createElement('div');
-    errorDiv.id = 'rsvpError';
-    errorDiv.className = 'error-message';
-    errorDiv.style.cssText = `
-        background: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-        padding: 1rem;
-        border-radius: 8px;
-        margin: 1rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    `;
-    
-    const form = document.getElementById('rsvpForm');
-    form.parentNode.insertBefore(errorDiv, form);
-    
-    errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Auto-hide after 8 seconds
-    setTimeout(() => {
-        if (errorDiv) {
-            errorDiv.remove();
-        }
-    }, 8000);
-}
-
-function showGuestWelcomeMessage(message) {
-    // Remove any existing messages
-    const existingError = document.getElementById('rsvpError');
-    const existingWelcome = document.getElementById('rsvpWelcome');
-    if (existingError) existingError.remove();
-    if (existingWelcome) existingWelcome.remove();
-    
-    // Create welcome message element
-    const welcomeDiv = document.createElement('div');
-    welcomeDiv.id = 'rsvpWelcome';
-    welcomeDiv.className = 'welcome-message';
-    welcomeDiv.style.cssText = `
-        background: linear-gradient(135deg, #DCD0A8, #FFF9E5);
-        border: 1px solid #4A9782;
-        color: #004030;
-        padding: 1rem;
-        border-radius: 8px;
-        margin: 1rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 500;
-    `;
-    
-    const form = document.getElementById('rsvpForm');
-    form.parentNode.insertBefore(welcomeDiv, form);
-    
-    welcomeDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #4A9782;"></i> ${message}`;
-    welcomeDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Auto-hide after 6 seconds
-    setTimeout(() => {
-        if (welcomeDiv) {
-            welcomeDiv.remove();
-        }
-    }, 6000);
-}
-
-// Utility Functions
-function formatDate(date) {
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    };
-    return new Date(date).toLocaleDateString('en-US', options);
-}
-
-function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// Handle browser back/forward buttons
-window.addEventListener('popstate', function(e) {
-    const hash = window.location.hash.substring(1);
-    if (hash) {
-        showSection(hash);
-    } else {
-        showSection('details');
-    }
-});
-
-// Handle initial page load with hash
-window.addEventListener('load', function() {
-    const hash = window.location.hash.substring(1);
-    if (hash && ['details', 'rsvp'].includes(hash)) {
-        showSection(hash);
-    } else {
-        showSection('details');
-    }
-});
-
-// Smooth scrolling for anchor links
-document.addEventListener('click', function(e) {
-    if (e.target.tagName === 'A' && e.target.getAttribute('href').startsWith('#')) {
-        const targetId = e.target.getAttribute('href').substring(1);
-        const targetElement = document.getElementById(targetId);
-        
-        if (targetElement) {
-            e.preventDefault();
-            targetElement.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-});
-
-// Add some interactive animations
-function addScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-    
-    // Observe elements for animation
-    const animatedElements = document.querySelectorAll('.detail-card, .timeline-item, .location-card, .attire-card');
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-}
-
-// Initialize animations when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(addScrollAnimations, 1000); // Delay to ensure everything is loaded
-});
-
-// Export functions for testing (if needed)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        checkPassword,
-        showSection,
-        submitRSVP,
-        validateEmail
-    };
-}
