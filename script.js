@@ -351,14 +351,16 @@ function initializeGuestAutocomplete() {
             return;
         }
 
-        suggestionsContainer.innerHTML = guests.map((guest, index) => `
+        suggestionsContainer.innerHTML = guests.map((guest, index) => {
+            const partner = guest.partner_name || guest.partner || guest.partnerName || '';
+            return `
             <div class="suggestion-item" data-index="${index}" onclick="selectSuggestionByIndex(${index})">
                 <div class="suggestion-name">${escapeHtml(guest.guest_name)}</div>
                 <div class="suggestion-details">
-                    ${guest.partner_name ? `With ${escapeHtml(guest.partner_name)}` : ''}
+                    ${partner ? `With ${escapeHtml(partner)}` : ''}
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
         
         selectedIndex = -1;
         suggestionsContainer.classList.add('show');
@@ -397,17 +399,25 @@ function initializeGuestAutocomplete() {
         guestNameInput.dataset.selected = 'true';
         hideSuggestions();
         
+        const partner = guest.partner_name || guest.partner || guest.partnerName || '';
+        
         // Store max guests for validation later
         guestNameInput.dataset.maxGuests = guest.max_guests;
-        guestNameInput.dataset.partnerName = guest.partner_name || '';
+        guestNameInput.dataset.partnerName = partner;
         guestNameInput.dataset.tier = guest.tier || '';
         guestNameInput.dataset.invitationDate = guest.invitation_date || '';
         
+        // Also set hidden input for partner name so it is included in FormData
+        const partnerNameHidden = document.getElementById('partnerNameInput');
+        if (partnerNameHidden) {
+            partnerNameHidden.value = partner;
+        }
+        
         // Populate guest names in RSVP sections
-        populateGuestNames(guest.guest_name, guest.partner_name);
+        populateGuestNames(guest.guest_name, partner);
         
         // Show/hide partner section based on whether guest has a partner
-        showPartnerSection(guest.partner_name);
+        showPartnerSection(partner);
         
         // Check and display tier information, and show RSVP sections if allowed
         const canRSVP = checkAndDisplayTierInfo(guest);
