@@ -284,12 +284,12 @@ exports.handler = async (event, context) => {
         };
 
         console.log('Attempting to send email via EmailJS to:', rsvpData.email);
-
+        console.log(emailjsPublicKey, emailjsServiceId, emailjsTemplateId);
         // Send email using EmailJS REST API
         const emailPayload = {
-          service_id: emailjsServiceId,
-          template_id: emailjsTemplateId,
-          user_id: emailjsPublicKey,
+          service_id: EMAILJS_SERVICE_ID,
+          template_id: EMAILJS_TEMPLATE_ID,
+          user_id: EMAILJS_PUBLIC_KEY,
           template_params: templateParams
         };
 

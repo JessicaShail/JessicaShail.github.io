@@ -3,12 +3,7 @@
 // Configuration
 // Removed unused Formspree constant since the app uses Netlify functions + EmailJS
 
-// EmailJS Configuration (dynamic from Netlify env via function, with fallbacks)
-const _getMeta = (n) => {
-    try {
-        return (typeof document !== 'undefined' && document.querySelector(`meta[name="${n}"]`)?.getAttribute('content')) || '';
-    } catch { return ''; }
-};
+// EmailJS Configuration (loaded from Netlify env via function)
 // Helper to mask values in logs
 const _mask = (s) => (s && s.length > 6 ? `${s.slice(0,3)}...${s.slice(-3)}` : s || '');
 let EMAILJS_PUBLIC_KEY = '';
@@ -18,32 +13,22 @@ let EMAILJS_TEMPLATE_ID = '';
 async function loadEmailJsConfig() {
     try {
         const res = await fetch('/.netlify/functions/get-emailjs-config');
-        if (res.ok) {
-            const cfg = await res.json();
-            EMAILJS_PUBLIC_KEY = cfg.publicKey || '';
-            EMAILJS_SERVICE_ID = cfg.serviceId || '';
-            EMAILJS_TEMPLATE_ID = cfg.templateId || '';
-            console.info('[EmailJS] Config loaded from Netlify function', {
-                hasPublicKey: !!EMAILJS_PUBLIC_KEY,
-                serviceId: EMAILJS_SERVICE_ID,
-                templateId: EMAILJS_TEMPLATE_ID,
-            });
+        if (!res.ok) {
+            console.error('[EmailJS] Failed to load config from function', { status: res.status });
             return;
-        } else {
-            console.warn('[EmailJS] Failed to load config from function', { status: res.status });
         }
+        const cfg = await res.json();
+        EMAILJS_PUBLIC_KEY = cfg.publicKey || '';
+        EMAILJS_SERVICE_ID = cfg.serviceId || '';
+        EMAILJS_TEMPLATE_ID = cfg.templateId || '';
+        console.info('[EmailJS] Config loaded', {
+            hasPublicKey: !!EMAILJS_PUBLIC_KEY,
+            serviceId: EMAILJS_SERVICE_ID,
+            templateId: EMAILJS_TEMPLATE_ID,
+        });
     } catch (e) {
-        console.warn('[EmailJS] Error fetching config from function, falling back to meta/window', e);
+        console.error('[EmailJS] Error fetching config from function', e);
     }
-    // Fallback to meta/window values
-    EMAILJS_PUBLIC_KEY = _getMeta('emailjs-public-key') || (typeof window !== 'undefined' ? (window.EMAILJS_PUBLIC_KEY || '') : '');
-    EMAILJS_SERVICE_ID = _getMeta('emailjs-service-id') || (typeof window !== 'undefined' ? (window.EMAILJS_SERVICE_ID || '') : '');
-    EMAILJS_TEMPLATE_ID = _getMeta('emailjs-template-id') || (typeof window !== 'undefined' ? (window.EMAILJS_TEMPLATE_ID || '') : '');
-    console.info('[EmailJS] Config loaded from meta/window', {
-        hasPublicKey: !!EMAILJS_PUBLIC_KEY,
-        serviceId: EMAILJS_SERVICE_ID,
-        templateId: EMAILJS_TEMPLATE_ID,
-    });
 }
 
 // API Configuration
@@ -607,6 +592,7 @@ async function sendEmailWithEmailJS(formData, apiResultMessage) {
         console.error('[EmailJS] SDK is undefined; cannot send');
         return;
     }
+    console.log(EMAILJS_PUBLIC_KEY);
     if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
         console.warn('[EmailJS] Missing configuration; skipping send', {
             hasPublicKey: !!EMAILJS_PUBLIC_KEY,
