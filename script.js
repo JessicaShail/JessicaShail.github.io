@@ -863,7 +863,7 @@ window.addEventListener('popstate', function(e) {
 // Handle initial page load with hash
 window.addEventListener('load', function() {
     const hash = window.location.hash.substring(1);
-    if (hash && ['details', 'rsvp'].includes(hash)) {
+    if (hash && ['details', 'rsvp', 'registry'].includes(hash)) {
         showSection(hash);
     } else {
         showSection('details');

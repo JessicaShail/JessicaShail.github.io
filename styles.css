@@ -1576,3 +1576,57 @@ p {
         padding: 1.5rem;
     }
 }
+
+/* Registry Section Styles */
+.registry-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.coming-soon {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #DCD0A8, #FFF9E5);
+    border-radius: 12px;
+    border: 2px solid #4A9782;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.coming-soon h3 {
+    color: #004030;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.coming-soon p {
+    color: #333;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.coming-soon i {
+    display: block;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .coming-soon {
+        padding: 3rem 1.5rem;
+    }
+    
+    .coming-soon h3 {
+        font-size: 1.8rem;
+    }
+    
+    .coming-soon p {
+        font-size: 1.1rem;
+    }
+    
+    .coming-soon i {
+        font-size: 2.5rem !important;
+    }
+}
