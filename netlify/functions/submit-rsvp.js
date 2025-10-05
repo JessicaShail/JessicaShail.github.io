@@ -49,19 +49,24 @@ const validateGuest = async (client, guestName) => {
 };
 
 // Check if guest already RSVP'd by email or guest name
-const checkExistingRsvp = async (client, email, guestName) => {
-  const query = 'SELECT id, guest_name, email FROM rsvps WHERE email = $1 OR LOWER(guest_name) = LOWER($2)';
-  const result = await client.query(query, [email, guestName]);
+const checkExistingRsvp = async (client, guestName) => {
+  const query = 'SELECT id, guest_name, partner_name FROM rsvps WHERE LOWER(guest_name) = LOWER($1) OR LOWER(partner_name) = LOWER($1)';
+  console.log(`🔍 Executing duplicate check query with: name: "${guestName}"`);
+  
+  const result = await client.query(query, [guestName]);
+  console.log(`🔍 Query returned ${result.rows.length} rows:`, result.rows);
+  
   if (result.rows.length > 0) {
     const existingRsvp = result.rows[0];
-    return {
+    const response = {
       exists: true,
-      byEmail: existingRsvp.email === email,
       byName: existingRsvp.guest_name.toLowerCase() === guestName.toLowerCase(),
-      guestName: existingRsvp.guest_name,
-      email: existingRsvp.email
     };
+    console.log('🔍 Duplicate found, response:', response);
+    return response;
   }
+  
+  console.log('🔍 No duplicates found');
   return { exists: false };
 };
 
@@ -221,7 +226,10 @@ exports.handler = async (event, context) => {
     }
 
     // Check if already RSVP'd by email or name
-    const existingRsvpCheck = await checkExistingRsvp(client, rsvpData.email, rsvpData.guestName);
+    console.log(`🔍 Checking for existing RSVP - Name: ${rsvpData.guestName}`);
+    const existingRsvpCheck = await checkExistingRsvp(client, rsvpData.guestName);
+    console.log('🔍 Existing RSVP check result:', existingRsvpCheck);
+    
     if (existingRsvpCheck.exists) {
       if (existingRsvpCheck.byName) {
         // Same name is trying to RSVP again - show friendly message

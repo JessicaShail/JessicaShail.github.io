@@ -710,9 +710,11 @@ async function submitRSVP() {
     try {
         // Submit to API
         const result = await submitRSVPToAPI(formData);
+        console.log('🔍 RSVP API Response:', result);
         
         // Check if this is a friendly duplicate message
         if (result.friendlyDuplicate) {
+            console.log('🔍 Detected friendly duplicate, showing welcome message');
             // Show as a welcome message instead of success
             showGuestWelcomeMessage(result.message);
             return; // Don't reset form or send email for duplicates
