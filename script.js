@@ -597,6 +597,12 @@ async function submitRSVPToAPI(formData) {
         throw new Error(result.error || `Submission failed (status ${response.status})`);
     }
     
+    // Handle cases where response is OK but success is false (like friendly duplicates)
+    if (result.success === false && !result.friendlyDuplicate) {
+        console.error('[RSVP] API returned success=false', result);
+        throw new Error(result.error || result.message || 'Submission failed');
+    }
+    
     console.info('[RSVP] API success', result);
     return result;
 }
@@ -704,6 +710,13 @@ async function submitRSVP() {
     try {
         // Submit to API
         const result = await submitRSVPToAPI(formData);
+        
+        // Check if this is a friendly duplicate message
+        if (result.friendlyDuplicate) {
+            // Show as a welcome message instead of success
+            showGuestWelcomeMessage(result.message);
+            return; // Don't reset form or send email for duplicates
+        }
         
         // Kick off email send (fire-and-forget)
         sendEmailWithEmailJS(formData, result.message);

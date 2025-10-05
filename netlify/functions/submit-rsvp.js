@@ -48,11 +48,21 @@ const validateGuest = async (client, guestName) => {
   return guest; // Guest is available for RSVP
 };
 
-// Check if guest already RSVP'd
-const checkExistingRsvp = async (client, email) => {
-  const query = 'SELECT id FROM rsvps WHERE email = $1';
-  const result = await client.query(query, [email]);
-  return result.rows.length > 0;
+// Check if guest already RSVP'd by email or guest name
+const checkExistingRsvp = async (client, email, guestName) => {
+  const query = 'SELECT id, guest_name, email FROM rsvps WHERE email = $1 OR LOWER(guest_name) = LOWER($2)';
+  const result = await client.query(query, [email, guestName]);
+  if (result.rows.length > 0) {
+    const existingRsvp = result.rows[0];
+    return {
+      exists: true,
+      byEmail: existingRsvp.email === email,
+      byName: existingRsvp.guest_name.toLowerCase() === guestName.toLowerCase(),
+      guestName: existingRsvp.guest_name,
+      email: existingRsvp.email
+    };
+  }
+  return { exists: false };
 };
 
 // Insert RSVP
@@ -210,17 +220,32 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Check if already RSVP'd
-    const alreadyRsvpd = await checkExistingRsvp(client, rsvpData.email);
-    if (alreadyRsvpd) {
-      return {
-        statusCode: 409,
-        headers,
-        body: JSON.stringify({ 
-          error: 'An RSVP has already been submitted with this email address. Please contact us if you need to make changes.',
-          field: 'email'
-        })
-      };
+    // Check if already RSVP'd by email or name
+    const existingRsvpCheck = await checkExistingRsvp(client, rsvpData.email, rsvpData.guestName);
+    if (existingRsvpCheck.exists) {
+      if (existingRsvpCheck.byName) {
+        // Same name is trying to RSVP again - show friendly message
+        return {
+          statusCode: 200, // Use 200 status for friendly message
+          headers,
+          body: JSON.stringify({ 
+            success: false,
+            friendlyDuplicate: true,
+            message: `Good to see you again, ${guestValidation.guest_name}! We've already received your RSVP and the system should have sent you a confirmation email. Let us know if you're having any issues.`,
+            field: 'guestName'
+          })
+        };
+      } else {
+        // Different name but same email
+        return {
+          statusCode: 409,
+          headers,
+          body: JSON.stringify({ 
+            error: 'An RSVP has already been submitted with this email address. Please contact us if you need to make changes.',
+            field: 'email'
+          })
+        };
+      }
     }
 
     // Check if at least one person is attending at least one event
