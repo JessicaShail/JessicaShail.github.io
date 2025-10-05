@@ -320,9 +320,9 @@ exports.handler = async (event, context) => {
         console.log(emailjsPublicKey, emailjsServiceId, emailjsTemplateId);
         // Send email using EmailJS REST API
         const emailPayload = {
-          service_id: EMAILJS_SERVICE_ID,
-          template_id: EMAILJS_TEMPLATE_ID,
-          user_id: EMAILJS_PUBLIC_KEY,
+          service_id: emailjsServiceId,
+          template_id: emailjsTemplateId,
+          user_id: emailjsPublicKey,
           template_params: templateParams
         };
 
@@ -371,15 +371,15 @@ exports.handler = async (event, context) => {
                             rsvpData.partnerReceptionAttending === 'yes';
 
     const successMessage = isAnyoneAttending 
-      ? `Thank you for your RSVP!`
-      : `Thank you for your RSVP!`;
+      ? `Thanks so much, ${guestValidation.guest_name}! We can't wait to celebrate with you.`
+      : `Thanks for letting us know, ${guestValidation.guest_name}. We'll miss you but appreciate the update!`;
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({ 
         success: true,
-        message: ``,
+  message: successMessage,
         rsvpId: rsvpId,
         emailDebug: process.env.NODE_ENV === 'development' ? {
           hasEmailJsKeys: !!(process.env.EMAILJS_PUBLIC_KEY && process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID),

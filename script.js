@@ -393,7 +393,7 @@ function initializeGuestAutocomplete() {
     }
 
     // Select a suggestion
-    function selectSuggestion(guest) {
+    async function selectSuggestion(guest) {
         guestNameInput.value = guest.guest_name;
         // Mark as selected to enforce dropdown usage
         guestNameInput.dataset.selected = 'true';
@@ -419,9 +419,24 @@ function initializeGuestAutocomplete() {
         // Show/hide partner section based on whether guest has a partner
         showPartnerSection(partner);
         
+        // First check for existing RSVP duplicate by name
+        try {
+            const dupRes = await fetch(`${API_BASE}/check-rsvp-duplicate?guestName=${encodeURIComponent(guest.guest_name)}`);
+            if (dupRes.ok) {
+                const dup = await dupRes.json();
+                if (dup.exists) {
+                    // Show friendly welcome and keep sections hidden to avoid re-submission
+                    hideRSVPFormSections();
+                    showGuestWelcomeMessage(dup.message || `Hi ${guest.guest_name}, we've already received your RSVP. If you need to make a change, please contact us.`);
+                    return; // stop here
+                }
+            }
+        } catch (e) {
+            console.warn('[RSVP] Duplicate check failed; proceeding as not duplicate', e);
+        }
+
         // Check and display tier information, and show RSVP sections if allowed
         const canRSVP = checkAndDisplayTierInfo(guest);
-        
         // Show the RSVP form sections only if guest can RSVP (tier is available)
         if (canRSVP) {
             showRSVPFormSections();
