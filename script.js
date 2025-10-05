@@ -838,7 +838,7 @@ function showGuestWelcomeMessage(message) {
     welcomeDiv.id = 'rsvpWelcome';
     welcomeDiv.className = 'welcome-message';
     welcomeDiv.style.cssText = `
-        background: linear-gradient(135deg, #DCD0A8, #FFF9E5);
+        background: white;
         border: 1px solid #4A9782;
         color: #004030;
         padding: 1rem;
@@ -855,13 +855,6 @@ function showGuestWelcomeMessage(message) {
     
     welcomeDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #4A9782;"></i> ${message}`;
     welcomeDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Auto-hide after 6 seconds
-    setTimeout(() => {
-        if (welcomeDiv) {
-            welcomeDiv.remove();
-        }
-    }, 6000);
 }
 
 // Utility Functions
