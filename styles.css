@@ -1630,3 +1630,30 @@ p {
         font-size: 2.5rem !important;
     }
 }
+
+/* Input Tooltip Styles */
+.input-tooltip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.input-tooltip i {
+    color: #4A9782;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .input-tooltip {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+}
