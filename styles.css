@@ -1342,14 +1342,14 @@ p {
 
 .photo-slides {
     display: flex;
-    width: 300%;            /* Track is 3x container */
+    width: 400%;            /* Track is 4x container */
     height: 100%;
     animation: slide-show 18s infinite ease-in-out;
 }
 
 .photo-slides img {
-    flex: 0 0 33.3333%;     /* Each slide is 1/3 of track = 100% of container */
-    width: 33.3333%;
+    flex: 0 0 25%;     /* Each slide is 1/3 of track = 100% of container */
+    width: 25%;
     height: 100%;
     object-fit: contain;     /* Show full image */
     background-color: #000;  /* Letterbox */
