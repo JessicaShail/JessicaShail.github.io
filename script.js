@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     initializeWebsite();
+    // Initialize adaptive slideshow after core UI
+    initPhotoSlideshow();
 });
 
 function initializeWebsite() {
@@ -931,6 +933,56 @@ function addScrollAnimations() {
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(addScrollAnimations, 1000); // Delay to ensure everything is loaded
 });
+
+// Adaptive slideshow controller (supports any number of images)
+function initPhotoSlideshow() {
+    const slideshow = document.querySelector('.photo-slideshow');
+    const track = document.querySelector('.photo-slides');
+    if (!slideshow || !track) return;
+
+    const slides = Array.from(track.querySelectorAll('img'));
+    const total = slides.length;
+    if (total <= 1) return; // Nothing to slide
+
+    let index = 0;
+    let paused = false;
+    let timer = null;
+
+    // Ensure starting position
+    track.style.transform = 'translateX(0%)';
+
+    const goTo = (i) => {
+        index = (i + total) % total;
+        const offset = -(index * 100);
+        track.style.transform = `translateX(${offset}%)`;
+    };
+
+    const next = () => { goTo(index + 1); restart(); };
+    const prev = () => { goTo(index - 1); restart(); };
+
+    const start = () => {
+        stop();
+        timer = setInterval(next, 5000); // 5s per slide
+    };
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const restart = () => { if (!paused) { start(); } };
+
+    // Pause on hover (desktop)
+    slideshow.addEventListener('mouseenter', () => { paused = true; stop(); });
+    slideshow.addEventListener('mouseleave', () => { if (paused) { paused = false; start(); } });
+
+    // Reset position on resize to avoid sub-pixel drift
+    window.addEventListener('resize', () => { goTo(index); });
+
+    // Kick off
+    start();
+
+    // Wire buttons if present
+    const prevBtn = slideshow.querySelector('.slide-btn.prev');
+    const nextBtn = slideshow.querySelector('.slide-btn.next');
+    if (prevBtn) prevBtn.addEventListener('click', prev);
+    if (nextBtn) nextBtn.addEventListener('click', next);
+}
 
 // Export functions for testing (if needed)
 if (typeof module !== 'undefined' && module.exports) {

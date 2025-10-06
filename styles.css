@@ -668,29 +668,23 @@ p {
 
 /* Timeline Section */
 .timeline {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
+    display: flex;
+    height: 100%;
+    transition: transform 0.8s ease-in-out;
+    will-change: transform;
 }
 
 .timeline::before {
     content: '';
-    position: absolute;
-    left: 50%;
+    flex: 0 0 100%;    /* Each slide takes full container width */
+    width: 100%;
     top: 0;
-    bottom: 0;
+    object-fit: contain;     /* Show full image */
+    object-position: center; /* Keep image centered */
     width: 2px;
     background: #DCD0A8;
     transform: translateX(-50%);
-}
-
-.timeline-item {
-    display: flex;
-    margin-bottom: 3rem;
-    position: relative;
-}
-
-.timeline-item:nth-child(odd) {
+/* Sliding is controlled by JS to support any number of slides */
     flex-direction: row;
 }
 
@@ -1340,30 +1334,48 @@ p {
     background: #000;
 }
 
+/* Slideshow Controls */
+.slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    line-height: 1;
+    transition: background 0.2s ease, transform 0.2s ease;
+    z-index: 3;
+}
+
+.slide-btn:hover { background: rgba(0,0,0,0.6); transform: translateY(-50%) scale(1.05); }
+.slide-btn.prev { left: 8px; }
+.slide-btn.next { right: 8px; }
+
 .photo-slides {
     display: flex;
-    width: 400%;            /* Track is 4x container */
     height: 100%;
-    animation: slide-show 18s infinite ease-in-out;
+    transition: transform 0.8s ease-in-out;
+    will-change: transform;
 }
 
 .photo-slides img {
-    flex: 0 0 25%;     /* Each slide is 1/3 of track = 100% of container */
-    width: 25%;
+    flex: 0 0 100%;    /* Each slide takes full container width */
+    width: 100%;
     height: 100%;
     object-fit: contain;     /* Show full image */
+    object-position: center; /* Keep image centered */
     background-color: #000;  /* Letterbox */
 }
 
-@keyframes slide-show {
-    0% { transform: translateX(0%); }
-    28% { transform: translateX(0%); }
-    33% { transform: translateX(-33.3333%); }
-    61% { transform: translateX(-33.3333%); }
-    66% { transform: translateX(-66.6667%); }
-    95% { transform: translateX(-66.6667%); }
-    100% { transform: translateX(0%); }
-}
+/* Sliding is controlled via JS to support any number of images */
 
 @media (max-width: 640px) {
     .photo-slideshow { aspect-ratio: 4 / 3; } /* Taller on mobile for better visibility */
