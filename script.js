@@ -703,11 +703,6 @@ function validateAndSubmitRSVP() {
     const hasAnyAttendance = mehndiAttending === 'yes' || ceremonyAttending === 'yes' || receptionAttending === 'yes' ||
                             mehndiPartnerAttending === 'yes' || ceremonyPartnerAttending === 'yes' || receptionPartnerAttending === 'yes';
     
-    if (!hasAnyAttendance) {
-        showRSVPError('Please select attendance for at least one person at one event.');
-        return;
-    }
-    
     // If basic validation passes, submit to API
     submitRSVP();
 }

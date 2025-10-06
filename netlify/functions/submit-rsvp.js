@@ -264,17 +264,6 @@ exports.handler = async (event, context) => {
                            rsvpData.partnerCeremonyAttending === 'yes' ||
                            rsvpData.partnerReceptionAttending === 'yes';
     
-    if (!hasEventSelected) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ 
-          error: 'Please select attendance for at least one person at one event.',
-          field: 'events'
-        })
-      };
-    }
-    
     // Set partner name from guest validation if not provided
     if (guestValidation.partner_name && !rsvpData.partnerName) {
       rsvpData.partnerName = guestValidation.partner_name;
@@ -320,9 +309,9 @@ exports.handler = async (event, context) => {
         console.log(emailjsPublicKey, emailjsServiceId, emailjsTemplateId);
         // Send email using EmailJS REST API
         const emailPayload = {
-          service_id: emailjsServiceId,
-          template_id: emailjsTemplateId,
-          user_id: emailjsPublicKey,
+          service_id: EMAILJS_SERVICE_ID,
+          template_id: EMAILJS_TEMPLATE_ID,
+          user_id: EMAILJS_PUBLIC_KEY,
           template_params: templateParams
         };
 
@@ -371,8 +360,8 @@ exports.handler = async (event, context) => {
                             rsvpData.partnerReceptionAttending === 'yes';
 
     const successMessage = isAnyoneAttending 
-      ? `Thanks so much, ${guestValidation.guest_name}! We can't wait to celebrate with you.`
-      : `Thanks for letting us know, ${guestValidation.guest_name}. We'll miss you but appreciate the update!`;
+      ? `Thank you for your RSVP!`
+      : `Thank you for your RSVP!`;
 
     return {
       statusCode: 200,
