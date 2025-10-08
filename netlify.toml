@@ -20,12 +20,111 @@
   to = "/admin.html"
   status = 200
 
-# Headers for security
+# Force HTTPS on primary domains (required for HSTS preload)
+[[redirects]]
+  from = "http://chalowedding.ca/*"
+  to = "https://chalowedding.ca/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.chalowedding.ca/*"
+  to = "https://chalowedding.ca/:splat"
+  status = 301
+  force = true
+
+# Canonicalize www to apex over HTTPS
+[[redirects]]
+  from = "/*"
+  to = "https://chalowedding.ca/:splat"
+  status = 301
+  force = true
+  [redirects.conditions]
+    Host = "www.chalowedding.ca"
+
+# Ensure functions are not rewritten by SPA fallback
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Headers for security (global)
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
+    X-Frame-Options = "DENY" # Deprecated, kept for legacy UAs
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    # Strong baseline CSP. Adjust if you add new third-parties.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; connect-src 'self' https://api.emailjs.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), accelerometer=(), autoplay=(), fullscreen=(), payment=(), usb=(), magnetometer=(), gyroscope=(), clipboard-read=(), clipboard-write=()"
+
+# Ensure the MTA-STS policy is cached reasonably
+[[headers]]
+  for = "/.well-known/mta-sts.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Content-Type = "text/plain; charset=utf-8"
+
+# Never cache HTML entry
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-store"
+
+# Asset caching: CSS/JS in root
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# Asset caching: resources and images/fonts
+[[headers]]
+  for = "/resources/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/resources/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/resources/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Root image caching
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# SPA fallback (prevents 404s on deep links)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
