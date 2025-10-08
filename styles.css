@@ -576,9 +576,7 @@ p {
     font-family: inherit;
 }
 
-.collapsible-header:hover {
-    background: transparent;
-}
+.collapsible-header:hover { background: transparent; }
 
 .chevron-icon {
     font-size: 1.2rem;
@@ -588,25 +586,31 @@ p {
     text-align: center;
 }
 
-.collapsible-header.active .chevron-icon {
-    transform: rotate(90deg);
-}
+.collapsible-header.active .chevron-icon { transform: rotate(90deg); }
 
-.header-content {
-    flex: 1;
-}
+.header-content { flex: 1; }
 
-.header-content h3 {
+/* New: support span-based titles/subtitles inside buttons */
+.header-content .header-title {
+    display: block;
     margin: 0;
+    font-family: 'Alta', serif;
+    text-transform: uppercase;
+    font-weight: 400;
     font-size: 1.8rem;
     color: #004030;
 }
 
-.header-content p {
+.header-content .header-subtitle {
+    display: block;
     margin: 0.3rem 0 0 0;
     font-size: 1.1rem;
     color: #666;
 }
+
+/* Backward compatibility for existing h3/p inside header-content */
+.header-content h3 { margin: 0; font-size: 1.8rem; color: #004030; }
+.header-content p { margin: 0.3rem 0 0 0; font-size: 1.1rem; color: #666; }
 
 .collapsible-content {
     max-height: 0;
