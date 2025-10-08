@@ -84,11 +84,17 @@ function initializeWebsite() {
 // Collapsible functionality
 function toggleCollapsible(eventId) {
     const content = document.getElementById(eventId + '-content');
+    if (!content) return;
     const header = content.previousElementSibling;
-    
+
     // Toggle current collapsible only
-    content.classList.toggle('active');
-    header.classList.toggle('active');
+    const isOpen = content.classList.toggle('active');
+    if (header) {
+        header.classList.toggle('active', isOpen);
+        // Update ARIA state for accessibility
+        header.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+    content.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
 }
 
 // Validate session token (basic time-based validation)
