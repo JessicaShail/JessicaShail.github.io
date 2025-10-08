@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     initializeWebsite();
+    // Initialize adaptive slideshow after core UI
+    initPhotoSlideshow();
 });
 
 function initializeWebsite() {
@@ -393,7 +395,7 @@ function initializeGuestAutocomplete() {
     }
 
     // Select a suggestion
-    function selectSuggestion(guest) {
+    async function selectSuggestion(guest) {
         guestNameInput.value = guest.guest_name;
         // Mark as selected to enforce dropdown usage
         guestNameInput.dataset.selected = 'true';
@@ -419,9 +421,24 @@ function initializeGuestAutocomplete() {
         // Show/hide partner section based on whether guest has a partner
         showPartnerSection(partner);
         
+        // First check for existing RSVP duplicate by name
+        try {
+            const dupRes = await fetch(`${API_BASE}/check-rsvp-duplicate?guestName=${encodeURIComponent(guest.guest_name)}`);
+            if (dupRes.ok) {
+                const dup = await dupRes.json();
+                if (dup.exists) {
+                    // Show friendly welcome and keep sections hidden to avoid re-submission
+                    hideRSVPFormSections();
+                    showGuestWelcomeMessage(dup.message || `Hi ${guest.guest_name}, we've already received your RSVP. If you need to make a change, please contact us.`);
+                    return; // stop here
+                }
+            }
+        } catch (e) {
+            console.warn('[RSVP] Duplicate check failed; proceeding as not duplicate', e);
+        }
+
         // Check and display tier information, and show RSVP sections if allowed
         const canRSVP = checkAndDisplayTierInfo(guest);
-        
         // Show the RSVP form sections only if guest can RSVP (tier is available)
         if (canRSVP) {
             showRSVPFormSections();
@@ -597,6 +614,12 @@ async function submitRSVPToAPI(formData) {
         throw new Error(result.error || `Submission failed (status ${response.status})`);
     }
     
+    // Handle cases where response is OK but success is false (like friendly duplicates)
+    if (result.success === false && !result.friendlyDuplicate) {
+        console.error('[RSVP] API returned success=false', result);
+        throw new Error(result.error || result.message || 'Submission failed');
+    }
+    
     console.info('[RSVP] API success', result);
     return result;
 }
@@ -682,11 +705,6 @@ function validateAndSubmitRSVP() {
     const hasAnyAttendance = mehndiAttending === 'yes' || ceremonyAttending === 'yes' || receptionAttending === 'yes' ||
                             mehndiPartnerAttending === 'yes' || ceremonyPartnerAttending === 'yes' || receptionPartnerAttending === 'yes';
     
-    if (!hasAnyAttendance) {
-        showRSVPError('Please select attendance for at least one person at one event.');
-        return;
-    }
-    
     // If basic validation passes, submit to API
     submitRSVP();
 }
@@ -704,6 +722,15 @@ async function submitRSVP() {
     try {
         // Submit to API
         const result = await submitRSVPToAPI(formData);
+        console.log('🔍 RSVP API Response:', result);
+        
+        // Check if this is a friendly duplicate message
+        if (result.friendlyDuplicate) {
+            console.log('🔍 Detected friendly duplicate, showing welcome message');
+            // Show as a welcome message instead of success
+            showGuestWelcomeMessage(result.message);
+            return; // Don't reset form or send email for duplicates
+        }
         
         // Kick off email send (fire-and-forget)
         sendEmailWithEmailJS(formData, result.message);
@@ -808,7 +835,7 @@ function showGuestWelcomeMessage(message) {
     welcomeDiv.id = 'rsvpWelcome';
     welcomeDiv.className = 'welcome-message';
     welcomeDiv.style.cssText = `
-        background: linear-gradient(135deg, #DCD0A8, #FFF9E5);
+        background: white;
         border: 1px solid #4A9782;
         color: #004030;
         padding: 1rem;
@@ -825,13 +852,6 @@ function showGuestWelcomeMessage(message) {
     
     welcomeDiv.innerHTML = `<i class="fas fa-check-circle" style="color: #4A9782;"></i> ${message}`;
     welcomeDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Auto-hide after 6 seconds
-    setTimeout(() => {
-        if (welcomeDiv) {
-            welcomeDiv.remove();
-        }
-    }, 6000);
 }
 
 // Utility Functions
@@ -863,7 +883,7 @@ window.addEventListener('popstate', function(e) {
 // Handle initial page load with hash
 window.addEventListener('load', function() {
     const hash = window.location.hash.substring(1);
-    if (hash && ['details', 'rsvp'].includes(hash)) {
+    if (hash && ['details', 'rsvp', 'registry'].includes(hash)) {
         showSection(hash);
     } else {
         showSection('details');
@@ -913,6 +933,56 @@ function addScrollAnimations() {
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(addScrollAnimations, 1000); // Delay to ensure everything is loaded
 });
+
+// Adaptive slideshow controller (supports any number of images)
+function initPhotoSlideshow() {
+    const slideshow = document.querySelector('.photo-slideshow');
+    const track = document.querySelector('.photo-slides');
+    if (!slideshow || !track) return;
+
+    const slides = Array.from(track.querySelectorAll('img'));
+    const total = slides.length;
+    if (total <= 1) return; // Nothing to slide
+
+    let index = 0;
+    let paused = false;
+    let timer = null;
+
+    // Ensure starting position
+    track.style.transform = 'translateX(0%)';
+
+    const goTo = (i) => {
+        index = (i + total) % total;
+        const offset = -(index * 100);
+        track.style.transform = `translateX(${offset}%)`;
+    };
+
+    const next = () => { goTo(index + 1); restart(); };
+    const prev = () => { goTo(index - 1); restart(); };
+
+    const start = () => {
+        stop();
+        timer = setInterval(next, 5000); // 5s per slide
+    };
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const restart = () => { if (!paused) { start(); } };
+
+    // Pause on hover (desktop)
+    slideshow.addEventListener('mouseenter', () => { paused = true; stop(); });
+    slideshow.addEventListener('mouseleave', () => { if (paused) { paused = false; start(); } });
+
+    // Reset position on resize to avoid sub-pixel drift
+    window.addEventListener('resize', () => { goTo(index); });
+
+    // Kick off
+    start();
+
+    // Wire buttons if present
+    const prevBtn = slideshow.querySelector('.slide-btn.prev');
+    const nextBtn = slideshow.querySelector('.slide-btn.next');
+    if (prevBtn) prevBtn.addEventListener('click', prev);
+    if (nextBtn) nextBtn.addEventListener('click', next);
+}
 
 // Export functions for testing (if needed)
 if (typeof module !== 'undefined' && module.exports) {

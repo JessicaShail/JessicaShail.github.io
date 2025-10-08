@@ -668,29 +668,23 @@ p {
 
 /* Timeline Section */
 .timeline {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
+    display: flex;
+    height: 100%;
+    transition: transform 0.8s ease-in-out;
+    will-change: transform;
 }
 
 .timeline::before {
     content: '';
-    position: absolute;
-    left: 50%;
+    flex: 0 0 100%;    /* Each slide takes full container width */
+    width: 100%;
     top: 0;
-    bottom: 0;
+    object-fit: contain;     /* Show full image */
+    object-position: center; /* Keep image centered */
     width: 2px;
     background: #DCD0A8;
     transform: translateX(-50%);
-}
-
-.timeline-item {
-    display: flex;
-    margin-bottom: 3rem;
-    position: relative;
-}
-
-.timeline-item:nth-child(odd) {
+/* Sliding is controlled by JS to support any number of slides */
     flex-direction: row;
 }
 
@@ -1340,30 +1334,48 @@ p {
     background: #000;
 }
 
+/* Slideshow Controls */
+.slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    line-height: 1;
+    transition: background 0.2s ease, transform 0.2s ease;
+    z-index: 3;
+}
+
+.slide-btn:hover { background: rgba(0,0,0,0.6); transform: translateY(-50%) scale(1.05); }
+.slide-btn.prev { left: 8px; }
+.slide-btn.next { right: 8px; }
+
 .photo-slides {
     display: flex;
-    width: 300%;            /* Track is 3x container */
     height: 100%;
-    animation: slide-show 18s infinite ease-in-out;
+    transition: transform 0.8s ease-in-out;
+    will-change: transform;
 }
 
 .photo-slides img {
-    flex: 0 0 33.3333%;     /* Each slide is 1/3 of track = 100% of container */
-    width: 33.3333%;
+    flex: 0 0 100%;    /* Each slide takes full container width */
+    width: 100%;
     height: 100%;
     object-fit: contain;     /* Show full image */
+    object-position: center; /* Keep image centered */
     background-color: #000;  /* Letterbox */
 }
 
-@keyframes slide-show {
-    0% { transform: translateX(0%); }
-    28% { transform: translateX(0%); }
-    33% { transform: translateX(-33.3333%); }
-    61% { transform: translateX(-33.3333%); }
-    66% { transform: translateX(-66.6667%); }
-    95% { transform: translateX(-66.6667%); }
-    100% { transform: translateX(0%); }
-}
+/* Sliding is controlled via JS to support any number of images */
 
 @media (max-width: 640px) {
     .photo-slideshow { aspect-ratio: 4 / 3; } /* Taller on mobile for better visibility */
@@ -1375,12 +1387,7 @@ p {
     color: white;
     text-align: center;
     padding: 3rem 0;
-    margin-top: 4rem;
-}
-
-.footer p {
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
+    margin-top: 0rem;
 }
 
 /* Responsive Design */
@@ -1574,5 +1581,86 @@ p {
     
     .rsvp-form {
         padding: 1.5rem;
+    }
+}
+
+/* Registry Section Styles */
+.registry-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+.coming-soon {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid #4A9782;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.coming-soon h3 {
+    color: #004030;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.coming-soon p {
+    color: #333;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.coming-soon i {
+    display: block;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .coming-soon {
+        padding: 3rem 1.5rem;
+    }
+    
+    .coming-soon h3 {
+        font-size: 1.8rem;
+    }
+    
+    .coming-soon p {
+        font-size: 1.1rem;
+    }
+    
+    .coming-soon i {
+        font-size: 2.5rem !important;
+    }
+}
+
+/* Input Tooltip Styles */
+.input-tooltip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.input-tooltip i {
+    color: #4A9782;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .input-tooltip {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
     }
 }

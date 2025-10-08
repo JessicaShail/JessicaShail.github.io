@@ -48,11 +48,26 @@ const validateGuest = async (client, guestName) => {
   return guest; // Guest is available for RSVP
 };
 
-// Check if guest already RSVP'd
-const checkExistingRsvp = async (client, email) => {
-  const query = 'SELECT id FROM rsvps WHERE email = $1';
-  const result = await client.query(query, [email]);
-  return result.rows.length > 0;
+// Check if guest already RSVP'd by email or guest name
+const checkExistingRsvp = async (client, guestName) => {
+  const query = 'SELECT id, guest_name, partner_name FROM rsvps WHERE LOWER(guest_name) = LOWER($1) OR LOWER(partner_name) = LOWER($1)';
+  console.log(`🔍 Executing duplicate check query with: name: "${guestName}"`);
+  
+  const result = await client.query(query, [guestName]);
+  console.log(`🔍 Query returned ${result.rows.length} rows:`, result.rows);
+  
+  if (result.rows.length > 0) {
+    const existingRsvp = result.rows[0];
+    const response = {
+      exists: true,
+      byName: existingRsvp.guest_name.toLowerCase() === guestName.toLowerCase(),
+    };
+    console.log('🔍 Duplicate found, response:', response);
+    return response;
+  }
+  
+  console.log('🔍 No duplicates found');
+  return { exists: false };
 };
 
 // Insert RSVP
@@ -210,17 +225,35 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Check if already RSVP'd
-    const alreadyRsvpd = await checkExistingRsvp(client, rsvpData.email);
-    if (alreadyRsvpd) {
-      return {
-        statusCode: 409,
-        headers,
-        body: JSON.stringify({ 
-          error: 'An RSVP has already been submitted with this email address. Please contact us if you need to make changes.',
-          field: 'email'
-        })
-      };
+    // Check if already RSVP'd by email or name
+    console.log(`🔍 Checking for existing RSVP - Name: ${rsvpData.guestName}`);
+    const existingRsvpCheck = await checkExistingRsvp(client, rsvpData.guestName);
+    console.log('🔍 Existing RSVP check result:', existingRsvpCheck);
+    
+    if (existingRsvpCheck.exists) {
+      if (existingRsvpCheck.byName) {
+        // Same name is trying to RSVP again - show friendly message
+        return {
+          statusCode: 200, // Use 200 status for friendly message
+          headers,
+          body: JSON.stringify({ 
+            success: false,
+            friendlyDuplicate: true,
+            message: `Good to see you again, ${guestValidation.guest_name}! We've already received your RSVP and the system should have sent you a confirmation email. Let us know if you're having any issues.`,
+            field: 'guestName'
+          })
+        };
+      } else {
+        // Different name but same email
+        return {
+          statusCode: 409,
+          headers,
+          body: JSON.stringify({ 
+            error: 'An RSVP has already been submitted with this email address. Please contact us if you need to make changes.',
+            field: 'email'
+          })
+        };
+      }
     }
 
     // Check if at least one person is attending at least one event
@@ -230,17 +263,6 @@ exports.handler = async (event, context) => {
                            rsvpData.partnerMehndiAttending === 'yes' ||
                            rsvpData.partnerCeremonyAttending === 'yes' ||
                            rsvpData.partnerReceptionAttending === 'yes';
-    
-    if (!hasEventSelected) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ 
-          error: 'Please select attendance for at least one person at one event.',
-          field: 'events'
-        })
-      };
-    }
     
     // Set partner name from guest validation if not provided
     if (guestValidation.partner_name && !rsvpData.partnerName) {
@@ -346,7 +368,7 @@ exports.handler = async (event, context) => {
       headers,
       body: JSON.stringify({ 
         success: true,
-        message: ``,
+  message: successMessage,
         rsvpId: rsvpId,
         emailDebug: process.env.NODE_ENV === 'development' ? {
           hasEmailJsKeys: !!(process.env.EMAILJS_PUBLIC_KEY && process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID),
