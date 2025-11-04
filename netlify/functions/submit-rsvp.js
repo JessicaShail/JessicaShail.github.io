@@ -2,6 +2,8 @@
 const { Client } = require('pg');
 const { createRsvpConfirmationEmail } = require('./email-templates');
 
+const net = require('net');
+
 // Database connection
 const getDbClient = () => {
   return new Client({
@@ -10,6 +12,22 @@ const getDbClient = () => {
       rejectUnauthorized: false
     }
   });
+};
+
+// Retry wrapper for transient DB connection errors
+const connectWithRetry = async (client, maxAttempts = 3, delayMs = 1000) => {
+  let attempt = 0;
+  while (attempt < maxAttempts) {
+    try {
+      await client.connect();
+      return;
+    } catch (err) {
+      attempt += 1;
+      console.warn(`DB connect attempt ${attempt} failed:`, err.message);
+      if (attempt >= maxAttempts) throw err;
+      await new Promise((res) => setTimeout(res, delayMs));
+    }
+  }
 };
 
 // Guest list validation with tier checking
@@ -134,14 +152,24 @@ exports.handler = async (event, context) => {
 
   const client = getDbClient();
 
+  // Helper to sanitize X-Forwarded-For / remote IP values and return a single IP
+  const sanitizeIp = (ipHeader) => {
+    if (!ipHeader || typeof ipHeader !== 'string') return null;
+    // X-Forwarded-For can contain a list like "1.2.3.4, 5.6.7.8" - take the first one
+    const first = ipHeader.split(',')[0].trim();
+    // Use node's net.isIP to validate (returns 0/4/6)
+    if (net.isIP(first)) return first;
+    return null;
+  };
+
   try {
-    await client.connect();
+    await connectWithRetry(client);
     
     // Parse request body
     const data = JSON.parse(event.body);
     
     // Extract client info
-    const clientIP = event.headers['x-forwarded-for'] || event.headers['x-real-ip'] || 'unknown';
+  const clientIPHeader = event.headers['x-forwarded-for'] || event.headers['x-real-ip'] || null;
     const userAgent = event.headers['user-agent'] || 'unknown';
     
     const rsvpData = {
@@ -162,7 +190,7 @@ exports.handler = async (event, context) => {
       'song-requests': data['song-requests'],
       advice: data.advice,
       message: data.message,
-      ipAddress: clientIP,
+      ipAddress: sanitizeIp(clientIPHeader),
       userAgent: userAgent
     };
 
