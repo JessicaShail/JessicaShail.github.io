@@ -28,9 +28,12 @@
         <input id="reserve-qty" type="number" min="1" value="1" />
       </div>
       <label for="reserver-name">Your name</label>
-      <input id="reserver-name" type="text" />
-      <label for="reserver-email">Your email</label>
-      <input id="reserver-email" type="email" />
+      <div class="autocomplete-container">
+        <input id="reserver-name" type="text" autocomplete="off" />
+        <div id="reserverSuggestions" class="autocomplete-suggestions" aria-label="Suggestions"></div>
+      </div>
+  <label for="reserver-email">Your email</label>
+  <input id="reserver-email" type="email" />
       <label for="reserve-note">Note (optional)</label>
       <textarea id="reserve-note"></textarea>
       <div style="display:flex;gap:.5rem;align-items:center;margin-top:.75rem;">

@@ -39,6 +39,45 @@ function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':
 
 let currentGift = null;
 
+// Autocomplete state for reserver name
+let suggTimeout = null;
+let currentSuggestions = [];
+let selectedSuggestionIndex = -1;
+
+function hideReserverSuggestions(){
+  const box = $('reserverSuggestions'); if (!box) return;
+  box.classList.remove('show');
+  box.innerHTML = '';
+  selectedSuggestionIndex = -1;
+  currentSuggestions = [];
+}
+
+function showReserverSuggestions(items){
+  const box = $('reserverSuggestions'); if (!box) return;
+  if (!items || items.length === 0) { hideReserverSuggestions(); return; }
+  box.innerHTML = items.map((g,i)=>{
+    const partner = g.partner_name || g.partner || '';
+    const details = partner ? partner : (g.email || '');
+    return `<div class="suggestion-item" data-index="${i}"><div class="suggestion-name">${escapeHtml(g.guest_name)}</div><div class="suggestion-details">${escapeHtml(details)}</div></div>`;
+  }).join('');
+  box.classList.add('show');
+  currentSuggestions = items;
+  selectedSuggestionIndex = -1;
+  // attach click handlers
+  box.querySelectorAll('.suggestion-item').forEach(el=> el.addEventListener('click', (e)=>{
+    const idx = Number(el.dataset.index);
+    selectSuggestionByIndex(idx);
+  }));
+}
+
+function selectSuggestionByIndex(i){
+  if (!currentSuggestions[i]) return;
+  const g = currentSuggestions[i];
+  $('reserver-name').value = g.guest_name;
+  if (g.email) $('reserver-email').value = g.email;
+  hideReserverSuggestions();
+}
+
 function onView(e){
   const id = e.currentTarget.dataset.id;
   openModal(id);
@@ -124,6 +163,41 @@ async function openModal(id){
   }
 }
 
+// Initialize reserver-name autocomplete behaviors
+function initReserverAutocomplete(){
+  const input = $('reserver-name');
+  const box = $('reserverSuggestions');
+  if (!input || !box) return;
+
+  input.addEventListener('input', ()=>{
+    const q = input.value.trim();
+    clearTimeout(suggTimeout);
+    if (q.length < 2) { hideReserverSuggestions(); return; }
+    suggTimeout = setTimeout(async ()=>{
+      try {
+        const res = await fetch(`${GIFT_API_BASE}/get-attending-guests?q=${encodeURIComponent(q)}`);
+        if (!res.ok) { hideReserverSuggestions(); return; }
+        const json = await res.json();
+        // server returns rows with guest_name and email; map to expected shape
+        const guests = (json.guests || []).map(r => ({ guest_name: r.guest_name, partner_name: r.partner_name, email: r.email }));
+        showReserverSuggestions(guests);
+      } catch(e){ hideReserverSuggestions(); }
+    }, 250);
+  });
+
+  input.addEventListener('keydown', (e)=>{
+    const boxEl = $('reserverSuggestions'); if (!boxEl || !boxEl.classList.contains('show')) return;
+    const items = boxEl.querySelectorAll('.suggestion-item');
+    if (e.key === 'ArrowDown') { e.preventDefault(); selectedSuggestionIndex = Math.min(selectedSuggestionIndex+1, items.length-1); items.forEach((it,idx)=> it.classList.toggle('highlighted', idx===selectedSuggestionIndex)); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); selectedSuggestionIndex = Math.max(selectedSuggestionIndex-1, 0); items.forEach((it,idx)=> it.classList.toggle('highlighted', idx===selectedSuggestionIndex)); }
+    if (e.key === 'Enter') { e.preventDefault(); if (selectedSuggestionIndex>=0) selectSuggestionByIndex(selectedSuggestionIndex); }
+    if (e.key === 'Escape') { hideReserverSuggestions(); }
+  });
+
+  // hide on outside click
+  document.addEventListener('click', (e)=>{ const c = $('reserver-name'); const box = $('reserverSuggestions'); if (!c || !box) return; if (!c.contains(e.target) && !box.contains(e.target)) hideReserverSuggestions(); });
+}
+
 $('modal-close').addEventListener('click', () => { $('gift-modal').hidden = true; });
 
 $('reserve-btn').addEventListener('click', async () => {
@@ -164,4 +238,5 @@ async function load(){
 // expose init function so the SPA can call it when showing the registry
 export async function initGifts(){
   await load();
+  initReserverAutocomplete();
 }

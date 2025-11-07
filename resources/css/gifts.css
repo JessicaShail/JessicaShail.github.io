@@ -64,3 +64,21 @@
   .gift-card img { height: 140px; }
   .admin-list .gift-card { flex-direction: column; align-items:flex-start; }
 }
+
+/* Autocomplete suggestions */
+.autocomplete-container { position: relative; }
+.autocomplete-suggestions {
+  position: absolute;
+  left: 0; right: 0; top: 100%;
+  background: white;
+  border: 1px solid #e6ded9;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  z-index: 2000;
+  max-height: 220px; overflow: auto;
+  display: none;
+}
+.autocomplete-suggestions.show { display: block; }
+.autocomplete-suggestions .suggestion-item { padding: 0.6rem; cursor: pointer; border-bottom: 1px solid #f2f0ee; }
+.autocomplete-suggestions .suggestion-item:hover, .autocomplete-suggestions .suggestion-item.highlighted { background: #f7f7f7; }
+.autocomplete-suggestions .suggestion-name { font-weight:700; color:var(--site-dark); }
+.autocomplete-suggestions .suggestion-details { font-size:0.9rem; color:var(--muted); }
