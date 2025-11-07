@@ -21,14 +21,17 @@ async function loadAdminGifts(){
 function renderAdminList(gifts){
   const c = $('admin-gifts-list');
   c.innerHTML = '';
+  c.classList.add('admin-list');
   gifts.forEach(g => {
     const div = document.createElement('div');
     div.className = 'gift-card';
     div.innerHTML = `
       <div class="gift-title">${g.title} (id: ${g.id})</div>
       <div>Qty: ${g.quantity} reserved: ${g.reserved_count}</div>
-      <button data-id="${g.id}" class="edit">Edit</button>
-      <button data-id="${g.id}" class="delete">Delete</button>
+      <div class="admin-controls">
+        <button data-id="${g.id}" class="edit btn btn-secondary">Edit</button>
+        <button data-id="${g.id}" class="delete btn btn-danger">Delete</button>
+      </div>
     `;
     c.appendChild(div);
   });

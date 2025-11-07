@@ -19,7 +19,7 @@ function renderGifts(gifts) {
       <div class="gift-title">${escapeHtml(g.title)}</div>
       <div class="gift-price">${g.price ? ('$' + Number(g.price).toFixed(2)) : ''}</div>
       <div class="gift-qty">Available: ${g.quantity - g.reserved_count}</div>
-      <button data-id="${g.id}" class="gift-view">View</button>
+      <div class="actions"><button data-id="${g.id}" class="gift-view btn btn-primary">View</button></div>
     `;
     container.appendChild(card);
   });

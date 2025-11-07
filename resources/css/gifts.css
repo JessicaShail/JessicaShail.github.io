@@ -1,20 +1,66 @@
 /* Minimal styles for gift registry */
+:root{
+  --site-green: #427a5e;
+  --site-dark: #004030;
+  --card-radius: 15px;
+  --btn-radius: 10px;
+  --muted: #666;
+}
+
 .gifts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  margin: 1rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0;
 }
+
 .gift-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 0.75rem;
-  background: white;
+  background: #ffffff;
+  border-radius: var(--card-radius);
+  padding: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.gift-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
-.gift-title { font-weight: bold; margin: 0.5rem 0; }
-.gift-price { color: #333; }
-.modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); }
+.gift-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,0.08); }
+
+.gift-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; display:block; }
+
+.gift-title { font-weight: 700; margin: 0.5rem 0; color: var(--site-dark); font-size: 1.05rem; }
+.gift-price { color: var(--site-dark); font-weight: 600; margin-bottom: 0.5rem; }
+.gift-qty { color: var(--muted); font-size: 0.95rem; margin-bottom: 0.5rem; }
+
+/* Buttons */
+.btn { display: inline-block; padding: 0.6rem 1rem; border-radius: var(--btn-radius); border: none; cursor: pointer; font-weight: 600; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.btn:focus { outline: 3px solid rgba(66,122,94,0.12); }
+.btn-primary { background: var(--site-green); color: white; }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: #8F8D91; color: white; }
+.btn-danger { background: #e74c3c; color: white; }
+
+.gift-card .actions { display:flex; gap:0.5rem; margin-top:0.75rem; }
+.gift-card .actions button { flex: 1; }
+
+/* Modal adjustments to match site */
+.modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.45); z-index: 1200; }
 .modal[hidden] { display: none; }
-.modal-content { background: white; padding: 1rem; border-radius: 8px; width: 90%; max-width: 600px; }
-.modal-close { float: right; }
+.modal-content { background: white; padding: 1.5rem; border-radius: 20px; width: 92%; max-width: 720px; box-shadow: 0 30px 60px rgba(0,0,0,0.12); }
+.modal-close { float: right; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
+
+/* Admin list */
+.admin-list { display:flex; flex-direction: column; gap: 0.75rem; }
+.admin-list .gift-card { flex-direction: row; gap: 1rem; align-items: center; }
+.admin-list .gift-card img { width: 120px; height: 80px; flex-shrink: 0; }
+.admin-controls { display:flex; gap:0.5rem; }
+
+/* Create form */
+#create label { display:block; margin-bottom:0.5rem; font-weight:600; color:var(--site-dark); }
+#create input, #create textarea { width:100%; padding:0.6rem; border:1px solid #e6ded9; border-radius:8px; margin-bottom:0.5rem; }
+#create .btn { margin-top:0.5rem; }
+
+@media (max-width:600px){
+  .gift-card img { height: 140px; }
+  .admin-list .gift-card { flex-direction: column; align-items:flex-start; }
+}
