@@ -20,6 +20,21 @@
   to = "/admin.html"
   status = 200
 
+[[redirects]]
+  from = "/gifts"
+  to = "/gifts.html"
+  status = 200
+
+[[redirects]]
+  from = "/gifts-admin"
+  to = "/gifts-admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/gifts"
+  to = "/gifts-admin.html"
+  status = 200
+
 # Force HTTPS on primary domains (required for HSTS preload)
 [[redirects]]
   from = "http://chalowedding.ca/*"
