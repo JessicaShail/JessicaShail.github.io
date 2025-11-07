@@ -2,6 +2,9 @@ const GIFT_API_BASE = '/.netlify/functions';
 
 const $ = (id) => document.getElementById(id);
 
+// Simple in-memory cache for gifts to avoid extra network roundtrips
+const giftsCache = new Map();
+
 async function fetchGifts() {
   const res = await fetch(`${GIFT_API_BASE}/get-gifts`);
   const json = await res.json();
@@ -11,7 +14,13 @@ async function fetchGifts() {
 function renderGifts(gifts) {
   const container = $('gifts-list');
   container.innerHTML = '';
+  if (!gifts || gifts.length === 0) {
+    container.innerHTML = `<div class="coming-soon"><h3>Coming Soon...</h3></div>`;
+    return;
+  }
   gifts.forEach(g => {
+    // cache basic gift info for instant UI
+    giftsCache.set(g.id, g);
     const card = document.createElement('div');
     card.className = 'gift-card';
     card.innerHTML = `
@@ -36,23 +45,83 @@ function onView(e){
 }
 
 async function openModal(id){
-  const res = await fetch(`${GIFT_API_BASE}/get-gift?id=${encodeURIComponent(id)}`);
-  if (!res.ok) return alert('Failed to load');
-  const { gift } = await res.json();
-  currentGift = gift;
-  $('gift-title').textContent = gift.title;
-  $('gift-image').src = gift.image_url || 'resources/images/Celebration.png';
-  $('gift-image').alt = gift.title;
-  $('gift-desc').textContent = gift.description || '';
-  $('gift-price').textContent = gift.price ? '$' + Number(gift.price).toFixed(2) : '';
-  $('gift-qty').textContent = `Available: ${gift.quantity - gift.reserved_count}`;
-  $('reserve-qty').max = Math.max(1, gift.quantity - gift.reserved_count);
+  // Show modal immediately with a loading state to reduce perceived latency
+  currentGift = null;
+  $('gift-title').textContent = 'Loading…';
+  $('gift-image').src = '/resources/images/Celebration.png';
+  $('gift-image').alt = 'Loading';
+  $('gift-desc').textContent = '';
+  $('gift-price').textContent = '';
+  $('gift-qty').textContent = '';
+  $('reserve-qty').max = 1;
   $('reserve-qty').value = 1;
   $('reserver-name').value = '';
   $('reserver-email').value = '';
   $('reserve-note').value = '';
   $('reserve-feedback').textContent = '';
+  // disable reserve until we know availability
+  try { $('reserve-btn').disabled = true; } catch(e){}
   $('gift-modal').hidden = false;
+
+  // If we have cached data, show it immediately while we refresh from the server
+  const cached = giftsCache.get(id);
+  if (cached) {
+    currentGift = cached;
+    $('gift-title').textContent = cached.title || 'Gift';
+    $('gift-image').src = cached.image_url ? (cached.image_url) : '/resources/images/Celebration.png';
+    $('gift-image').alt = cached.title || '';
+    $('gift-desc').textContent = cached.description || '';
+    // show purchase link if available in cached data
+    if (cached.purchase_url) {
+      const a = $('gift-purchase');
+      a.href = cached.purchase_url;
+      a.style.display = '';
+    } else {
+      const a = $('gift-purchase'); if (a) a.style.display = 'none';
+    }
+    $('gift-price').textContent = cached.price ? '$' + Number(cached.price).toFixed(2) : '';
+    const avail = (cached.quantity || 0) - (cached.reserved_count || 0);
+    $('gift-qty').textContent = `Available: ${avail}`;
+    $('reserve-qty').max = Math.max(1, avail);
+    $('reserve-qty').value = Math.min(1, Math.max(1, $('reserve-qty').value));
+    if (avail > 0) { try { $('reserve-btn').disabled = false; } catch(e){} }
+  }
+
+  // Fetch the authoritative gift details and update the modal when done
+  try {
+    const res = await fetch(`${GIFT_API_BASE}/get-gift?id=${encodeURIComponent(id)}`);
+    if (res.ok) {
+      const { gift } = await res.json();
+      if (gift) {
+        giftsCache.set(gift.id, gift);
+        currentGift = gift;
+        $('gift-title').textContent = gift.title || 'Gift';
+        $('gift-image').src = gift.image_url ? gift.image_url : '/resources/images/Celebration.png';
+        $('gift-image').alt = gift.title || '';
+        $('gift-desc').textContent = gift.description || '';
+        // show purchase link if present
+        if (gift.purchase_url) {
+          const a = $('gift-purchase');
+          a.href = gift.purchase_url;
+          a.style.display = '';
+        } else {
+          const a = $('gift-purchase'); if (a) a.style.display = 'none';
+        }
+        $('gift-price').textContent = gift.price ? '$' + Number(gift.price).toFixed(2) : '';
+        const available = (gift.quantity || 0) - (gift.reserved_count || 0);
+        $('gift-qty').textContent = `Available: ${available}`;
+        $('reserve-qty').max = Math.max(1, available);
+        $('reserve-qty').value = 1;
+        $('reserve-feedback').textContent = '';
+        $('reserve-btn').disabled = available <= 0;
+      }
+    } else {
+      $('reserve-feedback').textContent = 'Failed to load details';
+    }
+  } catch (err) {
+    console.error('Failed to fetch gift details', err);
+    $('reserve-feedback').textContent = 'Network error';
+  }
 }
 
 $('modal-close').addEventListener('click', () => { $('gift-modal').hidden = true; });

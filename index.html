@@ -476,18 +476,23 @@
                 <h2 id="gift-title"></h2>
                 <img id="gift-image" src="" alt="" />
                 <p id="gift-desc"></p>
-                <p id="gift-price"></p>
-                <p id="gift-qty"></p>
-                <label for="reserve-qty">Quantity</label>
-                <input id="reserve-qty" type="number" min="1" value="1" />
-                <label for="reserver-name">Your name</label>
-                <input id="reserver-name" type="text" />
-                <label for="reserver-email">Your email</label>
-                <input id="reserver-email" type="email" />
-                <label for="reserve-note">Note (optional)</label>
-                <textarea id="reserve-note"></textarea>
-                <button id="reserve-btn" class="btn btn-primary">Reserve</button>
-                <div id="reserve-feedback" role="status"></div>
+                                <p id="gift-price"></p>
+                                <p id="gift-qty"></p>
+                                <div class="modal-actions">
+                                    <a id="gift-purchase" class="btn btn-secondary" href="#" target="_blank" rel="noopener" style="display:none;">Buy / Purchase</a>
+                                    <label for="reserve-qty">Quantity</label>
+                                    <input id="reserve-qty" type="number" min="1" value="1" />
+                                </div>
+                                <label for="reserver-name">Your name</label>
+                                <input id="reserver-name" type="text" />
+                                <label for="reserver-email">Your email</label>
+                                <input id="reserver-email" type="email" />
+                                <label for="reserve-note">Note (optional)</label>
+                                <textarea id="reserve-note"></textarea>
+                                <div style="display:flex;gap:.5rem;align-items:center;margin-top:.75rem;">
+                                    <button id="reserve-btn" class="btn btn-primary">Reserve</button>
+                                    <div id="reserve-feedback" role="status" style="margin-left:.5rem"></div>
+                                </div>
               </div>
             </div>
         </section>
