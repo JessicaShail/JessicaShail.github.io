@@ -8,7 +8,7 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["pg"]
+  external_node_modules = ["pg", "@neondatabase/serverless"]
 
 # Environment variables (set these in Netlify dashboard)
 # NEON_DATABASE_URL = "postgresql://username:password@host:5432/database"
@@ -60,11 +60,7 @@
   [redirects.conditions]
     Host = "www.chalowedding.ca"
 
-# Ensure functions are not rewritten by SPA fallback
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+
 
 # Headers for security (global)
 [[headers]]
