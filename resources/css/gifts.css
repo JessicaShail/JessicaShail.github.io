@@ -49,6 +49,21 @@
 .modal-content { background: white; padding: 1.5rem; border-radius: 20px; width: 92%; max-width: 720px; box-shadow: 0 30px 60px rgba(0,0,0,0.12); }
 .modal-close { float: right; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
 
+/* Layout for actions area inside modal: align purchase button and quantity inline */
+.modal-actions { display:flex; align-items:center; gap:0.75rem; margin-bottom: 0.75rem; }
+.modal-actions a#gift-purchase { flex: 0 0 auto; }
+.modal-actions .form-group { margin: 0; }
+.modal-actions label { display:block; margin-bottom:0.25rem; }
+
+/* Reserve button alignment and sizing */
+.reserve-row { display:flex; align-items:center; justify-content:center; gap:0.5rem; }
+.reserve-action button#reserve-btn { padding: 0.6rem 1rem; border-radius: var(--btn-radius); font-weight:600; }
+/* Make reserve button visually similar width as purchase button on larger screens */
+@media (min-width:480px){
+  .reserve-action { min-width: 140px; }
+  .reserve-action button#reserve-btn { width:100%; }
+}
+
 /* Make modal inputs match RSVP form inputs for consistent styling */
 .modal-content label { display: block; margin-top: 0.75rem; margin-bottom: 0.35rem; font-weight: 600; color: var(--site-dark); }
 .modal-content input,
