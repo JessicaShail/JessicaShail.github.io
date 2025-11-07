@@ -479,14 +479,16 @@
                 <p id="gift-price"></p>
                 <p id="gift-qty"></p>
                 <div class="modal-actions">
-                    <div class="action-buttons" style="display:flex;gap:0.5rem;align-items:center;">
-                        <a id="gift-purchase" class="btn btn-primary action-equal" href="#" target="_blank" rel="noopener" style="display:none;" aria-describedby="purchase-tooltip">Buy / Purchase</a>
-                        <button id="reserve-btn" class="btn btn-primary action-equal" type="button">Reserve</button>
-                    </div>
-                    <span id="purchase-tooltip" class="input-tooltip" style="display:none;margin-left:0.5rem;">Opens retailer site in new tab</span>
-                    <div class="form-group" style="display:inline-block;margin-left:1rem;vertical-align:middle;">
+                    <div class="action-item quantity">
                         <label for="reserve-qty">Quantity</label>
                         <input id="reserve-qty" type="number" min="1" value="1" aria-label="Quantity to reserve" />
+                    </div>
+                    <div class="action-item buy">
+                        <a id="gift-purchase" class="btn btn-primary action-equal" href="#" target="_blank" rel="noopener" style="display:none;" aria-describedby="purchase-tooltip">Buy / Purchase</a>
+                        <span id="purchase-tooltip" class="input-tooltip" style="display:none;">Opens retailer site in new tab</span>
+                    </div>
+                    <div class="action-item reserve">
+                        <button id="reserve-btn" class="btn btn-primary action-equal" type="button">Reserve</button>
                     </div>
                 </div>
 

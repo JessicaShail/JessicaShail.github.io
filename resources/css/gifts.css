@@ -53,10 +53,22 @@
 .modal-close { float: right; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
 
 /* Layout for actions area inside modal: align purchase button and quantity inline */
-.modal-actions { display:flex; align-items:center; gap:0.75rem; margin-bottom: 0.75rem; }
-.modal-actions a#gift-purchase { flex: 0 0 auto; }
-.modal-actions .form-group { margin: 0; }
-.modal-actions label { display:block; margin-bottom:0.25rem; }
+.modal-actions { display:flex; gap:0.75rem; margin-bottom: 0.75rem; align-items:center; flex-wrap:wrap; }
+
+/* Structured action items: quantity, buy, reserve */
+.modal-actions .action-item { display:flex; flex-direction:column; gap:0.35rem; min-width: 0; }
+.modal-actions .action-item label { font-weight:600; color:var(--site-dark); font-size:0.95rem; }
+.modal-actions .action-item.quantity { flex: 0 0 auto; display:flex; flex-direction:row; align-items:center; gap:0.5rem; }
+.modal-actions .action-item.quantity input { width:5.5rem; }
+.modal-actions .action-item.buy, .modal-actions .action-item.reserve { flex: 1 1 140px; display:flex; align-items:center; }
+.modal-actions .action-item.buy .input-tooltip { margin-left:0.5rem; }
+.modal-actions .action-item.buy .action-equal, .modal-actions .action-item.reserve .action-equal { width:100%; }
+
+@media (max-width:520px){
+  .modal-actions { flex-direction:column; align-items:stretch; }
+  .modal-actions .action-item.buy, .modal-actions .action-item.reserve { width:100%; }
+  .modal-actions .action-item.quantity { justify-content:flex-start; }
+}
 
 /* Reserve button alignment and sizing */
 .reserve-row { display:flex; align-items:center; justify-content:center; gap:0.5rem; }
