@@ -1,0 +1,141 @@
+/**
+ * Netlify Function: Get Pending RSVPs
+ * Returns a list of guests who haven't responded to their RSVP
+ * 
+ * Usage: GET /.netlify/functions/get-pending-rsvps
+ * 
+ * Query Parameters:
+ * - password: Admin password for authentication
+ * - urgency: Filter by urgency level (urgent, high, normal, all) - default: all
+ * - invitedBy: Filter by who invited them - optional
+ */
+
+const { neon } = require('@neondatabase/serverless');
+
+// Helper function to validate admin password
+function validateAdminPassword(password) {
+    const adminPassword = process.env.ADMIN_PASSWORD || 'wedding2025';
+    return password === adminPassword;
+}
+
+exports.handler = async (event, context) => {
+    // Only allow GET requests
+    if (event.httpMethod !== 'GET') {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: 'Method not allowed' })
+        };
+    }
+
+    try {
+        // Parse query parameters
+        const params = event.queryStringParameters || {};
+        const { password, urgency = 'all', invitedBy } = params;
+
+        // Validate admin password
+        if (!validateAdminPassword(password)) {
+            return {
+                statusCode: 401,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    error: 'Unauthorized',
+                    message: 'Invalid admin password'
+                })
+            };
+        }
+
+        // Connect to database
+        const sql = neon(process.env.DATABASE_URL);
+
+        // Build query based on filters
+        let query = `
+            SELECT 
+                id,
+                guest_name,
+                partner_name,
+                invited_by,
+                max_guests,
+                notes,
+                TO_CHAR(invited_at, 'YYYY-MM-DD') as invited_at,
+                TO_CHAR(rsvp_deadline, 'YYYY-MM-DD') as rsvp_deadline,
+                days_until_deadline,
+                CASE 
+                    WHEN days_until_deadline <= 7 THEN 'Urgent'
+                    WHEN days_until_deadline <= 14 THEN 'High Priority'
+                    WHEN days_until_deadline <= 30 THEN 'Normal'
+                    ELSE 'Low Priority'
+                END as urgency_level
+            FROM pending_rsvps
+            WHERE 1=1
+        `;
+
+        const queryParams = [];
+
+        // Add urgency filter
+        if (urgency !== 'all') {
+            if (urgency === 'urgent') {
+                query += ' AND days_until_deadline <= 7';
+            } else if (urgency === 'high') {
+                query += ' AND days_until_deadline <= 14';
+            } else if (urgency === 'normal') {
+                query += ' AND days_until_deadline <= 30';
+            }
+        }
+
+        // Add invitedBy filter
+        if (invitedBy) {
+            queryParams.push(invitedBy);
+            query += ` AND invited_by = $${queryParams.length}`;
+        }
+
+        // Order by urgency
+        query += ' ORDER BY days_until_deadline ASC';
+
+        // Execute query
+        const pendingRsvps = await sql(query, queryParams);
+
+        // Calculate summary statistics
+        const summary = {
+            total_pending: pendingRsvps.length,
+            urgent: pendingRsvps.filter(r => r.urgency_level === 'Urgent').length,
+            high_priority: pendingRsvps.filter(r => r.urgency_level === 'High Priority').length,
+            normal: pendingRsvps.filter(r => r.urgency_level === 'Normal').length,
+            low_priority: pendingRsvps.filter(r => r.urgency_level === 'Low Priority').length,
+            overdue: pendingRsvps.filter(r => r.days_until_deadline < 0).length
+        };
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+            },
+            body: JSON.stringify({
+                success: true,
+                summary,
+                pending_rsvps: pendingRsvps,
+                filters_applied: {
+                    urgency: urgency !== 'all' ? urgency : 'none',
+                    invited_by: invitedBy || 'all'
+                }
+            })
+        };
+
+    } catch (error) {
+        console.error('Error fetching pending RSVPs:', error);
+        return {
+            statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                error: 'Internal server error',
+                message: error.message
+            })
+        };
+    }
+};
+
+

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gift Registry</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="resources/css/gifts.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Gift Registry</h1>
+    <div id="gifts-list" class="gifts-grid" aria-live="polite"></div>
+  </div>
+
+  <!-- Detail modal -->
+  <div id="gift-modal" class="modal" hidden>
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="gift-title">
+      <button id="modal-close" class="modal-close" aria-label="Close">×</button>
+      <h2 id="gift-title"></h2>
+      <img id="gift-image" src="" alt="" />
+      <p id="gift-desc"></p>
+      <p id="gift-price"></p>
+      <p id="gift-qty"></p>
+      <label for="reserve-qty">Quantity</label>
+      <input id="reserve-qty" type="number" min="1" value="1" />
+      <label for="reserver-name">Your name</label>
+      <input id="reserver-name" type="text" />
+      <label for="reserver-email">Your email</label>
+      <input id="reserver-email" type="email" />
+      <label for="reserve-note">Note (optional)</label>
+      <textarea id="reserve-note"></textarea>
+      <button id="reserve-btn">Reserve</button>
+      <div id="reserve-feedback" role="status"></div>
+    </div>
+  </div>
+
+  <script src="resources/js/gifts.js" defer></script>
+</body>
+</html>
