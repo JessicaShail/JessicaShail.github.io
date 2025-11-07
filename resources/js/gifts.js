@@ -58,7 +58,8 @@ function showReserverSuggestions(items){
   box.innerHTML = items.map((g,i)=>{
     const partner = g.partner_name || g.partner || '';
     const details = partner ? partner : (g.email || '');
-    return `<div class="suggestion-item" data-index="${i}"><div class="suggestion-name">${escapeHtml(g.guest_name)}</div><div class="suggestion-details">${escapeHtml(details)}</div></div>`;
+    // add role and aria-selected for better screen reader support
+    return `<div class="suggestion-item" role="option" aria-selected="false" data-index="${i}"><div class="suggestion-name">${escapeHtml(g.guest_name)}</div><div class="suggestion-details">${escapeHtml(details)}</div></div>`;
   }).join('');
   box.classList.add('show');
   currentSuggestions = items;
@@ -75,6 +76,9 @@ function selectSuggestionByIndex(i){
   const g = currentSuggestions[i];
   $('reserver-name').value = g.guest_name;
   if (g.email) $('reserver-email').value = g.email;
+  // announce selection for screen readers
+  const feedback = $('reserve-feedback');
+  if (feedback) feedback.textContent = `Selected ${g.guest_name}`;
   hideReserverSuggestions();
 }
 
@@ -188,8 +192,24 @@ function initReserverAutocomplete(){
   input.addEventListener('keydown', (e)=>{
     const boxEl = $('reserverSuggestions'); if (!boxEl || !boxEl.classList.contains('show')) return;
     const items = boxEl.querySelectorAll('.suggestion-item');
-    if (e.key === 'ArrowDown') { e.preventDefault(); selectedSuggestionIndex = Math.min(selectedSuggestionIndex+1, items.length-1); items.forEach((it,idx)=> it.classList.toggle('highlighted', idx===selectedSuggestionIndex)); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); selectedSuggestionIndex = Math.max(selectedSuggestionIndex-1, 0); items.forEach((it,idx)=> it.classList.toggle('highlighted', idx===selectedSuggestionIndex)); }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedSuggestionIndex = Math.min(selectedSuggestionIndex+1, items.length-1);
+        items.forEach((it,idx)=>{
+          const selected = idx===selectedSuggestionIndex;
+          it.classList.toggle('highlighted', selected);
+          it.setAttribute('aria-selected', selected ? 'true' : 'false');
+        });
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedSuggestionIndex = Math.max(selectedSuggestionIndex-1, 0);
+        items.forEach((it,idx)=>{
+          const selected = idx===selectedSuggestionIndex;
+          it.classList.toggle('highlighted', selected);
+          it.setAttribute('aria-selected', selected ? 'true' : 'false');
+        });
+      }
     if (e.key === 'Enter') { e.preventDefault(); if (selectedSuggestionIndex>=0) selectSuggestionByIndex(selectedSuggestionIndex); }
     if (e.key === 'Escape') { hideReserverSuggestions(); }
   });

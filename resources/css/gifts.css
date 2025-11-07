@@ -49,6 +49,43 @@
 .modal-content { background: white; padding: 1.5rem; border-radius: 20px; width: 92%; max-width: 720px; box-shadow: 0 30px 60px rgba(0,0,0,0.12); }
 .modal-close { float: right; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
 
+/* Make modal inputs match RSVP form inputs for consistent styling */
+.modal-content label { display: block; margin-top: 0.75rem; margin-bottom: 0.35rem; font-weight: 600; color: var(--site-dark); }
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #666666;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: 'Playfair Display', serif;
+  box-sizing: border-box;
+}
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  outline: none;
+  border-color: var(--site-dark);
+  box-shadow: 0 0 0 3px rgba(74, 151, 130, 0.1);
+}
+.modal-content textarea { min-height: 100px; resize: vertical; }
+
+/* Reserve quantity input should be compact but visually consistent */
+#reserve-qty { width: 5.5rem; display: inline-block; vertical-align: middle; }
+#reserve-qty:focus { outline: none; border-color: var(--site-dark); box-shadow: 0 0 0 3px rgba(74, 151, 130, 0.08); }
+
+/* Ensure .form-group styles apply inside modal for consistent spacing */
+.modal-content .form-group { margin-bottom: 1rem; }
+.modal-content .form-group label { margin-bottom: 0.35rem; }
+
+/* Purchase link tooltip styling */
+.input-tooltip { display:inline-block; background:#FFF9E5; border-left:4px solid #DCD0A8; padding:0.5rem 0.75rem; border-radius:6px; font-size:0.9rem; color:var(--site-dark); margin-left:0.75rem; }
+.modal-content #purchase-tooltip { display:none; margin-left:0.5rem; }
+.modal-content a#gift-purchase[style*="display:none"] + #purchase-tooltip { display:none; }
+.modal-content a#gift-purchase[style*="display:"] + #purchase-tooltip { display:inline-block; }
+
 /* Admin list */
 .admin-list { display:flex; flex-direction: column; gap: 0.75rem; }
 .admin-list .gift-card { flex-direction: row; gap: 1rem; align-items: center; }

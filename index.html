@@ -476,26 +476,37 @@
                 <h2 id="gift-title"></h2>
                 <img id="gift-image" src="" alt="" />
                 <p id="gift-desc"></p>
-                                <p id="gift-price"></p>
-                                <p id="gift-qty"></p>
-                                <div class="modal-actions">
-                                    <a id="gift-purchase" class="btn btn-secondary" href="#" target="_blank" rel="noopener" style="display:none;">Buy / Purchase</a>
-                                    <label for="reserve-qty">Quantity</label>
-                                    <input id="reserve-qty" type="number" min="1" value="1" />
-                                </div>
-                                                <label for="reserver-name">Your name</label>
-                                                <div class="autocomplete-container">
-                                                    <input id="reserver-name" type="text" autocomplete="off" />
-                                                    <div id="reserverSuggestions" class="autocomplete-suggestions" aria-label="Suggestions"></div>
-                                                </div>
-                                <label for="reserver-email">Your email</label>
-                                <input id="reserver-email" type="email" />
-                                <label for="reserve-note">Note (optional)</label>
-                                <textarea id="reserve-note"></textarea>
-                                <div style="display:flex;gap:.5rem;align-items:center;margin-top:.75rem;">
-                                    <button id="reserve-btn" class="btn btn-primary">Reserve</button>
-                                    <div id="reserve-feedback" role="status" style="margin-left:.5rem"></div>
-                                </div>
+                <p id="gift-price"></p>
+                <p id="gift-qty"></p>
+                <div class="modal-actions">
+                    <a id="gift-purchase" class="btn btn-secondary" href="#" target="_blank" rel="noopener" style="display:none;" aria-describedby="purchase-tooltip">Buy / Purchase</a>
+                    <span id="purchase-tooltip" class="input-tooltip" style="display:none;">Opens retailer site in new tab</span>
+                    <div class="form-group" style="display:inline-block;margin-left:1rem;vertical-align:middle;">
+                        <label for="reserve-qty">Quantity</label>
+                        <input id="reserve-qty" type="number" min="1" value="1" aria-label="Quantity to reserve" />
+                    </div>
+                </div>
+
+                <div class="form-group autocomplete-container">
+                    <label for="reserver-name">Your name</label>
+                    <input id="reserver-name" type="text" autocomplete="off" placeholder="Start typing your name..." aria-required="true" aria-autocomplete="list" aria-controls="reserverSuggestions" />
+                    <div id="reserverSuggestions" class="autocomplete-suggestions" role="listbox" aria-label="Suggestions"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reserver-email">Your email</label>
+                    <input id="reserver-email" type="email" placeholder="your.email@example.com" aria-required="true" />
+                </div>
+
+                <div class="form-group">
+                    <label for="reserve-note">Note (optional)</label>
+                    <textarea id="reserve-note" placeholder="Add an optional note (e.g., shipping instructions)"></textarea>
+                </div>
+
+                <div style="display:flex;gap:.5rem;align-items:center;margin-top:.75rem;">
+                    <button id="reserve-btn" class="btn btn-primary">Reserve</button>
+                    <div id="reserve-feedback" role="status" aria-live="polite" style="margin-left:.5rem"></div>
+                </div>
               </div>
             </div>
         </section>
