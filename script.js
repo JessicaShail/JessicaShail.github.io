@@ -217,6 +217,12 @@ function showSection(sectionId) {
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.classList.add('active');
+        // If registry section is shown, lazy-load the gifts module and initialize it
+        if (sectionId === 'registry') {
+            import('/resources/js/gifts.js')
+              .then(mod => { if (mod && typeof mod.initGifts === 'function') mod.initGifts(); })
+              .catch(err => console.error('Failed to load gifts module', err));
+        }
     }
     
     // Update URL hash without triggering scroll

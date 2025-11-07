@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/resources/css/gifts.css">
 </head>
 <body>
     <!-- Password Protection Modal -->
@@ -39,7 +40,7 @@
             <ul>
                 <li><a href="#details" onclick="showSection('details'); updateActiveNavigation(this)" class="active">HOME</a></li>
                 <li><a href="#rsvp" onclick="showSection('rsvp'); updateActiveNavigation(this)">RSVP</a></li>
-                <li><a href="/gifts" onclick="updateActiveNavigation(this)">REGISTRY</a></li>
+                <li><a href="#registry" onclick="showSection('registry'); updateActiveNavigation(this)">REGISTRY</a></li>
             </ul>
         </nav>
 
@@ -464,10 +465,30 @@
             <div class="container">
                 <h2>Wedding Registry</h2>
                 <div class="registry-content">
-                    <div class="coming-soon">
-                        <h3>Coming Soon...</h3>
-                    </div>
+                    <div id="gifts-list" class="gifts-grid" aria-live="polite"></div>
                 </div>
+            </div>
+
+            <!-- Detail modal -->
+            <div id="gift-modal" class="modal" hidden>
+              <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="gift-title">
+                <button id="modal-close" class="modal-close" aria-label="Close">×</button>
+                <h2 id="gift-title"></h2>
+                <img id="gift-image" src="" alt="" />
+                <p id="gift-desc"></p>
+                <p id="gift-price"></p>
+                <p id="gift-qty"></p>
+                <label for="reserve-qty">Quantity</label>
+                <input id="reserve-qty" type="number" min="1" value="1" />
+                <label for="reserver-name">Your name</label>
+                <input id="reserver-name" type="text" />
+                <label for="reserver-email">Your email</label>
+                <input id="reserver-email" type="email" />
+                <label for="reserve-note">Note (optional)</label>
+                <textarea id="reserve-note"></textarea>
+                <button id="reserve-btn">Reserve</button>
+                <div id="reserve-feedback" role="status"></div>
+              </div>
             </div>
         </section>
     </div>
@@ -478,5 +499,6 @@
     <!-- Load EmailJS SDK (client-side email sending) -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" type="text/javascript" defer></script>
     <script src="script.js" type="text/javascript" defer></script>
+    <script type="module" src="/resources/js/gifts.js"></script>
 </body>
 </html>

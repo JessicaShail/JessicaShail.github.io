@@ -1,9 +1,9 @@
-const API_BASE = '/.netlify/functions';
+const GIFT_API_BASE = '/.netlify/functions';
 
 const $ = (id) => document.getElementById(id);
 
 async function fetchGifts() {
-  const res = await fetch(`${API_BASE}/get-gifts`);
+  const res = await fetch(`${GIFT_API_BASE}/get-gifts`);
   const json = await res.json();
   return json.gifts || [];
 }
@@ -36,7 +36,7 @@ function onView(e){
 }
 
 async function openModal(id){
-  const res = await fetch(`${API_BASE}/get-gift?id=${encodeURIComponent(id)}`);
+  const res = await fetch(`${GIFT_API_BASE}/get-gift?id=${encodeURIComponent(id)}`);
   if (!res.ok) return alert('Failed to load');
   const { gift } = await res.json();
   currentGift = gift;
@@ -65,7 +65,7 @@ $('reserve-btn').addEventListener('click', async () => {
   const note = $('reserve-note').value.trim();
   $('reserve-feedback').textContent = 'Processing...';
   try {
-    const res = await fetch(`${API_BASE}/reserve-gift`, {
+    const res = await fetch(`${GIFT_API_BASE}/reserve-gift`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ giftId: currentGift.id, reserverName: name, reserverEmail: email, qty, note })
@@ -92,5 +92,7 @@ async function load(){
   renderGifts(gifts);
 }
 
-// initialize
-window.addEventListener('load', load);
+// expose init function so the SPA can call it when showing the registry
+export async function initGifts(){
+  await load();
+}
