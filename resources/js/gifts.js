@@ -75,7 +75,6 @@ function selectSuggestionByIndex(i){
   if (!currentSuggestions[i]) return;
   const g = currentSuggestions[i];
   $('reserver-name').value = g.guest_name;
-  if (g.email) $('reserver-email').value = g.email;
   // announce selection for screen readers
   const feedback = $('reserve-feedback');
   if (feedback) feedback.textContent = `Selected ${g.guest_name}`;
@@ -99,8 +98,6 @@ async function openModal(id){
   $('reserve-qty').max = 1;
   $('reserve-qty').value = 1;
   $('reserver-name').value = '';
-  $('reserver-email').value = '';
-  $('reserve-note').value = '';
   $('reserve-feedback').textContent = '';
   // disable reserve until we know availability
   try { $('reserve-btn').disabled = true; } catch(e){}
@@ -224,14 +221,12 @@ $('reserve-btn').addEventListener('click', async () => {
   if (!currentGift) return;
   const qty = Number($('reserve-qty').value) || 1;
   const name = $('reserver-name').value.trim();
-  const email = $('reserver-email').value.trim();
-  const note = $('reserve-note').value.trim();
   $('reserve-feedback').textContent = 'Processing...';
   try {
     const res = await fetch(`${GIFT_API_BASE}/reserve-gift`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ giftId: currentGift.id, reserverName: name, reserverEmail: email, qty, note })
+      body: JSON.stringify({ giftId: currentGift.id, reserverName: name, qty })
     });
     const json = await res.json();
     if (res.status === 201) {

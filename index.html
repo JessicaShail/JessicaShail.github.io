@@ -479,8 +479,11 @@
                 <p id="gift-price"></p>
                 <p id="gift-qty"></p>
                 <div class="modal-actions">
-                    <a id="gift-purchase" class="btn btn-primary" href="#" target="_blank" rel="noopener" style="display:none;" aria-describedby="purchase-tooltip">Buy / Purchase</a>
-                    <span id="purchase-tooltip" class="input-tooltip" style="display:none;">Opens retailer site in new tab</span>
+                    <div class="action-buttons" style="display:flex;gap:0.5rem;align-items:center;">
+                        <a id="gift-purchase" class="btn btn-primary action-equal" href="#" target="_blank" rel="noopener" style="display:none;" aria-describedby="purchase-tooltip">Buy / Purchase</a>
+                        <button id="reserve-btn" class="btn btn-primary action-equal" type="button">Reserve</button>
+                    </div>
+                    <span id="purchase-tooltip" class="input-tooltip" style="display:none;margin-left:0.5rem;">Opens retailer site in new tab</span>
                     <div class="form-group" style="display:inline-block;margin-left:1rem;vertical-align:middle;">
                         <label for="reserve-qty">Quantity</label>
                         <input id="reserve-qty" type="number" min="1" value="1" aria-label="Quantity to reserve" />
@@ -493,20 +496,11 @@
                     <div id="reserverSuggestions" class="autocomplete-suggestions" role="listbox" aria-label="Suggestions"></div>
                 </div>
 
-                <div class="form-group">
-                    <label for="reserver-email">Your email</label>
-                    <input id="reserver-email" type="email" placeholder="your.email@example.com" aria-required="true" />
-                </div>
+                <!-- Email removed from modal since we already have it in the RSVP database -->
 
-                <div class="form-group">
-                    <label for="reserve-note">Note (optional)</label>
-                    <textarea id="reserve-note" placeholder="Add an optional note (e.g., shipping instructions)"></textarea>
-                </div>
+                <!-- Note removed - not required -->
 
                 <div class="reserve-row" style="margin-top:.75rem;">
-                    <div class="reserve-action" style="display:flex;justify-content:center;">
-                        <button id="reserve-btn" class="btn btn-primary" type="button">Reserve</button>
-                    </div>
                     <div id="reserve-feedback" role="status" aria-live="polite" style="margin-left:.5rem;text-align:center;min-width:180px;"></div>
                 </div>
               </div>

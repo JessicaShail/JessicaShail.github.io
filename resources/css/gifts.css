@@ -40,6 +40,9 @@
 .btn-secondary { background: #8F8D91; color: white; }
 .btn-danger { background: #e74c3c; color: white; }
 
+/* Remove underline for anchor-styled buttons and ensure pointer styling */
+.btn[href] { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+
 .gift-card .actions { display:flex; gap:0.5rem; margin-top:0.75rem; }
 .gift-card .actions button { flex: 1; }
 
@@ -60,9 +63,17 @@
 .reserve-action button#reserve-btn { padding: 0.6rem 1rem; border-radius: var(--btn-radius); font-weight:600; }
 /* Make reserve button visually similar width as purchase button on larger screens */
 @media (min-width:480px){
-  .reserve-action { min-width: 140px; }
-  .reserve-action button#reserve-btn { width:100%; }
+  .action-buttons .action-equal { min-width: 140px; width: 140px; }
 }
+/* On small screens allow equal buttons to shrink but keep spacing */
+@media (max-width:479px){
+  .action-buttons { width:100%; }
+  .action-buttons .action-equal { flex: 1 1 auto; }
+}
+
+/* Make sure anchor buttons don't show an underline on focus/visited */
+.btn { text-decoration: none; }
+.btn:visited, .btn:active { text-decoration: none; }
 
 /* Make modal inputs match RSVP form inputs for consistent styling */
 .modal-content label { display: block; margin-top: 0.75rem; margin-bottom: 0.35rem; font-weight: 600; color: var(--site-dark); }
