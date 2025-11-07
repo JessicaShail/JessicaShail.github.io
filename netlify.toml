@@ -24,16 +24,19 @@
   from = "/gifts"
   to = "/gifts.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/gifts-admin"
   to = "/gifts-admin.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/admin/gifts"
   to = "/gifts-admin.html"
   status = 200
+  force = true
 
 # Force HTTPS on primary domains (required for HSTS preload)
 [[redirects]]

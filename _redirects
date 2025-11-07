@@ -1,0 +1,6 @@
+/gifts    /gifts.html    200!
+/gifts-admin    /gifts-admin.html    200!
+/admin/gifts    /gifts-admin.html    200!
+
+# SPA fallback
+/*    /index.html    200
