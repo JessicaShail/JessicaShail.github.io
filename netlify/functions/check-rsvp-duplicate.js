@@ -33,14 +33,26 @@ exports.handler = async (event) => {
   try {
     await client.connect();
 
-    const query = `
-      SELECT id, guest_name, partner_name
-      FROM rsvps
-      WHERE LOWER(guest_name) = LOWER($1)
-         OR LOWER(partner_name) = LOWER($1)
+    // Try to find a canonical guest_list id first (normalized search)
+    const normalizedInput = guestName.toLowerCase().trim().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ');
+    const guestQuery = `
+      SELECT id, guest_name
+      FROM guest_list
+      WHERE LOWER(REPLACE(REGEXP_REPLACE(guest_name, '[^\\w\\s]', '', 'g'), ' ', ' ')) ILIKE $1
       LIMIT 1
     `;
-    const result = await client.query(query, [guestName.trim()]);
+    const guestRes = await client.query(guestQuery, [normalizedInput]);
+    const guestId = (guestRes.rows[0] && guestRes.rows[0].id) || null;
+
+    const query = `
+      SELECT id, guest_id, guest_name, partner_name, email
+      FROM rsvps
+      WHERE (guest_id IS NOT NULL AND guest_id = $1)
+         OR LOWER(guest_name) = LOWER($2)
+         OR LOWER(partner_name) = LOWER($2)
+      LIMIT 1
+    `;
+    const result = await client.query(query, [guestId, guestName.trim()]);
 
     if (result.rows.length > 0) {
       const row = result.rows[0];

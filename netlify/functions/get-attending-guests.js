@@ -59,12 +59,12 @@ exports.handler = async (event) => {
     if (q) {
       const normalized = `%${q.toLowerCase()}%`;
       queryText = `
-        SELECT r.guest_name, r.email, r.partner_name,
-               r.mehndi_attending, r.ceremony_attending, r.reception_attending,
-               r.partner_mehndi_attending, r.partner_ceremony_attending, r.partner_reception_attending,
-               gl.id as guest_list_id, gl.max_guests
-        FROM rsvps r
-        LEFT JOIN guest_list gl ON LOWER(TRIM(gl.guest_name)) = LOWER(TRIM(r.guest_name))
+   SELECT COALESCE(gl.guest_name, r.guest_name) AS guest_name, r.email, r.partner_name,
+     r.mehndi_attending, r.ceremony_attending, r.reception_attending,
+     r.partner_mehndi_attending, r.partner_ceremony_attending, r.partner_reception_attending,
+     gl.id as guest_list_id, gl.max_guests
+   FROM rsvps r
+   LEFT JOIN guest_list gl ON gl.id = r.guest_id
         WHERE (
           COALESCE(r.mehndi_attending, false)
           OR COALESCE(r.ceremony_attending, false)
@@ -82,12 +82,12 @@ exports.handler = async (event) => {
       params = [normalized];
     } else {
       queryText = `
-        SELECT r.guest_name, r.email, r.partner_name,
-               r.mehndi_attending, r.ceremony_attending, r.reception_attending,
-               r.partner_mehndi_attending, r.partner_ceremony_attending, r.partner_reception_attending,
-               gl.id as guest_list_id, gl.max_guests
-        FROM rsvps r
-        LEFT JOIN guest_list gl ON LOWER(TRIM(gl.guest_name)) = LOWER(TRIM(r.guest_name))
+   SELECT COALESCE(gl.guest_name, r.guest_name) AS guest_name, r.email, r.partner_name,
+     r.mehndi_attending, r.ceremony_attending, r.reception_attending,
+     r.partner_mehndi_attending, r.partner_ceremony_attending, r.partner_reception_attending,
+     gl.id as guest_list_id, gl.max_guests
+   FROM rsvps r
+   LEFT JOIN guest_list gl ON gl.id = r.guest_id
         WHERE (
           COALESCE(r.mehndi_attending, false)
           OR COALESCE(r.ceremony_attending, false)
