@@ -1,10 +1,7 @@
-const { Client } = require('pg');
+const { createDbClient } = require('./db');
 const crypto = require('crypto');
 
-const getDbClient = () => new Client({
-  connectionString: process.env.NETLIFY_DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
+const getDbClient = () => createDbClient();
 
 const checkAdmin = (event) => {
   const body = event.body ? JSON.parse(event.body) : {};

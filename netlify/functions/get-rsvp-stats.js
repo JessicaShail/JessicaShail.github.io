@@ -1,13 +1,8 @@
 // Netlify Function for RSVP analytics (admin only)
-const { Client } = require('pg');
+const { createDbClient } = require('./db');
 
 const getDbClient = () => {
-  return new Client({
-    connectionString: process.env.NETLIFY_DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
+  return createDbClient();
 };
 
 // Simple admin authentication

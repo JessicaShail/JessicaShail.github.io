@@ -1,5 +1,5 @@
 // Netlify Function for guest list autocomplete
-const { Client } = require('pg');
+const { createDbClient } = require('./db');
 
 // Database connection
 const getDbClient = () => {
@@ -9,16 +9,10 @@ const getDbClient = () => {
     throw new Error('NETLIFY_DATABASE_URL environment variable is not set');
   }
   
-  return new Client({
-    connectionString: connectionString,
-    ssl: {
-      rejectUnauthorized: false
-    },
+  return createDbClient({
     // Add connection timeout settings
     connectionTimeoutMillis: 10000,
-    query_timeout: 10000,
-    // Ensure proper SSL mode for Neon
-    sslmode: 'require'
+    query_timeout: 10000
   });
 };
 

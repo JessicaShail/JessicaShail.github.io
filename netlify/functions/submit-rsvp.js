@@ -1,17 +1,12 @@
 // Netlify Function for RSVP submission
-const { Client } = require('pg');
+const { createDbClient } = require('./db');
 const { createRsvpConfirmationEmail } = require('./email-templates');
 
 const net = require('net');
 
 // Database connection
 const getDbClient = () => {
-  return new Client({
-    connectionString: process.env.NETLIFY_DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
+  return createDbClient();
 };
 
 // Retry wrapper for transient DB connection errors

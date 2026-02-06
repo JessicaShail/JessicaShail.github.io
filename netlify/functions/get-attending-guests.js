@@ -1,5 +1,5 @@
 // Netlify Function to return guests who have RSVP'd 'yes' to any event
-const { Client } = require('pg');
+const { createDbClient } = require('./db');
 
 // Database connection helper (matches existing pattern)
 const getDbClient = () => {
@@ -7,12 +7,9 @@ const getDbClient = () => {
   if (!connectionString) {
     throw new Error('NETLIFY_DATABASE_URL environment variable is not set');
   }
-  return new Client({
-    connectionString: connectionString,
-    ssl: { rejectUnauthorized: false },
+  return createDbClient({
     connectionTimeoutMillis: 10000,
-    query_timeout: 10000,
-    sslmode: 'require'
+    query_timeout: 10000
   });
 };
 

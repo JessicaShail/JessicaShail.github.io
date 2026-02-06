@@ -77,7 +77,6 @@ exports.handler = async (event, context) => {
                 dietary_restrictions,
                 special_message,
                 TO_CHAR(rsvp_deadline, 'YYYY-MM-DD') as rsvp_deadline,
-                days_until_deadline,
                 days_since_rsvp
             FROM rsvp_tracking
             WHERE 1=1

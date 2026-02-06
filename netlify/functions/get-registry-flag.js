@@ -1,8 +1,8 @@
 // Netlify Function: Get registry enabled flag
 // Priority: if REGISTRY_ENABLED env var is set, use it. Otherwise read from DB site_settings table.
-const { Client } = require('pg');
+const { createDbClient } = require('./db');
 
-const getDbClient = () => new Client({ connectionString: process.env.NETLIFY_DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const getDbClient = () => createDbClient();
 
 exports.handler = async (event) => {
   const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' };

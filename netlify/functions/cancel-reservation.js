@@ -1,9 +1,6 @@
-const { Client } = require('pg');
+const { createDbClient } = require('./db');
 
-const getDbClient = () => new Client({
-  connectionString: process.env.NETLIFY_DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
+const getDbClient = () => createDbClient();
 
 // Allow cancellation by admin-secret or by reservation id + reserverEmail match
 const checkAdmin = (event) => {

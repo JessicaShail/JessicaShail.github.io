@@ -1,9 +1,9 @@
 // Netlify Function: Set registry enabled flag (admin only)
 // This will upsert the 'registry_enabled' key in site_settings table.
 // If a Netlify env var REGISTRY_ENABLED is present, it will still take precedence when reading.
-const { Client } = require('pg');
+const { createDbClient } = require('./db');
 
-const getDbClient = () => new Client({ connectionString: process.env.NETLIFY_DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const getDbClient = () => createDbClient();
 
 const isAuthorized = (event) => {
   const auth = event.headers && (event.headers.authorization || event.headers.Authorization);
