@@ -34,145 +34,93 @@ function renderLoading(){
 
 function renderGifts(gifts) {
   const container = $('gifts-list');
-  container.innerHTML = '';
+  const tbody = $('gifts-table-body');
+  if (!container || !tbody) return;
+  tbody.innerHTML = '';
   if (!gifts || gifts.length === 0) {
     container.innerHTML = `<div class="coming-soon"><h3>Coming Soon...</h3></div>`;
     return;
   }
+  container.innerHTML = `
+    <table class="gifts-table" aria-label="Gift registry">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Available</th>
+          <th>Link</th>
+          <th>Quantity</th>
+          <th>Reserve</th>
+        </tr>
+      </thead>
+      <tbody id="gifts-table-body"></tbody>
+    </table>
+  `;
+  const body = $('gifts-table-body');
   gifts.forEach(g => {
     // cache basic gift info for instant UI
     giftsCache.set(g.id, g);
-    const card = document.createElement('div');
-    card.className = 'gift-card';
-    card.innerHTML = `
-      <div class="gift-title">${escapeHtml(g.title)}</div>
-      <div class="gift-price">${g.price ? ('$' + Number(g.price).toFixed(2)) : ''}</div>
-      <div class="gift-qty">Available: ${g.quantity - g.reserved_count}</div>
-      <div class="actions"><button data-id="${g.id}" class="gift-view btn btn-primary">View</button></div>
+    const row = document.createElement('tr');
+    const available = (g.quantity || 0) - (g.reserved_count || 0);
+    row.innerHTML = `
+      <td class="gift-title">${escapeHtml(g.title)}</td>
+      <td class="gift-desc">${escapeHtml(g.description || '')}</td>
+      <td class="gift-price">${g.price ? ('$' + Number(g.price).toFixed(2)) : ''}</td>
+      <td class="gift-qty" data-id="${g.id}">${available}</td>
+      <td class="gift-link">
+        ${g.purchase_url ? `<a href="${g.purchase_url}" target="_blank" rel="noopener" class="btn btn-secondary">Buy / Purchase</a>` : ''}
+      </td>
+      <td>
+        <input class="reserve-qty" type="number" min="1" value="1" ${available <= 0 ? 'disabled' : ''} />
+      </td>
+      <td>
+        <button data-id="${g.id}" class="reserve-btn btn btn-primary" ${available <= 0 ? 'disabled' : ''}>Reserve</button>
+        <div class="reserve-feedback" role="status"></div>
+      </td>
     `;
-    container.appendChild(card);
+    body.appendChild(row);
   });
-  container.querySelectorAll('.gift-view').forEach(btn => btn.addEventListener('click', onView));
+  container.querySelectorAll('.reserve-btn').forEach(btn => btn.addEventListener('click', onReserve));
 }
 
 function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) : ''; }
 
-let currentGift = null;
-
-// Autocomplete state for reserver name
-function onView(e){
-  const id = e.currentTarget.dataset.id;
-  openModal(id);
-}
-
-// Purchase button handler (opens stored URL in a new tab)
-const purchaseBtn = $('gift-purchase');
-if (purchaseBtn) {
-  purchaseBtn.addEventListener('click', () => {
-    const url = purchaseBtn.dataset.href;
-    if (url) window.open(url, '_blank', 'noopener');
-  });
-}
-
-async function openModal(id){
-  // Show modal immediately with a loading state to reduce perceived latency
-  currentGift = null;
-  $('gift-title').textContent = 'Loading…';
-  $('gift-desc').textContent = '';
-  $('gift-price').textContent = '';
-  $('gift-qty').textContent = '';
-  $('reserve-qty').max = 1;
-  $('reserve-qty').value = 1;
-  $('reserve-feedback').textContent = '';
-  // disable reserve until we know availability
-  try { $('reserve-btn').disabled = true; } catch(e){}
-  $('gift-modal').hidden = false;
-
-  // If we have cached data, show it immediately while we refresh from the server
-  const cached = giftsCache.get(id);
-  if (cached) {
-    currentGift = cached;
-    $('gift-title').textContent = cached.title || 'Gift';
-    $('gift-desc').textContent = cached.description || '';
-    // show purchase link if available in cached data
-    if (cached.purchase_url) {
-      const a = $('gift-purchase');
-      a.dataset.href = cached.purchase_url;
-      a.style.display = '';
-    } else {
-      const a = $('gift-purchase'); if (a) { a.style.display = 'none'; a.dataset.href = ''; }
-    }
-    $('gift-price').textContent = cached.price ? '$' + Number(cached.price).toFixed(2) : '';
-    const avail = (cached.quantity || 0) - (cached.reserved_count || 0);
-    $('gift-qty').textContent = `Available: ${avail}`;
-    $('reserve-qty').max = Math.max(1, avail);
-    $('reserve-qty').value = Math.min(1, Math.max(1, $('reserve-qty').value));
-    if (avail > 0) { try { $('reserve-btn').disabled = false; } catch(e){} }
-  }
-
-  // Fetch the authoritative gift details and update the modal when done
-  try {
-    const res = await fetch(`${GIFT_API_BASE}/get-gift?id=${encodeURIComponent(id)}`);
-    if (res.ok) {
-      const { gift } = await res.json();
-      if (gift) {
-        giftsCache.set(gift.id, gift);
-        currentGift = gift;
-        $('gift-title').textContent = gift.title || 'Gift';
-        $('gift-desc').textContent = gift.description || '';
-        // show purchase link if present
-        if (gift.purchase_url) {
-          const a = $('gift-purchase');
-          a.dataset.href = gift.purchase_url;
-          a.style.display = '';
-        } else {
-          const a = $('gift-purchase'); if (a) { a.style.display = 'none'; a.dataset.href = ''; }
-        }
-        $('gift-price').textContent = gift.price ? '$' + Number(gift.price).toFixed(2) : '';
-        const available = (gift.quantity || 0) - (gift.reserved_count || 0);
-        $('gift-qty').textContent = `Available: ${available}`;
-        $('reserve-qty').max = Math.max(1, available);
-        $('reserve-qty').value = 1;
-        $('reserve-feedback').textContent = '';
-        $('reserve-btn').disabled = available <= 0;
-      }
-    } else {
-      $('reserve-feedback').textContent = 'Failed to load details';
-    }
-  } catch (err) {
-    console.error('Failed to fetch gift details', err);
-    $('reserve-feedback').textContent = 'Network error';
-  }
-}
-
-$('modal-close').addEventListener('click', () => { $('gift-modal').hidden = true; });
-
-$('reserve-btn').addEventListener('click', async () => {
-  if (!currentGift) return;
-  const qty = Number($('reserve-qty').value) || 1;
-  $('reserve-feedback').textContent = 'Processing...';
+async function onReserve(e){
+  const btn = e.currentTarget;
+  const id = btn.dataset.id;
+  const row = btn.closest('tr');
+  if (!id || !row) return;
+  const qtyInput = row.querySelector('.reserve-qty');
+  const feedback = row.querySelector('.reserve-feedback');
+  const qty = Number(qtyInput?.value) || 1;
+  if (feedback) feedback.textContent = 'Processing...';
   try {
     const res = await fetch(`${GIFT_API_BASE}/reserve-gift`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ giftId: currentGift.id, qty })
+      body: JSON.stringify({ giftId: id, qty })
     });
     const json = await res.json();
     if (res.status === 201) {
-      $('reserve-feedback').textContent = 'Reserved — thank you!';
-      $('gift-qty').textContent = `Available: ${json.remaining}`;
-      // refresh main list
-      load();
+      if (feedback) feedback.textContent = 'Reserved — thank you!';
+      const qtyCell = row.querySelector('.gift-qty');
+      if (qtyCell) qtyCell.textContent = String(json.remaining);
+      if (qtyInput) qtyInput.max = Math.max(1, json.remaining);
+      if (json.remaining <= 0) {
+        btn.disabled = true;
+        if (qtyInput) qtyInput.disabled = true;
+      }
     } else if (res.status === 409) {
-      $('reserve-feedback').textContent = `Not enough quantity available (remaining: ${json.available})`;
+      if (feedback) feedback.textContent = `Not enough quantity available (remaining: ${json.available})`;
     } else {
-      $('reserve-feedback').textContent = json.error || 'Reservation failed';
+      if (feedback) feedback.textContent = json.error || 'Reservation failed';
     }
   } catch (err) {
     console.error(err);
-    $('reserve-feedback').textContent = 'Network error';
+    if (feedback) feedback.textContent = 'Network error';
   }
-});
+}
 
 async function load(){
   const container = $('gifts-list');
