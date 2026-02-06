@@ -1,5 +1,5 @@
 // Simple database connection test
-const { Client } = require('pg');
+const { createDbClient, getConnectionString } = require('./db');
 
 exports.handler = async (event, context) => {
   const corsHeaders = {
@@ -29,12 +29,7 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const client = new Client({
-    connectionString: process.env.NEON_DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
+  const client = createDbClient();
 
   try {
     // Test basic connection
@@ -67,8 +62,8 @@ exports.handler = async (event, context) => {
         guestListTableExists: tableCheck.rows[0].count > 0,
         guestCount: guestCount,
         environmentCheck: {
-          hasConnectionString: !!process.env.NEON_DATABASE_URL,
-          connectionStringLength: process.env.NEON_DATABASE_URL ? process.env.NEON_DATABASE_URL.length : 0
+          hasConnectionString: !!process.env.NETLIFY_DATABASE_URL,
+          connectionStringLength: process.env.NETLIFY_DATABASE_URL ? process.env.NETLIFY_DATABASE_URL.length : 0
         }
       })
     };
@@ -85,8 +80,8 @@ exports.handler = async (event, context) => {
         details: {
           message: error.message,
           code: error.code,
-          hasConnectionString: !!process.env.NEON_DATABASE_URL,
-          connectionStringPrefix: process.env.NEON_DATABASE_URL ? process.env.NEON_DATABASE_URL.substring(0, 15) + '...' : 'Not set'
+          hasConnectionString: !!process.env.NETLIFY_DATABASE_URL,
+          connectionStringPrefix: process.env.NETLIFY_DATABASE_URL ? process.env.NETLIFY_DATABASE_URL.substring(0, 15) + '...' : 'Not set'
         }
       })
     };

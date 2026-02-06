@@ -2,16 +2,15 @@ const { Client } = require('pg');
 
 function withSslMode(url) {
   if (!url) return url;
-  if (url.includes('sslmode=')) return url;
   try {
     const u = new URL(url);
-    if (!u.searchParams.has('sslmode')) {
-      u.searchParams.set('sslmode', 'verify-full');
-    }
+    // Always enforce verify-full to avoid pg warning about weaker modes
+    u.searchParams.set('sslmode', 'verify-full');
     return u.toString();
   } catch (e) {
-    const sep = url.includes('?') ? '&' : '?';
-    return `${url}${sep}sslmode=verify-full`;
+    const base = url.replace(/([?&])sslmode=[^&]+(&?)/i, (m, p1, p2) => (p2 ? p1 : ''));
+    const sep = base.includes('?') ? '&' : '?';
+    return `${base}${sep}sslmode=verify-full`;
   }
 }
 
