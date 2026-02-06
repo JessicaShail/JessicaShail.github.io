@@ -34,9 +34,7 @@ function renderLoading(){
 
 function renderGifts(gifts) {
   const container = $('gifts-list');
-  const tbody = $('gifts-table-body');
-  if (!container || !tbody) return;
-  tbody.innerHTML = '';
+  if (!container) return;
   if (!gifts || gifts.length === 0) {
     container.innerHTML = `<div class="coming-soon"><h3>Coming Soon...</h3></div>`;
     return;
@@ -58,6 +56,8 @@ function renderGifts(gifts) {
     </table>
   `;
   const body = $('gifts-table-body');
+  if (!body) return;
+  body.innerHTML = '';
   gifts.forEach(g => {
     // cache basic gift info for instant UI
     giftsCache.set(g.id, g);
