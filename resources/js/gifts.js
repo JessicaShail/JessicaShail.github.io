@@ -60,50 +60,18 @@ function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':
 let currentGift = null;
 
 // Autocomplete state for reserver name
-let suggTimeout = null;
-let currentSuggestions = [];
-let selectedSuggestionIndex = -1;
-
-function hideReserverSuggestions(){
-  const box = $('reserverSuggestions'); if (!box) return;
-  box.classList.remove('show');
-  box.innerHTML = '';
-  selectedSuggestionIndex = -1;
-  currentSuggestions = [];
-}
-
-function showReserverSuggestions(items){
-  const box = $('reserverSuggestions'); if (!box) return;
-  if (!items || items.length === 0) { hideReserverSuggestions(); return; }
-  box.innerHTML = items.map((g,i)=>{
-    const partner = g.partner_name || g.partner || '';
-    const details = partner ? partner : (g.email || '');
-    // add role and aria-selected for better screen reader support
-    return `<div class="suggestion-item" role="option" aria-selected="false" data-index="${i}"><div class="suggestion-name">${escapeHtml(g.guest_name)}</div><div class="suggestion-details">${escapeHtml(details)}</div></div>`;
-  }).join('');
-  box.classList.add('show');
-  currentSuggestions = items;
-  selectedSuggestionIndex = -1;
-  // attach click handlers
-  box.querySelectorAll('.suggestion-item').forEach(el=> el.addEventListener('click', (e)=>{
-    const idx = Number(el.dataset.index);
-    selectSuggestionByIndex(idx);
-  }));
-}
-
-function selectSuggestionByIndex(i){
-  if (!currentSuggestions[i]) return;
-  const g = currentSuggestions[i];
-  $('reserver-name').value = g.guest_name;
-  // announce selection for screen readers
-  const feedback = $('reserve-feedback');
-  if (feedback) feedback.textContent = `Selected ${g.guest_name}`;
-  hideReserverSuggestions();
-}
-
 function onView(e){
   const id = e.currentTarget.dataset.id;
   openModal(id);
+}
+
+// Purchase button handler (opens stored URL in a new tab)
+const purchaseBtn = $('gift-purchase');
+if (purchaseBtn) {
+  purchaseBtn.addEventListener('click', () => {
+    const url = purchaseBtn.dataset.href;
+    if (url) window.open(url, '_blank', 'noopener');
+  });
 }
 
 async function openModal(id){
@@ -115,7 +83,6 @@ async function openModal(id){
   $('gift-qty').textContent = '';
   $('reserve-qty').max = 1;
   $('reserve-qty').value = 1;
-  $('reserver-name').value = '';
   $('reserve-feedback').textContent = '';
   // disable reserve until we know availability
   try { $('reserve-btn').disabled = true; } catch(e){}
@@ -130,10 +97,10 @@ async function openModal(id){
     // show purchase link if available in cached data
     if (cached.purchase_url) {
       const a = $('gift-purchase');
-      a.href = cached.purchase_url;
+      a.dataset.href = cached.purchase_url;
       a.style.display = '';
     } else {
-      const a = $('gift-purchase'); if (a) a.style.display = 'none';
+      const a = $('gift-purchase'); if (a) { a.style.display = 'none'; a.dataset.href = ''; }
     }
     $('gift-price').textContent = cached.price ? '$' + Number(cached.price).toFixed(2) : '';
     const avail = (cached.quantity || 0) - (cached.reserved_count || 0);
@@ -156,10 +123,10 @@ async function openModal(id){
         // show purchase link if present
         if (gift.purchase_url) {
           const a = $('gift-purchase');
-          a.href = gift.purchase_url;
+          a.dataset.href = gift.purchase_url;
           a.style.display = '';
         } else {
-          const a = $('gift-purchase'); if (a) a.style.display = 'none';
+          const a = $('gift-purchase'); if (a) { a.style.display = 'none'; a.dataset.href = ''; }
         }
         $('gift-price').textContent = gift.price ? '$' + Number(gift.price).toFixed(2) : '';
         const available = (gift.quantity || 0) - (gift.reserved_count || 0);
@@ -178,69 +145,17 @@ async function openModal(id){
   }
 }
 
-// Initialize reserver-name autocomplete behaviors
-function initReserverAutocomplete(){
-  const input = $('reserver-name');
-  const box = $('reserverSuggestions');
-  if (!input || !box) return;
-
-  input.addEventListener('input', ()=>{
-    const q = input.value.trim();
-    clearTimeout(suggTimeout);
-    if (q.length < 2) { hideReserverSuggestions(); return; }
-    suggTimeout = setTimeout(async ()=>{
-      try {
-        const res = await fetch(`${GIFT_API_BASE}/get-attending-guests?q=${encodeURIComponent(q)}`);
-        if (!res.ok) { hideReserverSuggestions(); return; }
-        const json = await res.json();
-        // server returns rows with guest_name and email; map to expected shape
-        const guests = (json.guests || []).map(r => ({ guest_name: r.guest_name, partner_name: r.partner_name, email: r.email }));
-        showReserverSuggestions(guests);
-      } catch(e){ hideReserverSuggestions(); }
-    }, 250);
-  });
-
-  input.addEventListener('keydown', (e)=>{
-    const boxEl = $('reserverSuggestions'); if (!boxEl || !boxEl.classList.contains('show')) return;
-    const items = boxEl.querySelectorAll('.suggestion-item');
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        selectedSuggestionIndex = Math.min(selectedSuggestionIndex+1, items.length-1);
-        items.forEach((it,idx)=>{
-          const selected = idx===selectedSuggestionIndex;
-          it.classList.toggle('highlighted', selected);
-          it.setAttribute('aria-selected', selected ? 'true' : 'false');
-        });
-      }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        selectedSuggestionIndex = Math.max(selectedSuggestionIndex-1, 0);
-        items.forEach((it,idx)=>{
-          const selected = idx===selectedSuggestionIndex;
-          it.classList.toggle('highlighted', selected);
-          it.setAttribute('aria-selected', selected ? 'true' : 'false');
-        });
-      }
-    if (e.key === 'Enter') { e.preventDefault(); if (selectedSuggestionIndex>=0) selectSuggestionByIndex(selectedSuggestionIndex); }
-    if (e.key === 'Escape') { hideReserverSuggestions(); }
-  });
-
-  // hide on outside click
-  document.addEventListener('click', (e)=>{ const c = $('reserver-name'); const box = $('reserverSuggestions'); if (!c || !box) return; if (!c.contains(e.target) && !box.contains(e.target)) hideReserverSuggestions(); });
-}
-
 $('modal-close').addEventListener('click', () => { $('gift-modal').hidden = true; });
 
 $('reserve-btn').addEventListener('click', async () => {
   if (!currentGift) return;
   const qty = Number($('reserve-qty').value) || 1;
-  const name = $('reserver-name').value.trim();
   $('reserve-feedback').textContent = 'Processing...';
   try {
     const res = await fetch(`${GIFT_API_BASE}/reserve-gift`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ giftId: currentGift.id, reserverName: name, qty })
+      body: JSON.stringify({ giftId: currentGift.id, qty })
     });
     const json = await res.json();
     if (res.status === 201) {
@@ -261,15 +176,18 @@ $('reserve-btn').addEventListener('click', async () => {
 
 async function load(){
   const container = $('gifts-list');
+  const blurb = $('registry-blurb');
 
   // Determine flag from server (this will prefer any Netlify env var when present)
   renderLoading();
   const flag = await fetchRegistryFlag();
   if (!flag.enabled) {
+    if (blurb) blurb.hidden = true;
     // skip DB call and show Coming Soon
     renderGifts([]);
     return;
   }
+  if (blurb) blurb.hidden = false;
 
   try {
     // flag enabled -> fetch and render
@@ -285,5 +203,4 @@ async function load(){
 // expose init function so the SPA can call it when showing the registry
 export async function initGifts(){
   await load();
-  initReserverAutocomplete();
 }

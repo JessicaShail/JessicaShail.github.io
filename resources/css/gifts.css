@@ -157,3 +157,9 @@
 .autocomplete-suggestions .suggestion-item:hover, .autocomplete-suggestions .suggestion-item.highlighted { background: #f7f7f7; }
 .autocomplete-suggestions .suggestion-name { font-weight:700; color:var(--site-dark); }
 .autocomplete-suggestions .suggestion-details { font-size:0.9rem; color:var(--muted); }
+
+/* Loading spinner and states for registry */
+.gifts-loading { text-align:center; padding:2rem 1rem; }
+.gifts-loading .spinner { border: 4px solid rgba(0,0,0,0.08); border-top: 4px solid var(--site-dark); border-radius: 50%; width: 44px; height: 44px; margin: 0 auto 0.75rem; animation: spin 1s linear infinite; }
+.gifts-loading .loading-text { color: var(--muted); font-size: 0.95rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
