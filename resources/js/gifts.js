@@ -1,5 +1,20 @@
 const GIFT_API_BASE = '/.netlify/functions';
 
+const API_BASE = '/.netlify/functions';
+
+// Registry enabled is read from server (prefers Netlify env var). We fetch it at init.
+async function fetchRegistryFlag(){
+  try {
+    const res = await fetch(`${API_BASE}/get-registry-flag`);
+    if (!res.ok) return { enabled: false };
+    const json = await res.json();
+    return { enabled: !!json.enabled, source: json.source };
+  } catch (err) {
+    console.error('Failed to fetch registry flag', err);
+    return { enabled: false };
+  }
+}
+
 const $ = (id) => document.getElementById(id);
 
 // Simple in-memory cache for gifts to avoid extra network roundtrips
@@ -9,6 +24,12 @@ async function fetchGifts() {
   const res = await fetch(`${GIFT_API_BASE}/get-gifts`);
   const json = await res.json();
   return json.gifts || [];
+}
+
+function renderLoading(){
+  const container = $('gifts-list');
+  if (!container) return;
+  container.innerHTML = `<div class="gifts-loading" aria-busy="true" aria-live="polite"><div class="spinner" role="status" aria-hidden="true"></div><div class="loading-text">Loading registry…</div></div>`;
 }
 
 function renderGifts(gifts) {
@@ -24,7 +45,6 @@ function renderGifts(gifts) {
     const card = document.createElement('div');
     card.className = 'gift-card';
     card.innerHTML = `
-      <img src="${g.image_url || 'resources/images/Celebration.png'}" alt="${escapeHtml(g.title)}">
       <div class="gift-title">${escapeHtml(g.title)}</div>
       <div class="gift-price">${g.price ? ('$' + Number(g.price).toFixed(2)) : ''}</div>
       <div class="gift-qty">Available: ${g.quantity - g.reserved_count}</div>
@@ -90,8 +110,6 @@ async function openModal(id){
   // Show modal immediately with a loading state to reduce perceived latency
   currentGift = null;
   $('gift-title').textContent = 'Loading…';
-  $('gift-image').src = '/resources/images/Celebration.png';
-  $('gift-image').alt = 'Loading';
   $('gift-desc').textContent = '';
   $('gift-price').textContent = '';
   $('gift-qty').textContent = '';
@@ -108,8 +126,6 @@ async function openModal(id){
   if (cached) {
     currentGift = cached;
     $('gift-title').textContent = cached.title || 'Gift';
-    $('gift-image').src = cached.image_url ? (cached.image_url) : '/resources/images/Celebration.png';
-    $('gift-image').alt = cached.title || '';
     $('gift-desc').textContent = cached.description || '';
     // show purchase link if available in cached data
     if (cached.purchase_url) {
@@ -136,8 +152,6 @@ async function openModal(id){
         giftsCache.set(gift.id, gift);
         currentGift = gift;
         $('gift-title').textContent = gift.title || 'Gift';
-        $('gift-image').src = gift.image_url ? gift.image_url : '/resources/images/Celebration.png';
-        $('gift-image').alt = gift.title || '';
         $('gift-desc').textContent = gift.description || '';
         // show purchase link if present
         if (gift.purchase_url) {
@@ -246,8 +260,26 @@ $('reserve-btn').addEventListener('click', async () => {
 });
 
 async function load(){
-  const gifts = await fetchGifts();
-  renderGifts(gifts);
+  const container = $('gifts-list');
+
+  // Determine flag from server (this will prefer any Netlify env var when present)
+  renderLoading();
+  const flag = await fetchRegistryFlag();
+  if (!flag.enabled) {
+    // skip DB call and show Coming Soon
+    renderGifts([]);
+    return;
+  }
+
+  try {
+    // flag enabled -> fetch and render
+    renderLoading();
+    const gifts = await fetchGifts();
+    renderGifts(gifts);
+  } catch (err) {
+    console.error('Failed to load gifts', err);
+    if (container) container.innerHTML = `<div class="coming-soon"><h3>Coming Soon...</h3></div>`;
+  }
 }
 
 // expose init function so the SPA can call it when showing the registry

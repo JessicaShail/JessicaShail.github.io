@@ -22,12 +22,21 @@
       <h2>Create Gift</h2>
       <label>Title<input id="create-title" /></label>
       <label>Description<textarea id="create-desc"></textarea></label>
-      <label>Image URL<input id="create-image" /></label>
       <label>Price<input id="create-price" type="number" step="0.01" /></label>
       <label>Quantity<input id="create-qty" type="number" value="1" /></label>
       <label>Purchase URL<input id="create-purchase" /></label>
   <button id="create-btn" class="btn btn-primary">Create</button>
       <div id="create-feedback" role="status"></div>
+    </section>
+
+    <section id="registry-toggle" style="margin-top:1.5rem;">
+      <h2>Registry Settings</h2>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <label for="registry-enabled">Registry live listings</label>
+        <button id="toggle-registry" class="btn btn-primary">Loading...</button>
+        <div id="toggle-status" style="margin-left:0.5rem;color:var(--muted)"></div>
+      </div>
+      <div style="margin-top:.5rem;color:var(--muted);font-size:.95rem;">Note: If a Netlify environment variable <code>REGISTRY_ENABLED</code> is set on the site, it will take precedence over this toggle.</div>
     </section>
 
     <section id="manage">
