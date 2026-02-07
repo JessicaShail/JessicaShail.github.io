@@ -69,7 +69,7 @@ function renderGifts(gifts) {
       <td class="gift-price">${g.price ? ('$' + Number(g.price).toFixed(2)) : ''}</td>
       <td class="gift-qty" data-id="${g.id}">${available}</td>
       <td class="gift-link">
-        ${g.purchase_url ? `<a href="${g.purchase_url}" target="_blank" rel="noopener" class="btn btn-secondary">Buy / Purchase</a>` : ''}
+          ${g.purchase_url ? `<button type="button" class="buy-btn btn btn-secondary" data-href="${g.purchase_url}">Buy / Purchase</button>` : ''}
       </td>
       <td>
         <input class="reserve-qty" type="number" min="1" value="1" ${available <= 0 ? 'disabled' : ''} />
@@ -81,9 +81,15 @@ function renderGifts(gifts) {
     `;
     body.appendChild(row);
   });
-  container.querySelectorAll('.reserve-btn').forEach(btn => btn.addEventListener('click', onReserve));
+    container.querySelectorAll('.reserve-btn').forEach(btn => btn.addEventListener('click', onReserve));
+    container.querySelectorAll('.buy-btn').forEach(btn => btn.addEventListener('click', onBuy));
 }
 
+  function onBuy(e){
+    const btn = e.currentTarget;
+    const url = btn.dataset.href;
+    if (url) window.open(url, '_blank', 'noopener');
+  }
 function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) : ''; }
 
 async function onReserve(e){
