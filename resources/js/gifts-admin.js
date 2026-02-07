@@ -55,35 +55,63 @@ async function onDelete(e){
 function onEdit(e){
   const id = e.currentTarget.dataset.id;
   const current = adminGiftsCache.get(String(id)) || {};
-  // Simple inline edit prompt (for MVP)
-  const title = prompt('Title', current.title || '');
-  if (title === null) return;
-  const description = prompt('Description', current.description || '');
-  if (description === null) return;
-  const imageUrl = prompt('Image URL', current.image_url || '');
-  if (imageUrl === null) return;
-  const priceInput = prompt('Price', (current.price !== null && current.price !== undefined) ? String(current.price) : '');
-  if (priceInput === null) return;
-  const price = priceInput === '' ? null : Number(priceInput);
-  if (priceInput !== '' && !Number.isFinite(price)) { alert('Price must be a valid number'); return; }
-  const quantityInput = prompt('Quantity', Number.isFinite(current.quantity) ? String(current.quantity) : '1');
-  if (quantityInput === null) return;
-  const quantity = Number(quantityInput);
-  if (!Number.isFinite(quantity) || quantity < 0) { alert('Quantity must be 0 or more'); return; }
-  const purchaseUrl = prompt('Purchase URL', current.purchase_url || '');
-  if (purchaseUrl === null) return;
-  const payload = {
-    id,
-    title: title.trim(),
-    description: description.trim(),
-    imageUrl: imageUrl.trim(),
-    price,
-    quantity,
-    purchaseUrl: purchaseUrl.trim()
-  };
-  fetch(`${API_BASE}/update-gift`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': ADMIN_SECRET }, body: JSON.stringify(payload) })
-    .then(r => r.json()).then(j => { if (j.gift) loadAdminGifts(); else alert(j.error || 'Update failed'); });
+  openEditModal({ id, ...current });
 }
+
+function openEditModal(gift){
+  const modal = $('edit-modal');
+  if (!modal) return;
+  $('edit-id').value = gift.id || '';
+  $('edit-title').value = gift.title || '';
+  $('edit-desc').value = gift.description || '';
+  $('edit-image').value = gift.image_url || '';
+  $('edit-price').value = (gift.price !== null && gift.price !== undefined) ? gift.price : '';
+  $('edit-qty').value = Number.isFinite(gift.quantity) ? gift.quantity : 1;
+  $('edit-purchase').value = gift.purchase_url || '';
+  $('edit-feedback').textContent = '';
+  modal.hidden = false;
+}
+
+function closeEditModal(){
+  const modal = $('edit-modal');
+  if (!modal) return;
+  modal.hidden = true;
+}
+
+$('edit-cancel')?.addEventListener('click', closeEditModal);
+
+$('edit-save')?.addEventListener('click', async ()=>{
+  if (!ADMIN_SECRET) { alert('Set admin secret first'); return; }
+  const id = $('edit-id').value;
+  const title = $('edit-title').value.trim();
+  const description = $('edit-desc').value.trim();
+  const imageUrl = $('edit-image').value.trim();
+  const priceInput = $('edit-price').value.trim();
+  const price = priceInput === '' ? null : Number(priceInput);
+  if (priceInput !== '' && !Number.isFinite(price)) { $('edit-feedback').textContent = 'Price must be a valid number'; return; }
+  const quantity = Number($('edit-qty').value);
+  if (!Number.isFinite(quantity) || quantity < 0) { $('edit-feedback').textContent = 'Quantity must be 0 or more'; return; }
+  const purchaseUrl = $('edit-purchase').value.trim();
+
+  $('edit-feedback').textContent = 'Saving...';
+  const payload = { id, title, description, imageUrl, price, quantity, purchaseUrl };
+  try {
+    const res = await fetch(`${API_BASE}/update-gift`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': ADMIN_SECRET },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (res.ok && json.gift) {
+      closeEditModal();
+      loadAdminGifts();
+    } else {
+      $('edit-feedback').textContent = json.error || 'Update failed';
+    }
+  } catch (err) {
+    $('edit-feedback').textContent = 'Network error';
+  }
+});
 
 $('create-btn').addEventListener('click', async ()=>{
   if (!ADMIN_SECRET) { alert('Set admin secret first'); return; }
