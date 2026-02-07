@@ -60,13 +60,27 @@ function onEdit(e){
   if (title === null) return;
   const description = prompt('Description', current.description || '');
   if (description === null) return;
+  const imageUrl = prompt('Image URL', current.image_url || '');
+  if (imageUrl === null) return;
+  const priceInput = prompt('Price', (current.price !== null && current.price !== undefined) ? String(current.price) : '');
+  if (priceInput === null) return;
+  const price = priceInput === '' ? null : Number(priceInput);
+  if (priceInput !== '' && !Number.isFinite(price)) { alert('Price must be a valid number'); return; }
   const quantityInput = prompt('Quantity', Number.isFinite(current.quantity) ? String(current.quantity) : '1');
   if (quantityInput === null) return;
   const quantity = Number(quantityInput);
   if (!Number.isFinite(quantity) || quantity < 0) { alert('Quantity must be 0 or more'); return; }
   const purchaseUrl = prompt('Purchase URL', current.purchase_url || '');
   if (purchaseUrl === null) return;
-  const payload = { id, title: title.trim(), description: description.trim(), quantity, purchaseUrl: purchaseUrl.trim() };
+  const payload = {
+    id,
+    title: title.trim(),
+    description: description.trim(),
+    imageUrl: imageUrl.trim(),
+    price,
+    quantity,
+    purchaseUrl: purchaseUrl.trim()
+  };
   fetch(`${API_BASE}/update-gift`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': ADMIN_SECRET }, body: JSON.stringify(payload) })
     .then(r => r.json()).then(j => { if (j.gift) loadAdminGifts(); else alert(j.error || 'Update failed'); });
 }
