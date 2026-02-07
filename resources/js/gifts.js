@@ -153,7 +153,7 @@ async function onReserve(e){
 
 function openReserveConfirm(data){
   pendingReserve = data;
-  const modal = $('reserve-confirm');
+  const modal = ensureReserveModal();
   const text = $('reserve-confirm-text');
   const link = $('reserve-confirm-link');
   if (text) {
@@ -211,6 +211,30 @@ async function performReserve(){
 
 $('reserve-confirm-no')?.addEventListener('click', closeReserveConfirm);
 $('reserve-confirm-yes')?.addEventListener('click', performReserve);
+
+function ensureReserveModal(){
+  let modal = $('reserve-confirm');
+  if (modal) return modal;
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `
+    <div id="reserve-confirm" class="modal" hidden>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="reserve-confirm-title">
+        <h2 id="reserve-confirm-title">Confirm Reservation</h2>
+        <p id="reserve-confirm-text">Are you sure you want to reserve this item?</p>
+        <a id="reserve-confirm-link" href="#" target="_blank" rel="noopener" class="btn btn-secondary" style="display:none;">View Item</a>
+        <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1rem;">
+          <button id="reserve-confirm-no" class="btn btn-secondary" type="button">No</button>
+          <button id="reserve-confirm-yes" class="btn btn-primary" type="button">Yes</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(wrapper.firstElementChild);
+  $('reserve-confirm-no')?.addEventListener('click', closeReserveConfirm);
+  $('reserve-confirm-yes')?.addEventListener('click', performReserve);
+  modal = $('reserve-confirm');
+  return modal;
+}
 
 async function load(){
   const container = $('gifts-list');
