@@ -11,17 +11,21 @@
 }
 
 .registry-blurb {
-  max-width: 900px;
-  margin: 1.25rem auto 1.75rem;
+  margin: 0.5rem auto 1.5rem;
   padding: 1.25rem 1.5rem;
   background: #fffdf5;
   border: 1px solid var(--border);
   border-radius: 16px;
-  color: var(--site-dark);
-  font-size: 1.05rem;
+  color: #333;
+  font-size: 1.2rem;
   line-height: 1.7;
   text-align: center;
+  font-family: 'Bodoni FLF';
   box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+}
+
+#registry h2 {
+  margin-bottom: 0.75rem;
 }
 
 #gifts-list { margin-top: 1rem; overflow-x: auto; }
