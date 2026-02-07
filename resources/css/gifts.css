@@ -34,6 +34,7 @@
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+  font-family: 'Bodoni FLF';
 }
 
 .gifts-table thead th {
@@ -85,6 +86,7 @@
   vertical-align: middle;
   background: #fff;
   font-size: 1.05rem;
+  font-family: 'Bodoni FLF';
 }
 
 .gifts-table tbody tr:nth-child(even) td { background: #fff8ec; }
