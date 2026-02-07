@@ -238,18 +238,14 @@ function ensureReserveModal(){
 
 async function load(){
   const container = $('gifts-list');
-  const blurb = $('registry-blurb');
-
   // Determine flag from server (this will prefer any Netlify env var when present)
   renderLoading();
   const flag = await fetchRegistryFlag();
   if (!flag.enabled) {
-    if (blurb) blurb.hidden = true;
     // skip DB call and show Coming Soon
     renderGifts([]);
     return;
   }
-  if (blurb) blurb.hidden = false;
 
   try {
     // flag enabled -> fetch and render
