@@ -21,7 +21,7 @@ let pendingReserve = null;
 
 // Simple in-memory cache for gifts to avoid extra network roundtrips
 const giftsCache = new Map();
-let currentSort = { key: null, dir: 'asc' };
+let currentSort = { key: 'price', dir: 'asc' };
 
 async function fetchGifts() {
   const res = await fetch(`${GIFT_API_BASE}/get-gifts`);
@@ -222,7 +222,7 @@ function ensureReserveModal(){
         <h2 id="reserve-confirm-title">Confirm Reservation</h2>
         <p id="reserve-confirm-text">Are you sure you want to reserve this item?</p>
         <a id="reserve-confirm-link" href="#" target="_blank" rel="noopener" class="btn btn-secondary" style="display:none;">View Item</a>
-        <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1rem;">
+        <div class="confirm-actions">
           <button id="reserve-confirm-no" class="btn btn-secondary" type="button">No</button>
           <button id="reserve-confirm-yes" class="btn btn-primary" type="button">Yes</button>
         </div>
