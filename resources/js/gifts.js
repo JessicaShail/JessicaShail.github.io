@@ -242,3 +242,11 @@ async function load(){
 export async function initGifts(){
   await load();
 }
+
+// Auto-init on standalone registry page
+if (typeof window !== 'undefined') {
+  const isStandalone = !document.querySelector('.content-section');
+  if (isStandalone) {
+    initGifts();
+  }
+}
