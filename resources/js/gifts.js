@@ -17,8 +17,11 @@ async function fetchRegistryFlag(){
 
 const $ = (id) => document.getElementById(id);
 
+let pendingReserve = null;
+
 // Simple in-memory cache for gifts to avoid extra network roundtrips
 const giftsCache = new Map();
+let currentSort = { key: null, dir: 'asc' };
 
 async function fetchGifts() {
   const res = await fetch(`${GIFT_API_BASE}/get-gifts`);
@@ -35,7 +38,8 @@ function renderLoading(){
 function renderGifts(gifts) {
   const container = $('gifts-list');
   if (!container) return;
-  if (!gifts || gifts.length === 0) {
+  const visibleGifts = (gifts || []).filter(g => ((g.quantity || 0) - (g.reserved_count || 0)) > 0);
+  if (!visibleGifts || visibleGifts.length === 0) {
     container.innerHTML = `<div class="coming-soon"><h3>Coming Soon...</h3></div>`;
     return;
   }
@@ -43,12 +47,11 @@ function renderGifts(gifts) {
     <table class="gifts-table" aria-label="Gift registry">
       <thead>
         <tr>
-          <th>Item</th>
-          <th>Description</th>
-          <th>Price</th>
-          <th>Available</th>
-          <th>Link</th>
-          <th>Quantity</th>
+          <th class="sortable" data-sort="title" role="button" aria-sort="none" tabindex="0">Item</th>
+          <th class="col-desc sortable" data-sort="description" role="button" aria-sort="none" tabindex="0">Description</th>
+          <th class="sortable" data-sort="price" role="button" aria-sort="none" tabindex="0">Price</th>
+          <th class="sortable" data-sort="available" role="button" aria-sort="none" tabindex="0">Available</th>
+          <th class="sortable" data-sort="purchase" role="button" aria-sort="none" tabindex="0">Link</th>
           <th>Reserve</th>
         </tr>
       </thead>
@@ -58,7 +61,8 @@ function renderGifts(gifts) {
   const body = $('gifts-table-body');
   if (!body) return;
   body.innerHTML = '';
-  gifts.forEach(g => {
+  const sorted = sortGifts(visibleGifts);
+  sorted.forEach(g => {
     // cache basic gift info for instant UI
     giftsCache.set(g.id, g);
     const row = document.createElement('tr');
@@ -66,13 +70,10 @@ function renderGifts(gifts) {
     row.innerHTML = `
       <td class="gift-title">${escapeHtml(g.title)}</td>
       <td class="gift-desc">${escapeHtml(g.description || '')}</td>
-      <td class="gift-price">${g.price ? ('$' + Number(g.price).toFixed(2)) : ''}</td>
-      <td class="gift-qty" data-id="${g.id}">${available}</td>
+        <td class="gift-price">${g.price ? ('$' + Number(g.price).toFixed(2)) : ''}</td>
+        <td class="gift-qty" data-id="${g.id}">${available}</td>
       <td class="gift-link">
           ${g.purchase_url ? `<button type="button" class="buy-btn btn btn-secondary" data-href="${g.purchase_url}">View</button>` : ''}
-      </td>
-      <td>
-        <input class="reserve-qty" type="number" min="1" value="1" ${available <= 0 ? 'disabled' : ''} />
       </td>
       <td>
         <button data-id="${g.id}" class="reserve-btn btn btn-primary" ${available <= 0 ? 'disabled' : ''}>Reserve</button>
@@ -83,6 +84,11 @@ function renderGifts(gifts) {
   });
     container.querySelectorAll('.reserve-btn').forEach(btn => btn.addEventListener('click', onReserve));
     container.querySelectorAll('.buy-btn').forEach(btn => btn.addEventListener('click', onBuy));
+    container.querySelectorAll('th.sortable').forEach(th => {
+      th.addEventListener('click', () => onSort(th.dataset.sort));
+      th.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSort(th.dataset.sort); } });
+    });
+    updateSortIndicators(container);
 }
 
   function onBuy(e){
@@ -92,14 +98,89 @@ function renderGifts(gifts) {
   }
 function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) : ''; }
 
+function onSort(key){
+  if (!key) return;
+  if (currentSort.key === key) {
+    currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    currentSort = { key, dir: 'asc' };
+  }
+  const gifts = Array.from(giftsCache.values());
+  renderGifts(gifts);
+}
+
+function updateSortIndicators(container){
+  const headers = container.querySelectorAll('th.sortable');
+  headers.forEach(h => {
+    const isActive = h.dataset.sort === currentSort.key;
+    h.setAttribute('aria-sort', isActive ? (currentSort.dir === 'asc' ? 'ascending' : 'descending') : 'none');
+  });
+}
+
+function sortGifts(gifts){
+  if (!currentSort.key) return gifts;
+  const dir = currentSort.dir === 'asc' ? 1 : -1;
+  const key = currentSort.key;
+  const getVal = (g) => {
+    switch (key) {
+      case 'title': return (g.title || '').toLowerCase();
+      case 'description': return (g.description || '').toLowerCase();
+      case 'price': return g.price == null ? Number.POSITIVE_INFINITY : Number(g.price);
+      case 'available': return (g.quantity || 0) - (g.reserved_count || 0);
+      case 'purchase': return g.purchase_url ? 1 : 0;
+      default: return '';
+    }
+  };
+  return [...gifts].sort((a, b) => {
+    const av = getVal(a);
+    const bv = getVal(b);
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+    return 0;
+  });
+}
+
 async function onReserve(e){
   const btn = e.currentTarget;
   const id = btn.dataset.id;
   const row = btn.closest('tr');
   if (!id || !row) return;
   const qtyInput = row.querySelector('.reserve-qty');
+  const qty = qtyInput ? (Number(qtyInput.value) || 1) : 1;
+  const gift = giftsCache.get(Number(id)) || giftsCache.get(id) || {};
+  openReserveConfirm({ id, qty, row, btn, gift });
+}
+
+function openReserveConfirm(data){
+  pendingReserve = data;
+  const modal = $('reserve-confirm');
+  const text = $('reserve-confirm-text');
+  const link = $('reserve-confirm-link');
+  if (text) {
+    const title = data.gift?.title ? `“${data.gift.title}”` : 'this item';
+    text.textContent = `Are you sure you want to reserve ${title}?`;
+  }
+  if (link) {
+    if (data.gift?.purchase_url) {
+      link.href = data.gift.purchase_url;
+      link.style.display = '';
+    } else {
+      link.style.display = 'none';
+    }
+  }
+  if (modal) modal.hidden = false;
+}
+
+function closeReserveConfirm(){
+  const modal = $('reserve-confirm');
+  if (modal) modal.hidden = true;
+  pendingReserve = null;
+}
+
+async function performReserve(){
+  if (!pendingReserve) return;
+  const { id, qty, row, btn } = pendingReserve;
   const feedback = row.querySelector('.reserve-feedback');
-  const qty = Number(qtyInput?.value) || 1;
   if (feedback) feedback.textContent = 'Processing...';
   try {
     const res = await fetch(`${GIFT_API_BASE}/reserve-gift`, {
@@ -112,10 +193,8 @@ async function onReserve(e){
       if (feedback) feedback.textContent = 'Reserved — thank you!';
       const qtyCell = row.querySelector('.gift-qty');
       if (qtyCell) qtyCell.textContent = String(json.remaining);
-      if (qtyInput) qtyInput.max = Math.max(1, json.remaining);
       if (json.remaining <= 0) {
         btn.disabled = true;
-        if (qtyInput) qtyInput.disabled = true;
       }
     } else if (res.status === 409) {
       if (feedback) feedback.textContent = `Not enough quantity available (remaining: ${json.available})`;
@@ -125,8 +204,13 @@ async function onReserve(e){
   } catch (err) {
     console.error(err);
     if (feedback) feedback.textContent = 'Network error';
+  } finally {
+    closeReserveConfirm();
   }
 }
+
+$('reserve-confirm-no')?.addEventListener('click', closeReserveConfirm);
+$('reserve-confirm-yes')?.addEventListener('click', performReserve);
 
 async function load(){
   const container = $('gifts-list');
