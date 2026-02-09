@@ -764,6 +764,17 @@ p {
     transform: translateY(-2px);
 }
 
+/* Inline links for list content (Exploring Hamilton) */
+.inline-link {
+    color: #004030;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.inline-link:hover {
+    color: #427a5e;
+}
+
 .travel-options {
     display: grid;
     gap: 1.5rem;
