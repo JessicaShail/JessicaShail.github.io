@@ -387,6 +387,16 @@ p {
     padding-top: 0.5rem;
 }
 
+.table-value a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.table-value a:hover,
+.table-value a:focus {
+    text-decoration: none;
+}
+
 /* Two-column table styling for better centering */
 .event-table.two-column {
     max-width: 70%;
