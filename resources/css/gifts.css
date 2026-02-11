@@ -172,6 +172,27 @@
 #reserve-confirm #reserve-confirm-no,
 #reserve-confirm #reserve-confirm-yes { font-size: 1.05rem; padding: 0.75rem 1.6rem; min-width: 110px; }
 
+#reserve-confirm .reserve-qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0.75rem auto 0;
+  flex-wrap: wrap;
+}
+
+#reserve-confirm .reserve-qty-row label {
+  margin: 0;
+  font-weight: 600;
+  color: var(--site-dark);
+  font-size: 0.95rem;
+}
+
+#reserve-confirm #reserve-confirm-qty {
+  width: 5.5rem;
+  text-align: center;
+}
+
 /* Layout for actions area inside modal: align purchase button and quantity inline */
 .modal-actions { display:flex; gap:0.75rem; margin-bottom: 0.75rem; align-items:center; flex-wrap:wrap; }
 

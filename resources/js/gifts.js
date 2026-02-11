@@ -147,8 +147,10 @@ async function onReserve(e){
   if (!id || !row) return;
   const qtyInput = row.querySelector('.reserve-qty');
   const qty = qtyInput ? (Number(qtyInput.value) || 1) : 1;
+  const availableCell = row.querySelector('.gift-qty');
+  const available = availableCell ? Number(availableCell.textContent) || 0 : 0;
   const gift = giftsCache.get(Number(id)) || giftsCache.get(id) || {};
-  openReserveConfirm({ id, qty, row, btn, gift });
+  openReserveConfirm({ id, qty, row, btn, gift, available });
 }
 
 function openReserveConfirm(data){
@@ -156,9 +158,16 @@ function openReserveConfirm(data){
   const modal = ensureReserveModal();
   const text = $('reserve-confirm-text');
   const link = $('reserve-confirm-link');
+  const qtyInput = $('reserve-confirm-qty');
   if (text) {
     const title = data.gift?.title ? `“${data.gift.title}”` : 'this item';
-    text.textContent = `Are you sure you want to reserve ${title}?`;
+    text.textContent = `Please confirm the quantity of ${title} you would like to reserve.`;
+  }
+  if (qtyInput) {
+    const max = Math.max(1, Number(data.available) || 1);
+    const nextQty = Math.min(Math.max(1, Number(data.qty) || 1), max);
+    qtyInput.max = String(max);
+    qtyInput.value = String(nextQty);
   }
   if (link) {
     if (data.gift?.purchase_url) {
@@ -179,7 +188,11 @@ function closeReserveConfirm(){
 
 async function performReserve(){
   if (!pendingReserve) return;
-  const { id, qty, row, btn } = pendingReserve;
+  const { id, row, btn, available } = pendingReserve;
+  const qtyInput = $('reserve-confirm-qty');
+  const max = Math.max(1, Number(available) || 1);
+  const requested = qtyInput ? Number(qtyInput.value) || 1 : 1;
+  const qty = Math.min(Math.max(1, requested), max);
   const feedback = row.querySelector('.reserve-feedback');
   if (feedback) feedback.textContent = 'Processing...';
   try {
@@ -220,7 +233,11 @@ function ensureReserveModal(){
     <div id="reserve-confirm" class="modal" hidden>
       <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="reserve-confirm-title">
         <h2 id="reserve-confirm-title">Confirm Reservation</h2>
-        <p id="reserve-confirm-text">Are you sure you want to reserve this item?</p>
+        <p id="reserve-confirm-text">Please confirm the quantity you would like to reserve.</p>
+        <div class="reserve-qty-row">
+          <label for="reserve-confirm-qty">Quantity</label>
+          <input id="reserve-confirm-qty" type="number" min="1" value="1" aria-label="Quantity to reserve" />
+        </div>
         <a id="reserve-confirm-link" href="#" target="_blank" rel="noopener" class="btn btn-secondary" style="display:none;">View Item</a>
         <div class="confirm-actions">
           <button id="reserve-confirm-no" class="btn btn-secondary" type="button">No</button>
