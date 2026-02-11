@@ -634,7 +634,6 @@ p {
 }
 
 .collapsible-content.active {
-    max-height: 1000px;
     padding: 1rem 0;
 }
 

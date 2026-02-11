@@ -95,7 +95,20 @@ function toggleCollapsible(eventId) {
         header.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     }
     content.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    if (isOpen) {
+        requestAnimationFrame(() => {
+            content.style.maxHeight = content.scrollHeight + 'px';
+        });
+    } else {
+        content.style.maxHeight = '0px';
+    }
 }
+
+window.addEventListener('resize', () => {
+    document.querySelectorAll('.collapsible-content.active').forEach((content) => {
+        content.style.maxHeight = content.scrollHeight + 'px';
+    });
+});
 
 // Validate session token (basic time-based validation)
 function _isValidSession(token) {
