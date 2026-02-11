@@ -775,6 +775,12 @@ p {
     color: #427a5e;
 }
 
+.hamilton-tips {
+    max-width: 800px;
+    margin: 0 auto 1.5rem auto;
+    padding-left: 1.5rem;
+}
+
 .travel-options {
     display: grid;
     gap: 1.5rem;
