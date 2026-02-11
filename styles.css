@@ -748,8 +748,6 @@ p {
 .travel-info {
     background: white;
     padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .location-card h3,
@@ -783,6 +781,12 @@ p {
 
 .inline-link:hover {
     color: #427a5e;
+}
+
+.wedding-info {
+    max-width: 1000px;
+    margin: 0 auto 1.5rem auto;
+    padding-left: 1.5rem;
 }
 
 .hamilton-tips {
