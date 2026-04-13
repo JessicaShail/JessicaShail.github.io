@@ -19,6 +19,8 @@ async function loadAdminGifts(){
   renderAdminList(json.gifts || []);
 }
 
+function escapeHtml(s){ return s != null ? String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) : ''; }
+
 function renderAdminList(gifts){
   const c = $('admin-gifts-list');
   c.innerHTML = '';
@@ -28,11 +30,11 @@ function renderAdminList(gifts){
     const div = document.createElement('div');
     div.className = 'gift-card';
     div.innerHTML = `
-      <div class="gift-title">${g.title} (id: ${g.id})</div>
-      <div>Qty: ${g.quantity} reserved: ${g.reserved_count}</div>
+      <div class="gift-title">${escapeHtml(g.title)} (id: ${escapeHtml(String(g.id))})</div>
+      <div>Qty: ${escapeHtml(String(g.quantity))} reserved: ${escapeHtml(String(g.reserved_count))}</div>
       <div class="admin-controls">
-        <button data-id="${g.id}" class="edit btn btn-secondary">Edit</button>
-        <button data-id="${g.id}" class="delete btn btn-danger">Delete</button>
+        <button data-id="${escapeHtml(String(g.id))}" class="edit btn btn-secondary">Edit</button>
+        <button data-id="${escapeHtml(String(g.id))}" class="delete btn btn-danger">Delete</button>
       </div>
     `;
     c.appendChild(div);

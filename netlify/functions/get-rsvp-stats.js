@@ -7,13 +7,14 @@ const getDbClient = () => {
 
 // Simple admin authentication
 const isAuthorized = (event) => {
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) return false; // Fail closed when env var not configured
+
   const authHeader = event.headers.authorization;
-  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'; // Set this in Netlify env vars
-  
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return false;
   }
-  
+
   const token = authHeader.substring(7);
   return token === adminPassword;
 };

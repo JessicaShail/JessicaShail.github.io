@@ -1,7 +1,5 @@
 const GIFT_API_BASE = '/.netlify/functions';
 
-const API_BASE = '/.netlify/functions';
-
 // Registry enabled is read from server (prefers Netlify env var). We fetch it at init.
 async function fetchRegistryFlag(){
   try {
@@ -94,7 +92,8 @@ function renderGifts(gifts) {
   function onBuy(e){
     const btn = e.currentTarget;
     const url = btn.dataset.href;
-    if (url) window.open(url, '_blank', 'noopener');
+    // Only allow safe https:// URLs to prevent javascript: injection
+    if (url && /^https:\/\//i.test(url)) window.open(url, '_blank', 'noopener');
   }
 function escapeHtml(s){ return s ? s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) : ''; }
 

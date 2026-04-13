@@ -21,7 +21,7 @@ function getConnectionString() {
 function createDbClient(options = {}) {
   return new Client({
     connectionString: getConnectionString(),
-    ssl: { rejectUnauthorized: false },
+    ssl: { rejectUnauthorized: true },
     ...options
   });
 }

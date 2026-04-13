@@ -54,3 +54,6 @@ _site/
 README.md
 # Local Netlify folder
 .netlify
+
+# Guest list data (contains PII - manage outside repository)
+database/insert_guest_list.sql

@@ -3,15 +3,14 @@ const { createDbClient } = require('./db');
 const getDbClient = () => createDbClient();
 
 // Allow cancellation by admin-secret or by reservation id + reserverEmail match
-const checkAdmin = (event) => {
-  const body = event.body ? JSON.parse(event.body) : {};
-  const token = (event.headers && (event.headers['authorization'] || event.headers['Authorization'])) || body.adminSecret;
+const checkAdmin = (parsedBody, event) => {
+  const token = (event.headers && (event.headers['authorization'] || event.headers['Authorization'])) || (parsedBody && parsedBody.adminSecret);
   return token && token === process.env.GIFT_ADMIN_SECRET;
 };
 
 exports.handler = async (event) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN || 'https://chalowedding.ca',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
@@ -26,6 +25,7 @@ exports.handler = async (event) => {
   const { reservationId, reserverEmail } = body;
   if (!reservationId) return { statusCode: 400, headers, body: JSON.stringify({ error: 'reservationId required' }) };
 
+  const isAdmin = checkAdmin(body, event);
   const client = getDbClient();
   try {
     await client.connect();
@@ -36,9 +36,9 @@ exports.handler = async (event) => {
 
     const reservation = reservationRes.rows[0];
 
-    // Check permission: either admin or matching email
-    if (!checkAdmin(event)) {
-      if (!reserverEmail || reserverEmail !== reservation.reserver_email) {
+    // Check permission: either admin or matching email (case-insensitive)
+    if (!isAdmin) {
+      if (!reserverEmail || reserverEmail.toLowerCase() !== (reservation.reserver_email || '').toLowerCase()) {
         await client.query('ROLLBACK');
         return { statusCode: 401, headers, body: JSON.stringify({ error: 'Unauthorized' }) };
       }

@@ -142,7 +142,7 @@ const insertRsvp = async (client, rsvpData) => {
 exports.handler = async (event, context) => {
   // Handle CORS
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN || 'https://chalowedding.ca',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json'
@@ -176,7 +176,16 @@ exports.handler = async (event, context) => {
     await connectWithRetry(client);
     
     // Parse request body
-    const data = JSON.parse(event.body);
+    let data;
+    try {
+      data = JSON.parse(event.body);
+    } catch (e) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Invalid request body' })
+      };
+    }
     
     // Extract client info
   const clientIPHeader = event.headers['x-forwarded-for'] || event.headers['x-real-ip'] || null;

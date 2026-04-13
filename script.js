@@ -34,9 +34,7 @@ async function loadEmailJsConfig() {
 // API Configuration
 const API_BASE = '/.netlify/functions';
 
-const _p = ["SmVzc2lj","YVNoYWls","MjAyNiE="]; 
 const _s = 'wedding_auth_token';
-const _getAuth = () => atob(_p[0]) + atob(_p[1]) + atob(_p[2]);
 
 // Initialize the website
 document.addEventListener('DOMContentLoaded', async function() {
@@ -146,49 +144,50 @@ function hidePasswordModal() {
     showSection('details');
 }
 
-function checkPassword() {
-    const enteredPassword = document.getElementById('passwordInput').value;
-    const errorElement = document.getElementById('passwordError');
-    
-    // Use obfuscated password check with additional validation
-    const validPass = _validateAccess(enteredPassword);
-    
-    if (validPass) {
-        // Correct password
-        sessionStorage.setItem(_s, btoa(Date.now().toString()));
-        hidePasswordModal();
-        clearPasswordError();
-    } else {
-        // Incorrect password
-        showPasswordError('Incorrect password. Please try again.');
-        document.getElementById('passwordInput').value = '';
-        document.getElementById('passwordInput').focus();
-        
-        // Add small delay to prevent rapid brute force attempts
-        setTimeout(() => {
-            document.getElementById('passwordInput').disabled = false;
-        }, 1000);
-        document.getElementById('passwordInput').disabled = true;
-    }
-}
+async function checkPassword() {
+    const input = document.getElementById('passwordInput');
+    const btn = input.closest('.password-form')?.querySelector('button');
+    const enteredPassword = input.value;
 
-// Obfuscated password validation function
-function _validateAccess(input) {
-    const expected = _getAuth();
-    let result = true;
-    
-    // Constant-time comparison to prevent timing attacks
-    if (input.length !== expected.length) {
-        result = false;
+    if (!enteredPassword) {
+        showPasswordError('Please enter a password.');
+        return;
     }
-    
-    for (let i = 0; i < Math.max(input.length, expected.length); i++) {
-        if (input.charCodeAt(i) !== expected.charCodeAt(i)) {
-            result = false;
+
+    // Disable controls while verifying
+    input.disabled = true;
+    if (btn) { btn.disabled = true; btn.textContent = 'Checking…'; }
+
+    try {
+        const res = await fetch('/.netlify/functions/verify-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: enteredPassword })
+        });
+
+        if (!res.ok) {
+            showPasswordError('Could not verify password. Please try again.');
+            return;
         }
+
+        const { verified } = await res.json();
+
+        if (verified) {
+            sessionStorage.setItem(_s, btoa(Date.now().toString()));
+            hidePasswordModal();
+            clearPasswordError();
+        } else {
+            showPasswordError('Incorrect password. Please try again.');
+            input.value = '';
+            input.focus();
+        }
+    } catch (err) {
+        console.error('[Password] Verification request failed:', err);
+        showPasswordError('Network error. Please try again.');
+    } finally {
+        input.disabled = false;
+        if (btn) { btn.disabled = false; btn.textContent = 'Enter'; }
     }
-    
-    return result;
 }
 
 function showPasswordError(message) {

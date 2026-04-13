@@ -4,47 +4,64 @@
  * 
  * Usage: GET /.netlify/functions/get-rsvp-tracking
  * 
+ * Headers:
+ * - Authorization: Bearer <ADMIN_PASSWORD>
+ * 
  * Query Parameters:
- * - password: Admin password for authentication
  * - status: Filter by RSVP status (pending, responded, late, all) - default: all
  * - invitedBy: Filter by who invited them - optional
  */
 
 const { neon } = require('@neondatabase/serverless');
 
-// Helper function to validate admin password
-function validateAdminPassword(password) {
-    const adminPassword = process.env.ADMIN_PASSWORD || 'wedding2025';
-    return password === adminPassword;
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://chalowedding.ca';
+
+const corsHeaders = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS'
+};
+
+// Validate admin password from Authorization: Bearer header. Fails closed if env var not set.
+function validateAdminPassword(event) {
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) return false;
+    const auth = (event.headers['authorization'] || event.headers['Authorization'] || '');
+    if (!auth.startsWith('Bearer ')) return false;
+    return auth.slice(7) === adminPassword;
 }
 
 exports.handler = async (event, context) => {
+    if (event.httpMethod === 'OPTIONS') {
+        return { statusCode: 200, headers: corsHeaders, body: '' };
+    }
+
     // Only allow GET requests
     if (event.httpMethod !== 'GET') {
         return {
             statusCode: 405,
+            headers: corsHeaders,
             body: JSON.stringify({ error: 'Method not allowed' })
+        };
+    }
+
+    // Validate admin password from Authorization header
+    if (!validateAdminPassword(event)) {
+        return {
+            statusCode: 401,
+            headers: corsHeaders,
+            body: JSON.stringify({ 
+                error: 'Unauthorized',
+                message: 'Invalid or missing Authorization header'
+            })
         };
     }
 
     try {
         // Parse query parameters
         const params = event.queryStringParameters || {};
-        const { password, status = 'all', invitedBy } = params;
-
-        // Validate admin password
-        if (!validateAdminPassword(password)) {
-            return {
-                statusCode: 401,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    error: 'Unauthorized',
-                    message: 'Invalid admin password'
-                })
-            };
-        }
+        const { status = 'all', invitedBy } = params;
 
         // Connect to database
         const sql = neon(process.env.DATABASE_URL);
@@ -150,10 +167,7 @@ exports.handler = async (event, context) => {
 
         return {
             statusCode: 200,
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache'
-            },
+            headers: { ...corsHeaders, 'Cache-Control': 'no-cache' },
             body: JSON.stringify({
                 success: true,
                 summary,
@@ -170,9 +184,7 @@ exports.handler = async (event, context) => {
         console.error('Error fetching RSVP tracking:', error);
         return {
             statusCode: 500,
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: corsHeaders,
             body: JSON.stringify({
                 error: 'Internal server error',
                 message: error.message

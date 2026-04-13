@@ -1,5 +1,4 @@
 const { createDbClient } = require('./db');
-const crypto = require('crypto');
 
 const getDbClient = () => createDbClient();
 
@@ -11,7 +10,7 @@ const checkAdmin = (event) => {
 
 exports.handler = async (event) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN || 'https://chalowedding.ca',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json'
   };
