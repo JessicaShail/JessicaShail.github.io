@@ -73,7 +73,7 @@ function renderGifts(gifts) {
         <td class="gift-price">${g.price ? ('$' + Number(g.price).toFixed(2)) : ''}</td>
         <td class="gift-qty" data-id="${g.id}">${available}</td>
       <td class="gift-link">
-          ${g.purchase_url ? `<button type="button" class="buy-btn btn btn-secondary" data-href="${g.purchase_url}">View</button>` : ''}
+          ${g.purchase_url ? `<button type="button" class="buy-btn btn btn-primary" data-href="${g.purchase_url}">View</button>` : ''}
       </td>
       <td>
         <button data-id="${g.id}" class="reserve-btn btn ${available <= 0 ? 'btn-secondary' : 'btn-primary'}" ${available <= 0 ? 'disabled' : ''}>${available <= 0 ? 'Unavailable' : 'Reserve'}</button>
