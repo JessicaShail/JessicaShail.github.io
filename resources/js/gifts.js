@@ -38,7 +38,7 @@ function renderLoading(){
 function renderGifts(gifts) {
   const container = $('gifts-list');
   if (!container) return;
-  const visibleGifts = (gifts || []).filter(g => ((g.quantity || 0) - (g.reserved_count || 0)) > 0);
+  const visibleGifts = gifts || [];
   if (!visibleGifts || visibleGifts.length === 0) {
     container.innerHTML = `<div class="coming-soon"><h3>Coming Soon...</h3></div>`;
     return;
