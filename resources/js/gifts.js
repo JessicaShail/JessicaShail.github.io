@@ -76,7 +76,7 @@ function renderGifts(gifts) {
           ${g.purchase_url ? `<button type="button" class="buy-btn btn btn-secondary" data-href="${g.purchase_url}">View</button>` : ''}
       </td>
       <td>
-        <button data-id="${g.id}" class="reserve-btn btn btn-primary" ${available <= 0 ? 'disabled' : ''}>Reserve</button>
+        <button data-id="${g.id}" class="reserve-btn btn btn-primary" ${available <= 0 ? 'disabled' : ''}>${available <= 0 ? 'Unavailable' : 'Reserve'}</button>
         <div class="reserve-feedback" role="status"></div>
       </td>
     `;
